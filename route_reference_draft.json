@@ -1,0 +1,710 @@
+{
+  "schema": "route-reference-draft-2",
+  "purpose": "Weather-sector requirements/layout prototype. Not a navigation product.",
+  "retrieved_date_jst": "2026-11-21",
+  "coordinate_order": "latitude_deg, longitude_deg",
+  "notes": [
+    "Current main master VREP coordinates are used over older KML coordinates.",
+    "points.csv and checkpoints.csv contain headers only on current main.",
+    "All plotted coordinates have an observed source. Map-provider and public-landmark coordinates are approximate chart references, not user-confirmed exact navigation waypoints.",
+    "The user confirmed 大島 means 日南市南郷大島; geographic identity confirmation is separate from exact coordinate confirmation.",
+    "The three westbound departure segments RJFM→米ノ津駅, RJFM→獅子島, and RJFM→産島 are direct with no invented intermediate route points.",
+    "Airport and VREP master source metadata are preserved. Master coordinates are not a current-AIP operational verification."
+  ],
+  "points": [
+    {
+      "id": "RJFG",
+      "label": "種子島",
+      "kind": "airport",
+      "latitude_deg": 30.605,
+      "longitude_deg": 130.9916666667,
+      "status": "CURRENT_NAVMATE_MASTER",
+      "source": "https://github.com/Yuto-24/NavMate/blob/main/data/reference/default/airports.csv",
+      "source_blob_sha": "d7d212ed8a3186098f8333d0643e62c9ad9d50a6",
+      "source_metadata": {
+        "id": "RJFG",
+        "icao": "RJFG",
+        "name": "種子島",
+        "latitude_deg": "30.6050000000",
+        "longitude_deg": "130.9916666667",
+        "elevation_ft_msl": "768",
+        "pattern_altitude_ft_msl": "1800",
+        "pattern_altitude_source": "AutoNavLog validated reference policy",
+        "pattern_altitude_source_revision": "public-policy-v1",
+        "pattern_altitude_validation_status": "VERIFIED",
+        "source": "Civil Aviation Bureau Japan AIP AD 2.2 via public mirror; JMA Aviation Climatological Information 2025 cross-check",
+        "source_revision": "AIP https://nagodede.github.io/aip/japan/documents/RJFG_full.pdf; RJFG AD2-1 EFF 24 FEB 2022 retrieved 2026-08-11; JMA 2025"
+      }
+    },
+    {
+      "id": "RJFK",
+      "label": "鹿児島",
+      "kind": "airport",
+      "latitude_deg": 31.8033333333,
+      "longitude_deg": 130.7194444444,
+      "status": "CURRENT_NAVMATE_MASTER",
+      "source": "https://github.com/Yuto-24/NavMate/blob/main/data/reference/default/airports.csv",
+      "source_blob_sha": "d7d212ed8a3186098f8333d0643e62c9ad9d50a6",
+      "source_metadata": {
+        "id": "RJFK",
+        "icao": "RJFK",
+        "name": "鹿児島",
+        "latitude_deg": "31.8033333333",
+        "longitude_deg": "130.7194444444",
+        "elevation_ft_msl": "891",
+        "pattern_altitude_ft_msl": "1900",
+        "pattern_altitude_source": "AutoNavLog validated reference policy",
+        "pattern_altitude_source_revision": "public-policy-v1",
+        "pattern_altitude_validation_status": "VERIFIED",
+        "source": "Civil Aviation Bureau Japan AIP AD 2.2 via public mirror; JMA Aviation Climatological Information 2025 cross-check",
+        "source_revision": "AIP https://nagodede.github.io/aip/japan/documents/RJFK_full.pdf; RJFK AD2-1 EFF 18 APR 2024 retrieved 2026-08-11; JMA 2025"
+      }
+    },
+    {
+      "id": "RJFM",
+      "label": "宮崎",
+      "kind": "airport",
+      "latitude_deg": 31.8772222222,
+      "longitude_deg": 131.4486111111,
+      "status": "CURRENT_NAVMATE_MASTER",
+      "source": "https://github.com/Yuto-24/NavMate/blob/main/data/reference/default/airports.csv",
+      "source_blob_sha": "d7d212ed8a3186098f8333d0643e62c9ad9d50a6",
+      "source_metadata": {
+        "id": "RJFM",
+        "icao": "RJFM",
+        "name": "宮崎",
+        "latitude_deg": "31.8772222222",
+        "longitude_deg": "131.4486111111",
+        "elevation_ft_msl": "19",
+        "pattern_altitude_ft_msl": "1000",
+        "pattern_altitude_source": "AutoNavLog validated reference policy",
+        "pattern_altitude_source_revision": "public-policy-v1",
+        "pattern_altitude_validation_status": "VERIFIED",
+        "source": "Civil Aviation Bureau Japan AIP AD 2.2 via public mirror; JMA Aviation Climatological Information 2025 cross-check",
+        "source_revision": "AIP https://nagodede.github.io/aip/japan/documents/RJFM_full.pdf; RJFM AD2-1 EFF 22 OCT 2009 retrieved 2026-08-11; JMA 2025"
+      }
+    },
+    {
+      "id": "RJFO",
+      "label": "大分",
+      "kind": "airport",
+      "latitude_deg": 33.4794444444,
+      "longitude_deg": 131.7372222222,
+      "status": "CURRENT_NAVMATE_MASTER",
+      "source": "https://github.com/Yuto-24/NavMate/blob/main/data/reference/default/airports.csv",
+      "source_blob_sha": "d7d212ed8a3186098f8333d0643e62c9ad9d50a6",
+      "source_metadata": {
+        "id": "RJFO",
+        "icao": "RJFO",
+        "name": "大分",
+        "latitude_deg": "33.4794444444",
+        "longitude_deg": "131.7372222222",
+        "elevation_ft_msl": "17",
+        "pattern_altitude_ft_msl": "1000",
+        "pattern_altitude_source": "AutoNavLog validated reference policy",
+        "pattern_altitude_source_revision": "public-policy-v1",
+        "pattern_altitude_validation_status": "VERIFIED",
+        "source": "Civil Aviation Bureau Japan AIP AD 2.2 via public mirror; JMA Aviation Climatological Information 2025 cross-check",
+        "source_revision": "AIP https://nagodede.github.io/aip/japan/documents/RJFO_full.pdf; RJFO AD2-1 EFF 19 FEB 2026 retrieved 2026-08-11; JMA 2025"
+      }
+    },
+    {
+      "id": "RJFS",
+      "label": "佐賀",
+      "kind": "airport",
+      "latitude_deg": 33.1497222222,
+      "longitude_deg": 130.3022222222,
+      "status": "CURRENT_NAVMATE_MASTER",
+      "source": "https://github.com/Yuto-24/NavMate/blob/main/data/reference/default/airports.csv",
+      "source_blob_sha": "d7d212ed8a3186098f8333d0643e62c9ad9d50a6",
+      "source_metadata": {
+        "id": "RJFS",
+        "icao": "RJFS",
+        "name": "佐賀",
+        "latitude_deg": "33.1497222222",
+        "longitude_deg": "130.3022222222",
+        "elevation_ft_msl": "6",
+        "pattern_altitude_ft_msl": "1000",
+        "pattern_altitude_source": "AutoNavLog validated reference policy",
+        "pattern_altitude_source_revision": "public-policy-v1",
+        "pattern_altitude_validation_status": "VERIFIED",
+        "source": "Civil Aviation Bureau Japan AIP AD 2.2 via public mirror; JMA Aviation Climatological Information 2025 cross-check",
+        "source_revision": "AIP https://nagodede.github.io/aip/japan/documents/RJFS_full.pdf; RJFS AD2-1 EFF 27 AUG 2009 retrieved 2026-08-11; JMA 2025"
+      }
+    },
+    {
+      "id": "RJFT",
+      "label": "熊本",
+      "kind": "airport",
+      "latitude_deg": 32.8372222222,
+      "longitude_deg": 130.8552777778,
+      "status": "CURRENT_NAVMATE_MASTER",
+      "source": "https://github.com/Yuto-24/NavMate/blob/main/data/reference/default/airports.csv",
+      "source_blob_sha": "d7d212ed8a3186098f8333d0643e62c9ad9d50a6",
+      "source_metadata": {
+        "id": "RJFT",
+        "icao": "RJFT",
+        "name": "熊本",
+        "latitude_deg": "32.8372222222",
+        "longitude_deg": "130.8552777778",
+        "elevation_ft_msl": "632",
+        "pattern_altitude_ft_msl": "1700",
+        "pattern_altitude_source": "AutoNavLog validated reference policy",
+        "pattern_altitude_source_revision": "public-policy-v1",
+        "pattern_altitude_validation_status": "VERIFIED",
+        "source": "Civil Aviation Bureau Japan AIP AD 2.2 via public mirror; JMA Aviation Climatological Information 2025 cross-check",
+        "source_revision": "AIP https://nagodede.github.io/aip/japan/documents/RJFT_full.pdf; RJFT AD2-1 EFF 17 NOV 2011 retrieved 2026-08-11; JMA 2025"
+      }
+    },
+    {
+      "id": "RJFU",
+      "label": "長崎",
+      "kind": "airport",
+      "latitude_deg": 32.9169444444,
+      "longitude_deg": 129.9136111111,
+      "status": "CURRENT_NAVMATE_MASTER",
+      "source": "https://github.com/Yuto-24/NavMate/blob/main/data/reference/default/airports.csv",
+      "source_blob_sha": "d7d212ed8a3186098f8333d0643e62c9ad9d50a6",
+      "source_metadata": {
+        "id": "RJFU",
+        "icao": "RJFU",
+        "name": "長崎",
+        "latitude_deg": "32.9169444444",
+        "longitude_deg": "129.9136111111",
+        "elevation_ft_msl": "8",
+        "pattern_altitude_ft_msl": "1000",
+        "pattern_altitude_source": "AutoNavLog validated reference policy",
+        "pattern_altitude_source_revision": "public-policy-v1",
+        "pattern_altitude_validation_status": "VERIFIED",
+        "source": "Civil Aviation Bureau Japan AIP AD 2.2 via public mirror; JMA Aviation Climatological Information 2025 cross-check",
+        "source_revision": "AIP https://nagodede.github.io/aip/japan/documents/RJFU_full.pdf; RJFU AD2-1 EFF 15 DEC 2011 retrieved 2026-08-11; JMA 2025"
+      }
+    },
+    {
+      "id": "RJFG-VREP-NISHINOOMOTE",
+      "label": "西之表",
+      "canonical_label": "NISHINOOMOTE",
+      "kind": "vrep",
+      "latitude_deg": 30.73027,
+      "longitude_deg": 130.989136,
+      "status": "CURRENT_NAVMATE_MASTER_DERIVED_FROM_AIP_BEARING_DISTANCE",
+      "source": "https://github.com/Yuto-24/NavMate/blob/main/data/reference/vrep.json",
+      "source_blob_sha": "88fddfeebb05a4c4cd0c2fe7de0f0687a27a0aac",
+      "derivation": "Geodesic.WGS84.Direct(arp_latitude_deg, arp_longitude_deg, bearing_true_deg, distance_nm * 1852); lat2/lon2 rounded to 6 decimals; no magnetic variation",
+      "source_metadata": {
+        "url": "https://github.com/Yuto-24/AutoNavLog/issues/169#issuecomment-6415872164",
+        "filename": "RJFG__20241128.pdf",
+        "sha256": "654936b205cf31290ccbbada2c71fe45479bfe50855fe9c5bf847c6ee506c10b",
+        "table_pdf_page": 29,
+        "table_page": "RJFG AD2.24-OTHER-1",
+        "table_effective_date": "2022-02-24",
+        "arp_pdf_page": 1,
+        "arp_effective_date": "2022-02-24",
+        "arp_latitude_dms": "303618N",
+        "arp_longitude_dms": "1305930E",
+        "arp_latitude_deg": 30.605,
+        "arp_longitude_deg": 130.99166666666665
+      }
+    },
+    {
+      "id": "RJFK-VREP-KAJIKI-TOWN",
+      "label": "加治木タウン",
+      "canonical_label": "KAJIKI TOWN",
+      "kind": "vrep",
+      "latitude_deg": 31.729932,
+      "longitude_deg": 130.661527,
+      "status": "CURRENT_NAVMATE_MASTER_DERIVED_FROM_AIP_BEARING_DISTANCE",
+      "source": "https://github.com/Yuto-24/NavMate/blob/main/data/reference/vrep.json",
+      "source_blob_sha": "88fddfeebb05a4c4cd0c2fe7de0f0687a27a0aac",
+      "derivation": "Geodesic.WGS84.Direct(arp_latitude_deg, arp_longitude_deg, bearing_true_deg, distance_nm * 1852); lat2/lon2 rounded to 6 decimals; no magnetic variation",
+      "source_metadata": {
+        "url": "https://github.com/Yuto-24/AutoNavLog/issues/169#issuecomment-6415872164",
+        "filename": "RJFK__20260806.pdf",
+        "sha256": "ab15885a5d4eb533ba89dc14dfa7a236edad9c10656fa241103a87d0e546e0af",
+        "table_pdf_page": 46,
+        "table_page": "RJFK AD2.24-OTHER-2",
+        "table_effective_date": "2022-11-03",
+        "arp_pdf_page": 1,
+        "arp_effective_date": "2026-08-06",
+        "arp_latitude_dms": "314812N",
+        "arp_longitude_dms": "1304310E",
+        "arp_latitude_deg": 31.803333333333335,
+        "arp_longitude_deg": 130.71944444444443
+      }
+    },
+    {
+      "id": "RJFO-VREP-GOLF-COURSE",
+      "label": "ゴルフコース",
+      "canonical_label": "GOLF COURSE",
+      "kind": "vrep",
+      "latitude_deg": 33.635882,
+      "longitude_deg": 131.687107,
+      "status": "CURRENT_NAVMATE_MASTER_DERIVED_FROM_AIP_BEARING_DISTANCE",
+      "source": "https://github.com/Yuto-24/NavMate/blob/main/data/reference/vrep.json",
+      "source_blob_sha": "88fddfeebb05a4c4cd0c2fe7de0f0687a27a0aac",
+      "derivation": "Geodesic.WGS84.Direct(arp_latitude_deg, arp_longitude_deg, bearing_true_deg, distance_nm * 1852); lat2/lon2 rounded to 6 decimals; no magnetic variation",
+      "source_metadata": {
+        "url": "https://github.com/Yuto-24/AutoNavLog/issues/169#issuecomment-6415872164",
+        "filename": "RJFO__20261001.pdf",
+        "sha256": "ec8bfda481e6ed33399e2119bec7e9053e1eccec77024c5701fc5ceaa81f4391",
+        "table_pdf_page": 45,
+        "table_page": "RJFO AD2.24-OTHER-1",
+        "table_effective_date": "2026-10-01",
+        "arp_pdf_page": 1,
+        "arp_effective_date": "2026-10-01",
+        "arp_latitude_dms": "332846N",
+        "arp_longitude_dms": "1314414E",
+        "arp_latitude_deg": 33.47944444444445,
+        "arp_longitude_deg": 131.73722222222221
+      },
+      "alternatives": [
+        {
+          "latitude_deg": 33.6299482427053,
+          "longitude_deg": 131.6789378245261,
+          "label": "V-REP ゴルフコース 2400ft(TFE 351/8.8 ゴルフ場)",
+          "source": "https://github.com/Yuto-24/NavMate/blob/main/tests/fixtures/connected_oita_routes.kml",
+          "status": "OLDER_ROUTE_FIXTURE_NOT_ADOPTED_FOR_DRAFT"
+        }
+      ]
+    },
+    {
+      "id": "RJFS-VREP-OMUTA",
+      "label": "大牟田",
+      "canonical_label": "OMUTA",
+      "kind": "vrep",
+      "latitude_deg": 33.030382,
+      "longitude_deg": 130.443802,
+      "status": "CURRENT_NAVMATE_MASTER_DERIVED_FROM_AIP_BEARING_DISTANCE",
+      "source": "https://github.com/Yuto-24/NavMate/blob/main/data/reference/vrep.json",
+      "source_blob_sha": "88fddfeebb05a4c4cd0c2fe7de0f0687a27a0aac",
+      "derivation": "Geodesic.WGS84.Direct(arp_latitude_deg, arp_longitude_deg, bearing_true_deg, distance_nm * 1852); lat2/lon2 rounded to 6 decimals; no magnetic variation",
+      "source_metadata": {
+        "url": "https://github.com/Yuto-24/AutoNavLog/issues/169#issuecomment-6415872164",
+        "filename": "RJFS__20260611.pdf",
+        "sha256": "bfbd8b7075b323b98e4218e30c3393d2cee1e4362a9eb5f86934ad5fbd6c0a5e",
+        "table_pdf_page": 39,
+        "table_page": "RJFS AD2.24-OTHER-1",
+        "table_effective_date": "2025-07-01",
+        "arp_pdf_page": 1,
+        "arp_effective_date": "2021-10-01",
+        "arp_latitude_dms": "330859N",
+        "arp_longitude_dms": "1301808E",
+        "arp_latitude_deg": 33.14972222222222,
+        "arp_longitude_deg": 130.30222222222224
+      }
+    },
+    {
+      "id": "RJFT-VREP-UEKI",
+      "label": "植木",
+      "canonical_label": "UEKI",
+      "kind": "vrep",
+      "latitude_deg": 32.931945,
+      "longitude_deg": 130.69469,
+      "status": "CURRENT_NAVMATE_MASTER_DERIVED_FROM_AIP_BEARING_DISTANCE",
+      "source": "https://github.com/Yuto-24/NavMate/blob/main/data/reference/vrep.json",
+      "source_blob_sha": "88fddfeebb05a4c4cd0c2fe7de0f0687a27a0aac",
+      "derivation": "Geodesic.WGS84.Direct(arp_latitude_deg, arp_longitude_deg, bearing_true_deg, distance_nm * 1852); lat2/lon2 rounded to 6 decimals; no magnetic variation",
+      "source_metadata": {
+        "url": "https://github.com/Yuto-24/AutoNavLog/issues/169#issuecomment-6415872164",
+        "filename": "RJFT__20261001.pdf",
+        "sha256": "be16dd707cc661400f581ca66be99abc01426ebfec6493312fb0169cce7d6674",
+        "table_pdf_page": 46,
+        "table_page": "RJFT AD2.24-OTHER-3",
+        "table_effective_date": "2022-07-14",
+        "arp_pdf_page": 1,
+        "arp_effective_date": "2026-08-06",
+        "arp_latitude_dms": "325014N",
+        "arp_longitude_dms": "1305119E",
+        "arp_latitude_deg": 32.83722222222222,
+        "arp_longitude_deg": 130.8552777777778
+      }
+    },
+    {
+      "id": "RJFU-VREP-NAGATA",
+      "label": "長田",
+      "canonical_label": "NAGATA",
+      "kind": "vrep",
+      "latitude_deg": 32.858022,
+      "longitude_deg": 130.086055,
+      "status": "CURRENT_NAVMATE_MASTER_DERIVED_FROM_AIP_BEARING_DISTANCE",
+      "source": "https://github.com/Yuto-24/NavMate/blob/main/data/reference/vrep.json",
+      "source_blob_sha": "88fddfeebb05a4c4cd0c2fe7de0f0687a27a0aac",
+      "derivation": "Geodesic.WGS84.Direct(arp_latitude_deg, arp_longitude_deg, bearing_true_deg, distance_nm * 1852); lat2/lon2 rounded to 6 decimals; no magnetic variation",
+      "source_metadata": {
+        "url": "https://github.com/Yuto-24/AutoNavLog/issues/169#issuecomment-6415872164",
+        "filename": "RJFU__20261001.pdf",
+        "sha256": "d5758f59fee86a399ccc9f5b21076816348215ab8c1d094cad9d1164e51eed72",
+        "table_pdf_page": 43,
+        "table_page": "RJFU AD2.24-OTHER-1",
+        "table_effective_date": "2026-10-01",
+        "arp_pdf_page": 1,
+        "arp_effective_date": "2026-10-01",
+        "arp_latitude_dms": "325501N",
+        "arp_longitude_dms": "1295449E",
+        "arp_latitude_deg": 32.91694444444444,
+        "arp_longitude_deg": 129.91361111111112
+      }
+    },
+    {
+      "id": "UMK",
+      "label": "UMK・GC",
+      "kind": "route_point",
+      "latitude_deg": 31.985137767624444,
+      "longitude_deg": 131.42429852046251,
+      "status": "UNVERIFIED_MAP_DIGITIZATION",
+      "estimated_error_nm": 0.35,
+      "source": "https://github.com/Yuto-24/NavMate/blob/main/data/reference/rjfm/rjfm-reference.json",
+      "source_blob_sha": "4fdf0900f57af02d40f5e3442bbaeb5babe9c634",
+      "notes": "Reviewed operational-map coordinate. Use a matching KML coordinate in preference to this master value when available.",
+      "source_ids": [
+        "cac-rjfm-training-reference"
+      ]
+    },
+    {
+      "id": "OMARU",
+      "label": "小丸 / OMARU",
+      "kind": "route_point",
+      "latitude_deg": 32.16255070087476,
+      "longitude_deg": 131.47036916946163,
+      "status": "UNVERIFIED_MAP_DIGITIZATION",
+      "estimated_error_nm": 0.35,
+      "source": "https://github.com/Yuto-24/NavMate/blob/main/data/reference/rjfm/rjfm-reference.json",
+      "source_blob_sha": "4fdf0900f57af02d40f5e3442bbaeb5babe9c634",
+      "notes": "Reviewed operational-map coordinate. Use a matching KML coordinate in preference to this master value when available.",
+      "source_ids": [
+        "cac-rjfm-training-reference"
+      ]
+    },
+    {
+      "id": "TSURUMISAKI_OUTBOUND",
+      "label": "鶴御崎（往路KML）",
+      "canonical_label": "鶴見崎(TFE 159/37.8)",
+      "kind": "route_point",
+      "latitude_deg": 32.93247440159898,
+      "longitude_deg": 132.0827590783298,
+      "status": "EXISTING_OUTBOUND_ROUTE_FIXTURE_NOT_CONFIRMED_USER_COORDINATE",
+      "source": "https://github.com/Yuto-24/NavMate/blob/main/tests/fixtures/connected_oita_routes.kml",
+      "source_blob_sha": "b3f4eb8099df8d8b667d9c549bd3fbc2bb1df1f4",
+      "notes": "往路RJFM→RJFO②（祝島経由）のPoint座標。帰路では同名地点が異なる。",
+      "alternatives": [
+        {
+          "latitude_deg": 32.95363837860089,
+          "longitude_deg": 132.0333581581308,
+          "label": "変針点 鶴御崎(TFE 162/35.6)",
+          "status": "INBOUND_ROUTE_FIXTURE_DIFFERENT_POINT"
+        }
+      ]
+    },
+    {
+      "id": "IWAISHIMA",
+      "label": "祝島",
+      "canonical_label": "変針点 祝島(TFE 044/21.9)",
+      "kind": "route_point",
+      "latitude_deg": 33.78037891104157,
+      "longitude_deg": 131.9927442967895,
+      "status": "EXISTING_ROUTE_FIXTURE_NOT_CONFIRMED_USER_COORDINATE",
+      "source": "https://github.com/Yuto-24/NavMate/blob/main/tests/fixtures/connected_oita_routes.kml",
+      "source_blob_sha": "b3f4eb8099df8d8b667d9c549bd3fbc2bb1df1f4"
+    },
+    {
+      "id": "TAMANA",
+      "label": "玉名",
+      "kind": "route_point",
+      "latitude_deg": 32.89346338383958,
+      "longitude_deg": 130.5368732463333,
+      "status": "EXISTING_ROUTE_FIXTURE_NOT_CONFIRMED_USER_COORDINATE",
+      "source": "https://github.com/Yuto-24/NavMate/blob/main/tests/fixtures/issue_117_ftd_golden.json",
+      "notes": "新玉名駅とは別地点。名称が玉名である既存経路の座標を保持。"
+    },
+    {
+      "id": "KOMENOTSU_STATION",
+      "label": "米ノ津駅",
+      "kind": "railway_station",
+      "latitude_deg": 32.12226487,
+      "longitude_deg": 130.34213362,
+      "status": "MAP_PROVIDER_STATION_REFERENCE_NOT_USER_CONFIRMED_EXACT_COORDINATE",
+      "alternatives": [
+        {
+          "label": "既存経路の米ノ津（駅と同一とは未確認）",
+          "latitude_deg": 32.1156353433264,
+          "longitude_deg": 130.3376784271216,
+          "source": "https://github.com/Yuto-24/NavMate/blob/main/tests/fixtures/issue_117_ftd_golden.json",
+          "status": "DO_NOT_SUBSTITUTE_FOR_STATION"
+        },
+        {
+          "label": "米ノ津駅 public encyclopedia candidate",
+          "latitude_deg": 32.12215,
+          "longitude_deg": 130.34198,
+          "source": "https://en.wikipedia.org/wiki/Komenotsu_Station",
+          "status": "SECONDARY_SOURCE_CANDIDATE"
+        }
+      ],
+      "source": "https://www.mapion.co.jp/station/ST28961/",
+      "source_linked_map_url": "https://www.mapion.co.jp/m2/15.00/32.12226487/130.34213362/0/0?poi=ST28961",
+      "source_coordinate_method": "Latitude/longitude parameters in the map provider link for this named station.",
+      "notes": "Mapionの米ノ津駅ページが指す座標。気象セクターと概略経路図の参照位置。利用者が航法変針点の正確な座標を確認したという意味ではない。既存fixtureの米ノ津は駅と異なるため採用しない。",
+      "coordinate_use": "APPROXIMATE_MAP_AND_SECTOR_COVERAGE_ONLY",
+      "user_confirmed_exact_coordinates": false
+    },
+    {
+      "id": "SHIN_TAMANA_STATION",
+      "label": "新玉名駅",
+      "kind": "railway_station",
+      "latitude_deg": 32.9426044,
+      "longitude_deg": 130.5734997,
+      "status": "MAP_PROVIDER_STATION_REFERENCE_NOT_USER_CONFIRMED_EXACT_COORDINATE",
+      "alternatives": [
+        {
+          "latitude_deg": 32.94306,
+          "longitude_deg": 130.57306,
+          "source": "https://zh.wikipedia.org/wiki/新玉名車站",
+          "status": "SECONDARY_SOURCE_CANDIDATE"
+        }
+      ],
+      "source": "https://mapfan.com/spots/SCH,J,HX9",
+      "source_coordinate_method": "MapFan station page, Degree形式, 世界測地系.",
+      "notes": "MapFan掲載の新玉名駅座標。気象セクターと概略経路図の参照位置。利用者が航法変針点の正確な座標を確認したという意味ではない。玉名と別地点。",
+      "coordinate_use": "APPROXIMATE_MAP_AND_SECTOR_COVERAGE_ONLY",
+      "user_confirmed_exact_coordinates": false
+    },
+    {
+      "id": "OSHIMA",
+      "label": "大島（日南市南郷大島）",
+      "kind": "island",
+      "latitude_deg": 31.52812861,
+      "longitude_deg": 131.41097726,
+      "status": "USER_CONFIRMED_ISLAND_IDENTITY_MAP_PROVIDER_APPROXIMATE_POSITION",
+      "notes": "利用者が大島の同定を日南市南郷大島と確認済み。座標はMapionの島の参照位置を概略図に使用するもので、島内の特定変針点や正確なlat/lonが利用者確認済みという意味ではない。南端の鞍埼灯台を島中心に代用しない。",
+      "source": "https://www.mapion.co.jp/phonebook/M07005/45204/L0913760/",
+      "alternatives": [
+        {
+          "label": "南郷大島南端・鞍埼灯台（島中心ではない）",
+          "latitude_deg": 31.515597777777778,
+          "longitude_deg": 131.4198422222222,
+          "status": "OFFICIAL_LANDMARK_COORDINATE_CANDIDATE_NOT_ADOPTED",
+          "source": "https://www.bunka.go.jp/kindai/todai/064/index.html",
+          "source_coordinate_dms": "31°30′56.152″N 131°25′11.432″E"
+        }
+      ],
+      "identity_status": "USER_CONFIRMED_NICHINAN_NANGO_OSHIMA",
+      "user_confirmed_exact_coordinates": false,
+      "source_linked_map_url": "https://www.mapion.co.jp/m2/15.00/31.52812861/131.41097726/0/0?poi=L0913760",
+      "identity_corroboration_source": "https://www.mlit.go.jp/kokudoseisaku/chirit/kokudoseisaku_chirit_tk_000039.html",
+      "source_coordinate_method": "Latitude/longitude parameters in the map provider link for 日南市南郷町中村乙の大島.",
+      "coordinate_use": "APPROXIMATE_MAP_AND_SECTOR_COVERAGE_ONLY"
+    },
+    {
+      "id": "TOIMISAKI",
+      "label": "都井岬（灯台を位置基準とした案）",
+      "kind": "cape",
+      "latitude_deg": 31.367849166666666,
+      "longitude_deg": 131.34678333333335,
+      "status": "OFFICIAL_LANDMARK_COORDINATE_NOT_CONFIRMED_ROUTE_WAYPOINT",
+      "source": "https://www.bunka.go.jp/kindai/todai/065/index.html",
+      "source_coordinate_dms": "31°22′04.257″N 131°20′48.420″E",
+      "notes": "都井岬灯台の公開座標。実際に使う航法変針点の確定座標ではない。"
+    },
+    {
+      "id": "NOMAMISAKI",
+      "label": "野間岬（灯台を位置基準とした案）",
+      "kind": "cape",
+      "latitude_deg": 31.416027777777778,
+      "longitude_deg": 130.10930555555555,
+      "status": "OFFICIAL_LANDMARK_COORDINATE_NOT_CONFIRMED_ROUTE_WAYPOINT",
+      "source": "https://www.kaiho.mlit.go.jp/10kanku/kushikino/lh/l36.htm",
+      "source_coordinate_dms": "31°24′57.7″N 130°06′33.5″E",
+      "notes": "薩摩野間岬灯台の公開座標。実際に使う航法変針点の確定座標ではない。"
+    },
+    {
+      "id": "MAKURAZAKI",
+      "label": "枕崎",
+      "kind": "area_placeholder",
+      "latitude_deg": 31.269166666666667,
+      "longitude_deg": 130.29916666666668,
+      "status": "CITY_AREA_PLACEHOLDER_USING_OFFICIAL_CITY_HALL_REFERENCE",
+      "notes": "枕崎市公式統計書の市役所位置を枕崎市街地の概略プレースホルダーとして使う。利用者の枕崎変針点を市役所と決めたものではなく、旧空港・港・VOR等を指すとも断定しない。広めの気象セクター配置案専用。",
+      "source": "https://www.city.makurazaki.lg.jp/uploaded/attachment/21461.pdf",
+      "source_title": "枕崎の統計 令和7年度刊行 A 土地・気象 1 位置及び面積",
+      "source_coordinate_dms": "31°16′09″N 130°17′57″E",
+      "source_coordinate_method": "DMS city hall coordinate converted to decimal degrees.",
+      "coordinate_use": "APPROXIMATE_MAP_AND_SECTOR_COVERAGE_ONLY",
+      "user_confirmed_exact_coordinates": false
+    },
+    {
+      "id": "SHISHIJIMA",
+      "label": "獅子島",
+      "kind": "island",
+      "latitude_deg": 32.307186,
+      "longitude_deg": 130.245381,
+      "status": "OFFICIAL_CENSUS_GEOMETRY_CENTROID_NOT_CONFIRMED_ROUTE_WAYPOINT",
+      "source": "https://geoshape.ex.nii.ac.jp/ka/resource/46/464040010.html",
+      "notes": "国勢調査町丁・字等別境界データセットの鹿児島県長島町大字獅子島の図形中心点。島の航法変針点としての確定ではない。"
+    },
+    {
+      "id": "UBUSHIMA",
+      "label": "産島",
+      "kind": "island",
+      "latitude_deg": 32.2695267,
+      "longitude_deg": 130.14080050000007,
+      "status": "LOCAL_TOURISM_OFFICIAL_MAP_MARKER_APPROXIMATE_ISLAND_REFERENCE",
+      "notes": "天草観光ガイドの産島海水浴場ページがリンクする地点。天草市河浦町宮野河内の産島の概略位置として採用。利用者が指定した航法変針点の正確なlat/lonという意味ではない。八代の産島貝塚は別地点。",
+      "alternatives": [
+        {
+          "label": "産島海水浴場（島中心ではない）",
+          "latitude_deg": 32.275211,
+          "longitude_deg": 130.137707,
+          "source": "https://arealog.net/64313/",
+          "status": "SECONDARY_SOURCE_LANDMARK_CANDIDATE"
+        }
+      ],
+      "source": "https://www.t-island.jp/spot/2704",
+      "source_linked_map_url": "https://www.google.co.jp/maps/place/32.2695267,130.14080050000007",
+      "source_coordinate_method": "GoogleMapsで見る link on the official 天草観光ガイド page for 産島海水浴場.",
+      "coordinate_use": "APPROXIMATE_MAP_AND_SECTOR_COVERAGE_ONLY",
+      "user_confirmed_exact_coordinates": false
+    },
+    {
+      "id": "YAME_IC",
+      "label": "八女IC",
+      "kind": "interchange",
+      "latitude_deg": 33.2105915,
+      "longitude_deg": 130.5203576,
+      "status": "MAP_PROVIDER_IC_ENTRANCE_COORDINATE_NOT_CONFIRMED_ROUTE_WAYPOINT",
+      "source": "https://mapfan.com/spots/S3Y%2CJ%2CDIW",
+      "notes": "MapFanのIC入口位置。本線との分岐中心とは一致しない。"
+    }
+  ],
+  "routes": [
+    {
+      "id": "oita",
+      "label": "大分",
+      "waypoints": [
+        "RJFM",
+        "UMK",
+        "OMARU",
+        "TSURUMISAKI_OUTBOUND",
+        "IWAISHIMA",
+        "RJFO-VREP-GOLF-COURSE",
+        "RJFO"
+      ]
+    },
+    {
+      "id": "tanegashima_via_makurazaki",
+      "label": "種子島・枕崎経由",
+      "waypoints": [
+        "RJFM",
+        "OSHIMA",
+        "MAKURAZAKI",
+        "RJFG-VREP-NISHINOOMOTE",
+        "RJFG"
+      ]
+    },
+    {
+      "id": "tanegashima_via_noma",
+      "label": "種子島・野間岬経由",
+      "waypoints": [
+        "RJFM",
+        "OSHIMA",
+        "NOMAMISAKI",
+        "RJFG-VREP-NISHINOOMOTE",
+        "RJFG"
+      ]
+    },
+    {
+      "id": "kumamoto",
+      "label": "熊本",
+      "waypoints": [
+        "RJFM",
+        "KOMENOTSU_STATION",
+        "SHIN_TAMANA_STATION",
+        "RJFT-VREP-UEKI",
+        "RJFT"
+      ],
+      "departure_segment_direct_user_confirmed": true,
+      "departure_segment": [
+        "RJFM",
+        "KOMENOTSU_STATION"
+      ],
+      "insert_intermediate_points": false,
+      "route_intent_note": "宮崎から最初の指定地点まで直行。地形に沿う迂回点や未指定の中間地点を追加しない。セクター境界は経路の追加変針点ではない。"
+    },
+    {
+      "id": "kagoshima_via_makurazaki",
+      "label": "鹿児島・枕崎経由",
+      "waypoints": [
+        "RJFM",
+        "TOIMISAKI",
+        "MAKURAZAKI",
+        "RJFK-VREP-KAJIKI-TOWN",
+        "RJFK"
+      ]
+    },
+    {
+      "id": "kagoshima_via_noma",
+      "label": "鹿児島・野間岬経由",
+      "waypoints": [
+        "RJFM",
+        "TOIMISAKI",
+        "NOMAMISAKI",
+        "RJFK-VREP-KAJIKI-TOWN",
+        "RJFK"
+      ]
+    },
+    {
+      "id": "nagasaki",
+      "label": "長崎",
+      "waypoints": [
+        "RJFM",
+        "SHISHIJIMA",
+        "TAMANA",
+        "RJFU-VREP-NAGATA",
+        "RJFU"
+      ],
+      "departure_segment_direct_user_confirmed": true,
+      "departure_segment": [
+        "RJFM",
+        "SHISHIJIMA"
+      ],
+      "insert_intermediate_points": false,
+      "route_intent_note": "宮崎から最初の指定地点まで直行。地形に沿う迂回点や未指定の中間地点を追加しない。セクター境界は経路の追加変針点ではない。"
+    },
+    {
+      "id": "saga",
+      "label": "佐賀",
+      "waypoints": [
+        "RJFM",
+        "UBUSHIMA",
+        "YAME_IC",
+        "RJFS-VREP-OMUTA",
+        "RJFS"
+      ],
+      "departure_segment_direct_user_confirmed": true,
+      "departure_segment": [
+        "RJFM",
+        "UBUSHIMA"
+      ],
+      "insert_intermediate_points": false,
+      "route_intent_note": "宮崎から最初の指定地点まで直行。地形に沿う迂回点や未指定の中間地点を追加しない。セクター境界は経路の追加変針点ではない。"
+    }
+  ],
+  "navmate_reference_snapshot": "ab26080419f1a375db786b045c43aca828b02d7c",
+  "confirmed_design_context": {
+    "sectors_may_be_broader": true,
+    "tables_may_be_outside_sectors": true,
+    "leader_endpoints_visible": true,
+    "print_mode": "monochrome",
+    "altitude_order_ft": [
+      9500,
+      8500,
+      7500,
+      6500,
+      5500,
+      4500,
+      3500,
+      3000,
+      2500
+    ],
+    "airspeed_pressure_altitude_policy": "PLANNED_MSL_EQUALS_PA",
+    "note": "User-confirmed design choices supplied by parent; no coordinates inferred from these choices."
+  }
+}

@@ -1,0 +1,336 @@
+{
+  "schema": "kyushu-cloudflare-source-1",
+  "repository": "Yuto-24/kyushu-nav-weather",
+  "files": [
+    {
+      "path": ".env.example",
+      "bytes": 306,
+      "sha256": "d16080798e4997ed05a9dafbf0ee829958c6023e65209ba545e0e58665a90d21"
+    },
+    {
+      "path": ".github/workflows/verify.yml",
+      "bytes": 1620,
+      "sha256": "5d25c6ad18ed96613dffe3d8353f7a609c913e7a6c8084f26bbf4a52e117b012"
+    },
+    {
+      "path": ".github/workflows/weather-daily.yml",
+      "bytes": 6492,
+      "sha256": "e9bf1d60fd486dae2182f95d5bf38bbbf1b4660ff379177929db5dda0e4e15e6"
+    },
+    {
+      "path": ".gitignore",
+      "bytes": 262,
+      "sha256": "6a4d8fa619f808792d23022288c8ae077c1343c0c6d9f8b08a0ce04f5cc7f086"
+    },
+    {
+      "path": ".python-version",
+      "bytes": 5,
+      "sha256": "7b55f8e67b5623c4bef3fa691288da9437d79d3aba156de48d481db32ac7d16d"
+    },
+    {
+      "path": "analysis/geographic_revision/build_geographic_sheet.py",
+      "bytes": 24955,
+      "sha256": "de471c77bbfbafb42d726e24f55a941fa6ca0d78cf39cd1e6ec9a1416ee66d61"
+    },
+    {
+      "path": "analysis/pseudo_sectors/build_pseudo_sheet.py",
+      "bytes": 18618,
+      "sha256": "3b9d565f38ffa12f48dbc039d7a54f625862027a83c7a717533f6d3b3b5d113a"
+    },
+    {
+      "path": "analysis/pseudo_sectors/design/selection_10.json",
+      "bytes": 20397,
+      "sha256": "743ab56024472c1fbc45d9c8e73477345b93a625757916200f09d89fa3ae73e9"
+    },
+    {
+      "path": "analysis/pseudo_sectors/fonts/LICENSE.txt",
+      "bytes": 5756,
+      "sha256": "f32df582a2aab128c07b2f7e36e7b928dc5f6bd82657b905c04f91459f9e5cf9"
+    },
+    {
+      "path": "analysis/pseudo_sectors/fonts/LiberationSans-Bold.ttf",
+      "bytes": 414568,
+      "sha256": "1b5f2da6f4cadce4c05b9ecebe3a6fcd374eb95ae443605e799f4c3287978939"
+    },
+    {
+      "path": "analysis/pseudo_sectors/fonts/LiberationSans-Regular.ttf",
+      "bytes": 410820,
+      "sha256": "bade59d822652f76e6941aa87b40a87c13d1cc70db98ededb5011127efafd1d3"
+    },
+    {
+      "path": "analysis/pseudo_sectors/geometry/pseudo_boundaries_10.geojson",
+      "bytes": 571754,
+      "sha256": "10eeeec460f298f1fb3b6f9f00f48962292401208def102e5d204dc3bec286a6"
+    },
+    {
+      "path": "analysis/pseudo_sectors/geometry/pseudo_sectors_10.geojson",
+      "bytes": 808597,
+      "sha256": "a26057ff1f2600fef0820fd44761bc1e3b8705be9048b6b4d50a6769f04eb1ea"
+    },
+    {
+      "path": "analysis/pseudo_sectors/presentation_v2/decision.json",
+      "bytes": 1479,
+      "sha256": "c9fadf0c1a1a66d22a37e4cdd6bdae73b2fbe40c238a335b4b9b18a4ca2d4157"
+    },
+    {
+      "path": "kyushu_coastline.geojson",
+      "bytes": 113407,
+      "sha256": "0161537ec167e70834eac38c8f00d9a921fa93a53e4190f3af361b839c444bbc"
+    },
+    {
+      "path": "output/kyushu_weather_sector_requirements.md",
+      "bytes": 52711,
+      "sha256": "59e334b4578bdf32b503effbec47031da666eeea7202598b40fc5241a8878e09"
+    },
+    {
+      "path": "production/README.md",
+      "bytes": 8106,
+      "sha256": "23e0075dd676b05ceba1f4d8f27ec57f9fa0292c6d44c33cb759e88b009f5631"
+    },
+    {
+      "path": "production/WEATHER_PIPELINE.md",
+      "bytes": 8715,
+      "sha256": "c5363bebcefc799c70d2cdc0f63754b3ca650ee089ac1b8c8dfada537c677985"
+    },
+    {
+      "path": "production/actions_job.py",
+      "bytes": 18223,
+      "sha256": "1ccae3fa48b3be553591e9c767e4fcdbffd18dd80125d0dfcc643957dab840b8"
+    },
+    {
+      "path": "production/build_pages.py",
+      "bytes": 10254,
+      "sha256": "4bfd2d47d0f71b9733a6838484a47a44a8d5908009dde57ae8676734b8a78082"
+    },
+    {
+      "path": "production/deployment.json",
+      "bytes": 1273,
+      "sha256": "85a0cc4e9299085ec88c894b7952c45329ddeac69a700d8109df968694373292"
+    },
+    {
+      "path": "production/export_cloudflare.py",
+      "bytes": 4332,
+      "sha256": "fe219db209388987fb8e5c9ca0b1e840e6b9c97f371f945344cc739b1e17f168"
+    },
+    {
+      "path": "production/infra_reuse_notes.md",
+      "bytes": 32870,
+      "sha256": "170e1d9d2eabfe0e9021aa10a6bcacfee1c12429ba6d0b27719365bb77470475"
+    },
+    {
+      "path": "production/pages_publication.py",
+      "bytes": 30113,
+      "sha256": "e83fa66beb28409a5fea3e2ebda6b057e4a1e01fad82690197a120d810be24e3"
+    },
+    {
+      "path": "production/publication.py",
+      "bytes": 29056,
+      "sha256": "03663a3b9ec365e1945b8e160ede3b165c2860f33eb0cec08d037ab99da58943"
+    },
+    {
+      "path": "production/render_daily.py",
+      "bytes": 14573,
+      "sha256": "088faef05902d279df48d5eb4e0f38d08f9a4f49b96088d30cd9c20d625b224c"
+    },
+    {
+      "path": "production/renderer_README.md",
+      "bytes": 8147,
+      "sha256": "1076fe6b29d5c662e85235a7dcffdd8a58c9eb6ea3766aaf74c0ae03a7e14420"
+    },
+    {
+      "path": "production/requirements-renderer.txt",
+      "bytes": 231,
+      "sha256": "0cbb9106444a2161afe8d812aac5263bcccdd0b942cdcb5a1a605498ee050112"
+    },
+    {
+      "path": "production/requirements-weather.txt",
+      "bytes": 103,
+      "sha256": "5d1fb1e12c8ce66fb8435958e4219d8d481a58f369506feb68feffab3f345b87"
+    },
+    {
+      "path": "production/test_actions_job.py",
+      "bytes": 5193,
+      "sha256": "4b4a1181393b434ca22bbe830a4e50a880d9b8b51bb20e8f18cd852566ebc95b"
+    },
+    {
+      "path": "production/test_pages_publication.py",
+      "bytes": 15647,
+      "sha256": "0fd67a374d011925094c975084abbdd1c3874d57a95ee36220d65a6a5d4fe931"
+    },
+    {
+      "path": "production/test_weather_pipeline.py",
+      "bytes": 5527,
+      "sha256": "6fc0503404cd05a2ac3a68c65c50770d2024b90548f64c69290cd4d8b50bc79e"
+    },
+    {
+      "path": "production/vendor/jma_gpv_weather-0.6.0-py3-none-any.whl",
+      "bytes": 56053,
+      "sha256": "d008bb9a7125f6b69012562efffd1edd5d517345b2672359d3b55799fcc63787"
+    },
+    {
+      "path": "production/weather_assets/asset_manifest.json",
+      "bytes": 2416,
+      "sha256": "3518cc29e53a426b353f17f63485b6b5a8a8c09cc84a3410383f3d8ef55dfc3a"
+    },
+    {
+      "path": "production/weather_assets/fixed_leg_weights.npz",
+      "bytes": 5925,
+      "sha256": "9fc1d6890c6ff1f0fc58fbdbda34587e7a4f6d1d3c11696783f0f82f81426098"
+    },
+    {
+      "path": "production/weather_assets/leg_inventory.json",
+      "bytes": 82899,
+      "sha256": "caf70fa90819d80582f6c01746e56d2dc84a46c1b8d56f596068bad3ecd91c5b"
+    },
+    {
+      "path": "production/weather_assets/navmate_snapshot/autonavlog/__init__.py",
+      "bytes": 67,
+      "sha256": "e0b12854748f28531523ca543b3c43342c6d055e7e6b9bf892ec9312f48c1a90"
+    },
+    {
+      "path": "production/weather_assets/navmate_snapshot/autonavlog/domain/__init__.py",
+      "bytes": 67,
+      "sha256": "e0b12854748f28531523ca543b3c43342c6d055e7e6b9bf892ec9312f48c1a90"
+    },
+    {
+      "path": "production/weather_assets/navmate_snapshot/autonavlog/domain/enums.py",
+      "bytes": 2359,
+      "sha256": "f3734eb290d07a843c0ff9237e24b997cceb9fc2559073f96e59d6e4c1423354"
+    },
+    {
+      "path": "production/weather_assets/navmate_snapshot/autonavlog/nav/__init__.py",
+      "bytes": 67,
+      "sha256": "e0b12854748f28531523ca543b3c43342c6d055e7e6b9bf892ec9312f48c1a90"
+    },
+    {
+      "path": "production/weather_assets/navmate_snapshot/autonavlog/nav/airspeed.py",
+      "bytes": 2937,
+      "sha256": "00be54577eeb1f780d3236c2b08797934dea146732d6dac8c89fe6f3f49ef41f"
+    },
+    {
+      "path": "production/weather_assets/navmate_snapshot/autonavlog/nav/wind_triangle.py",
+      "bytes": 1813,
+      "sha256": "760cde4ed15433d1e6ac79f810291c5d3bd24bc669dd3dc2cdc2e6df06f07539"
+    },
+    {
+      "path": "production/weather_assets/navmate_snapshot/autonavlog/performance/__init__.py",
+      "bytes": 67,
+      "sha256": "e0b12854748f28531523ca543b3c43342c6d055e7e6b9bf892ec9312f48c1a90"
+    },
+    {
+      "path": "production/weather_assets/navmate_snapshot/autonavlog/performance/cruise.py",
+      "bytes": 12773,
+      "sha256": "83ed60383b4b1b9929412da93968f13304772f12db091fe82d2ab3f63fa81587"
+    },
+    {
+      "path": "production/weather_assets/navmate_snapshot/autonavlog/performance/repository.py",
+      "bytes": 15161,
+      "sha256": "6d3f8eb14a2dffaf5082e7654ca574668189d5b85cd98f9b4b313b72bf9c8a9d"
+    },
+    {
+      "path": "production/weather_assets/navmate_snapshot/autonavlog/performance/schemas.py",
+      "bytes": 2499,
+      "sha256": "d4c34497bf4b9c89a49aa23e588d578dcb277a93943a085cf129363317a985ef"
+    },
+    {
+      "path": "production/weather_assets/navmate_snapshot/data/performance/climb_time_fuel_distance.csv",
+      "bytes": 1271,
+      "sha256": "86bcc208238f6c65795551d0f318db679ecf0c96e4abb9bd4506b51d8f55cc94"
+    },
+    {
+      "path": "production/weather_assets/navmate_snapshot/data/performance/cruise_performance.csv",
+      "bytes": 5727,
+      "sha256": "c99c885d3cb9c7f147be1b858769a6582eb10d5a80589092df59e8cd9882edf3"
+    },
+    {
+      "path": "production/weather_assets/navmate_snapshot/data/performance/manifest.json",
+      "bytes": 2215,
+      "sha256": "65c597fa185a26431bde80d2dc87df80537d8ad2f10f5b7a647ec71c45635935"
+    },
+    {
+      "path": "production/weather_assets/navmate_snapshot/source_manifest.json",
+      "bytes": 4612,
+      "sha256": "3958e6f54f08261af2c13653b96aa1c3374f3e9415f6cea0dd063ac0875a8fce"
+    },
+    {
+      "path": "production/weather_assets/selection_10.json",
+      "bytes": 20397,
+      "sha256": "743ab56024472c1fbc45d9c8e73477345b93a625757916200f09d89fa3ae73e9"
+    },
+    {
+      "path": "production/weather_assets/terrain_source.json",
+      "bytes": 3112,
+      "sha256": "a4d9affd12527f9284681dd747eb17eb28fc739bd529290978b18e9e20e41c23"
+    },
+    {
+      "path": "production/weather_fetch.py",
+      "bytes": 16189,
+      "sha256": "2ec12bf6fc3665f26bc05afe4b8628ec8ef8376b0a463fb3ef3626f4d053cba8"
+    },
+    {
+      "path": "production/weather_pipeline.py",
+      "bytes": 24788,
+      "sha256": "ef755c6ff203b6c681130492bb0387be411637d6a8387c64f2ffbcbf5b9b4ef6"
+    },
+    {
+      "path": "production/web/app.js",
+      "bytes": 13371,
+      "sha256": "b748eec0124225987bd58f8469da405d1e43993833cf31fe3354aecda00b8d4c"
+    },
+    {
+      "path": "production/web/index.html",
+      "bytes": 2616,
+      "sha256": "5936beb2913316af0c34fc315e74b0865ddab6c01da8ad3060a7c38aeeb59530"
+    },
+    {
+      "path": "production/web/style.css",
+      "bytes": 4238,
+      "sha256": "aab61ae875fc179e079088ab94c2cf88d8cd68bf5eafc105c9a1380133363095"
+    },
+    {
+      "path": "requirements.txt",
+      "bytes": 79,
+      "sha256": "0cae6ef6051d4c85c4e78ac53a9961a377e875f938e54146345818503128eaa0"
+    },
+    {
+      "path": "route_reference_draft.json",
+      "bytes": 31807,
+      "sha256": "a9160be82459240b2828df00ab6113e0358a831fbab5426178fe7764a4452bca"
+    },
+    {
+      "path": "services/weather-trigger/README.md",
+      "bytes": 8846,
+      "sha256": "8bd802d923db1d057e997fba710347bc869d265134fa25ea1227452da1e94027"
+    },
+    {
+      "path": "services/weather-trigger/package-lock.json",
+      "bytes": 50071,
+      "sha256": "7debd945e93b34448b8e33bf1b5a6283479ac436e06020bada17d7195d3effa7"
+    },
+    {
+      "path": "services/weather-trigger/package.json",
+      "bytes": 321,
+      "sha256": "a5080e2bb802ef37dea9f536089b2f9318eeed4e70d1f3834c4ee11292bbc738"
+    },
+    {
+      "path": "services/weather-trigger/worker.mjs",
+      "bytes": 13835,
+      "sha256": "4e9dc4c587dc3b6553f569ae62b0b38d2e8470ef2bb8bdb5fe0144434f1f6dd4"
+    },
+    {
+      "path": "services/weather-trigger/worker.test.mjs",
+      "bytes": 13286,
+      "sha256": "cecb579ef0394b894056d0c34c09e9346e97f44c85455f0764f990c646467275"
+    },
+    {
+      "path": "services/weather-trigger/wrangler.jsonc",
+      "bytes": 416,
+      "sha256": "9358a4e4e637d9822c52db7627ebab6fe7f1e4d00e1940fdc77253d5a3a68b50"
+    },
+    {
+      "path": "README.md",
+      "bytes": 8106,
+      "sha256": "23e0075dd676b05ceba1f4d8f27ec57f9fa0292c6d44c33cb759e88b009f5631"
+    }
+  ]
+}

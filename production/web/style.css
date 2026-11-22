@@ -1,0 +1,90 @@
+:root {
+  color-scheme: light;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans JP", sans-serif;
+  color: #14191f;
+  background: #fff;
+  font-synthesis: none;
+  font-variant-numeric: tabular-nums;
+  --navy: #16334d;
+  --muted: #626a72;
+  --rule: #d8dce0;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; }
+[hidden] { display: none !important; }
+button, a { -webkit-tap-highlight-color: transparent; }
+button { font: inherit; }
+button, a { touch-action: manipulation; }
+button:focus-visible, a:focus-visible, [tabindex]:focus-visible {
+  outline: 2px solid var(--navy);
+  outline-offset: 4px;
+}
+
+.viewer { max-width: 1540px; margin: 0 auto; padding: 24px 28px 28px; }
+.site-header { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; }
+h1 { margin: 0; font-size: 21px; font-weight: 700; letter-spacing: .025em; }
+.sync-status { color: var(--muted); font-size: 14px; }
+
+.forecast-tabs { display: flex; gap: 10px; margin-top: 24px; border-bottom: 1px solid var(--rule); }
+.forecast-tab {
+  min-width: 158px;
+  padding: 10px 22px 12px;
+  border: 0;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -1px;
+  color: var(--muted);
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+}
+.forecast-tab[aria-selected="true"] { color: var(--navy); border-bottom-color: var(--navy); }
+.forecast-tab:hover { background: #f5f6f7; }
+.tab-time { display: block; font-size: 20px; font-weight: 700; }
+.tab-time > span { font-size: 14px; font-weight: 500; }
+.tab-date { display: block; margin-top: 4px; font-size: 14px; }
+
+.forecast-info { padding: 22px 0 18px; }
+.forecast-title-row { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px 16px; }
+h2 { display: flex; flex-wrap: wrap; align-items: baseline; gap: 16px; margin: 0; font-size: 28px; line-height: 1.25; }
+.forecast-time { font-size: 19px; font-weight: 600; }
+.edition-note { padding: 3px 8px; border: 1px solid #9ca3aa; color: #444b52; font-size: 14px; white-space: nowrap; }
+.actions { display: flex; align-items: center; gap: 18px; margin-left: auto; font-size: 14px; }
+.actions a { color: var(--navy); text-decoration: underline; text-underline-offset: 4px; cursor: pointer; }
+.actions .primary-link { font-weight: 700; }
+.actions button { padding: 4px 0; color: #313840; background: none; border: 0; cursor: pointer; }
+.actions button:hover { text-decoration: underline; text-underline-offset: 4px; }
+.forecast-meta { display: flex; flex-wrap: wrap; gap: 6px 25px; margin: 12px 0 0; font-size: 14px; line-height: 1.6; }
+.forecast-meta > div { display: flex; gap: 8px; }
+.forecast-meta dt { color: var(--muted); }
+.forecast-meta dd { margin: 0; }
+.message { color: #4d555d; margin: 18px 0; font-size: 14px; line-height: 1.6; }
+.message:empty { display: none; }
+.sheet-viewport { max-width: 100%; overflow: auto; border: 1px solid var(--rule); background: #fff; }
+.forecast-sheet { display: block; width: 100%; min-width: 1123px; max-width: none; height: auto; }
+
+@media (max-width: 680px) {
+  .viewer { padding: 18px 14px 20px; }
+  .site-header { flex-wrap: wrap; gap: 7px; }
+  h1 { font-size: 19px; }
+  .sync-status { font-size: 14px; }
+  .forecast-tabs { margin-top: 18px; gap: 0; }
+  .forecast-tab { flex: 1; min-width: 0; padding: 10px 14px 12px; }
+  .forecast-info { padding: 18px 0 14px; }
+  h2 { font-size: 25px; gap: 12px; }
+  .forecast-time { font-size: 17px; }
+  .forecast-title-row { gap: 10px; }
+  .actions { width: 100%; margin-left: 0; gap: 22px; padding-top: 3px; }
+  .forecast-meta { display: grid; gap: 3px; margin-top: 13px; }
+  .forecast-meta dt { min-width: 42px; }
+}
+
+@page { size: A4 landscape; margin: 0; }
+@media print {
+  html, body { width: 297mm; height: 210mm; margin: 0; padding: 0; overflow: hidden; background: #fff; }
+  .screen-only, noscript { display: none !important; }
+  .viewer, #forecast-panel { display: block; width: 297mm; height: 210mm; max-width: none; margin: 0; padding: 0; }
+  #forecast-panel { outline: none; }
+  .sheet-viewport { width: 297mm; height: 210mm; max-width: none; margin: 0; padding: 0; overflow: hidden; border: 0; }
+  .forecast-sheet { width: 297mm; height: 210mm; min-width: 0; max-width: none; object-fit: contain; break-inside: avoid; }
+}

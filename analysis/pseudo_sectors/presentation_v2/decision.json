@@ -1,0 +1,37 @@
+{
+  "schema": "pseudo-sector-presentation-revision-2",
+  "date_jst": "2026-11-22",
+  "user_direction": [
+    "Remove all midpoint X marks",
+    "Avoid unnecessary secondary labels and explanations; let layout explain",
+    "Bottom explanatory text generally unnecessary",
+    "Add fuel used per minute at each altitude",
+    "Redesign top to show full forecast context",
+    "Sector partition and table format broadly accepted",
+    "Prioritize fast numeric lookup and readable table placement"
+  ],
+  "geometry_and_representatives_sha256": {
+    "geometry/pseudo_sectors_10.geojson": "a26057ff1f2600fef0820fd44761bc1e3b8705be9048b6b4d50a6769f04eb1ea",
+    "geometry/pseudo_boundaries_10.geojson": "10eeeec460f298f1fb3b6f9f00f48962292401208def102e5d204dc3bec286a6",
+    "design/selection_10.json": "743ab56024472c1fbc45d9c8e73477345b93a625757916200f09d89fa3ae73e9"
+  },
+  "source_weather_date": "2026-11-20",
+  "work_scope": "Presentation and per-minute fuel only; no sector reselection, weather data refresh, or production service work",
+  "implemented": {
+    "midpoint_marks": 0,
+    "footer_explanatory_lines": 0,
+    "repeated_table_titles": 0,
+    "table_mm": [
+      66,
+      34.4
+    ],
+    "body_pt": 9.8,
+    "wind_pt": 10.1,
+    "main_header_pt": 18,
+    "fuel_unit": "US gal/min",
+    "fuel_display_decimals": 3,
+    "same_sector_geometry_and_representatives": true,
+    "same_existing_weather_and_performance_values": true,
+    "numeric_fonts_embedded": true
+  }
+}

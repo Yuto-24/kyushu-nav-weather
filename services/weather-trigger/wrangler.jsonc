@@ -1,0 +1,15 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "kyushu-weather-trigger",
+  "main": "worker.mjs",
+  "compatibility_date": "2026-11-22",
+  "workers_dev": false,
+  "preview_urls": false,
+  "triggers": { "crons": [] },
+  "vars": {
+    "MODE": "observe",
+    "STATUS_URL": "https://weather.example.invalid/status.json",
+    "GITHUB_REPOSITORY": "OWNER/REPOSITORY",
+    "GITHUB_BRANCH": "main"
+  }
+}

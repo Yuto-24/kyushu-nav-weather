@@ -1,0 +1,13 @@
+{
+  "name": "kyushu-weather-trigger",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test worker.test.mjs",
+    "check": "node --check worker.mjs",
+    "bundle": "wrangler deploy --dry-run --outdir /tmp/kyushu-weather-trigger-bundle"
+  },
+  "devDependencies": {
+    "wrangler": "4.152.0"
+  }
+}

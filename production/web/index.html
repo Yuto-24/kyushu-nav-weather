@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <title>九州 NAV LOG</title>
+  <link rel="stylesheet" href="/style.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <main class="viewer">
+    <header class="site-header screen-only">
+      <h1>九州 NAV LOG</h1>
+      <span id="sync-status" class="sync-status"></span>
+    </header>
+
+    <div class="forecast-tabs screen-only" role="tablist" aria-label="予報対象時刻">
+      <button id="tab-0900" class="forecast-tab" type="button" role="tab"
+        aria-controls="forecast-panel" aria-selected="true" data-slot="0900">
+        <span class="tab-time">09:00 <span>JST</span></span>
+        <span id="date-0900" class="tab-date">—</span>
+      </button>
+      <button id="tab-1400" class="forecast-tab" type="button" role="tab"
+        aria-controls="forecast-panel" aria-selected="false" tabindex="-1" data-slot="1400">
+        <span class="tab-time">14:00 <span>JST</span></span>
+        <span id="date-1400" class="tab-date">—</span>
+      </button>
+    </div>
+
+    <section id="forecast-panel" role="tabpanel" aria-labelledby="tab-0900" tabindex="0">
+      <div id="forecast-info" class="forecast-info screen-only" hidden>
+        <div class="forecast-title-row">
+          <h2><span id="forecast-date"></span><span id="forecast-time" class="forecast-time"></span></h2>
+          <span id="previous-edition" class="edition-note" hidden>前回更新分</span>
+          <div class="actions">
+            <a id="pdf-link" class="primary-link" target="_blank" rel="noopener noreferrer">A4 PDF</a>
+            <a id="png-link" target="_blank" rel="noopener noreferrer">PNG</a>
+            <button id="print-button" type="button">印刷</button>
+          </div>
+        </div>
+        <dl class="forecast-meta">
+          <div><dt>モデル</dt><dd id="forecast-model"></dd></div>
+          <div><dt>初期</dt><dd id="forecast-initial"></dd></div>
+          <div><dt>更新</dt><dd id="forecast-generated"></dd></div>
+        </dl>
+      </div>
+
+      <p id="message" class="message screen-only" role="status" aria-live="polite">予報を読み込んでいます</p>
+      <div id="sheet-viewport" class="sheet-viewport" hidden>
+        <img id="forecast-image" class="forecast-sheet" width="3508" height="2481" alt="" decoding="async">
+      </div>
+    </section>
+    <noscript><p class="message">予報の表示には JavaScript を有効にしてください。</p></noscript>
+  </main>
+</body>
+</html>

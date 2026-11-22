@@ -1,0 +1,146 @@
+name: weather-daily
+run-name: >-
+  ${{ inputs.trigger == 'worker' && format('weather-worker/{0}/{1}/{2}', inputs.target_date, inputs.slot, inputs.request_id)
+      || format('weather-{0}/{1}/{2}', github.event_name, github.event.schedule || inputs.slot, github.run_id) }}
+
+on:
+  schedule:
+    # UTC: JST 04:03 / 04:33 and 09:03 / 09:33.
+    - cron: '3,33 19 * * *'
+    - cron: '3,33 0 * * *'
+  workflow_dispatch:
+    inputs:
+      operation:
+        description: 'refresh: generate an edition; initialize: empty first publication only'
+        type: choice
+        options: [refresh, initialize]
+        default: refresh
+      slot:
+        description: 'Forecast time in JST'
+        type: choice
+        options: ['0900', '1400', both]
+        default: both
+      target_date:
+        description: 'JST YYYY-MM-DD; empty means today'
+        type: string
+      trigger:
+        description: 'Worker requests are validated against their occurrence ID'
+        type: choice
+        options: [manual, worker]
+        default: manual
+      request_id:
+        description: 'Only the external Worker supplies this occurrence ID'
+        type: string
+      publish:
+        description: 'Publish the verified candidate to the dedicated Cloudflare Pages project'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: weather-publication
+  cancel-in-progress: false
+  queue: max
+
+jobs:
+  refresh:
+    if: >-
+      github.ref == 'refs/heads/main' &&
+      ((github.event_name == 'schedule' && vars.WEATHER_AUTOMATION_ENABLED == 'true') ||
+       (github.event_name == 'workflow_dispatch' &&
+        (inputs.trigger != 'worker' || vars.WEATHER_AUTOMATION_ENABLED == 'true')))
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: |
+            production/requirements-weather.txt
+            production/requirements-renderer.txt
+      - name: Resolve the actual JST day and reject repeated Worker occurrences
+        id: plan
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: >-
+          python -m production.actions_job prepare
+          --output "$RUNNER_TEMP/weather-plan.json"
+          --github-output "$GITHUB_OUTPUT"
+      - name: Install generation dependencies
+        if: steps.plan.outputs.skip == 'false'
+        run: python -m pip install -r production/requirements-weather.txt -r production/requirements-renderer.txt
+      - name: Restore the complete prior site and generate the candidate
+        if: steps.plan.outputs.skip == 'false'
+        id: candidate
+        env:
+          WEATHER_ORIGIN: ${{ vars.WEATHER_ORIGIN }}
+          WEATHER_AUTOMATION_ENABLED: ${{ vars.WEATHER_AUTOMATION_ENABLED }}
+        shell: bash
+        run: |
+          args=(--plan "$RUNNER_TEMP/weather-plan.json" --output "$RUNNER_TEMP/weather-site" --report "$RUNNER_TEMP/weather-result.json" --github-output "$GITHUB_OUTPUT")
+          if [ -n "$WEATHER_ORIGIN" ]; then args+=(--origin "$WEATHER_ORIGIN"); fi
+          if [ "$WEATHER_AUTOMATION_ENABLED" = true ]; then args+=(--automatic-updates); fi
+          python -m production.actions_job build "${args[@]}"
+      - uses: actions/setup-node@v4
+        if: steps.candidate.outputs.changed == 'true' && steps.plan.outputs.publish == 'true'
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: services/weather-trigger/package-lock.json
+      - name: Install pinned Wrangler
+        if: steps.candidate.outputs.changed == 'true' && steps.plan.outputs.publish == 'true'
+        run: npm ci --prefix services/weather-trigger --ignore-scripts
+      - name: Upload the coherent static site to the dedicated Pages project
+        if: steps.candidate.outputs.changed == 'true' && steps.plan.outputs.publish == 'true'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_PAGES_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_PAGES_PROJECT: ${{ vars.CLOUDFLARE_PAGES_PROJECT }}
+          WEATHER_ORIGIN: ${{ vars.WEATHER_ORIGIN }}
+        shell: bash
+        run: |
+          test -n "$CLOUDFLARE_API_TOKEN"
+          test -n "$CLOUDFLARE_ACCOUNT_ID"
+          test "$CLOUDFLARE_PAGES_PROJECT" = kyushu-nav-weather
+          args=(--plan "$RUNNER_TEMP/weather-plan.json" --report "$RUNNER_TEMP/weather-result.json" --directory "$RUNNER_TEMP/weather-site")
+          if [ -n "$WEATHER_ORIGIN" ]; then args+=(--origin "$WEATHER_ORIGIN"); fi
+          python -m production.actions_job predeploy "${args[@]}"
+          services/weather-trigger/node_modules/.bin/wrangler pages deploy "$RUNNER_TEMP/weather-site" --project-name "$CLOUDFLARE_PAGES_PROJECT" --branch main
+      - name: Verify public files and both forecast identities
+        if: steps.candidate.outputs.changed == 'true' && steps.plan.outputs.publish == 'true'
+        env:
+          WEATHER_ORIGIN: ${{ vars.WEATHER_ORIGIN }}
+          CLOUDFLARE_PAGES_PROJECT: ${{ vars.CLOUDFLARE_PAGES_PROJECT }}
+        shell: bash
+        run: |
+          origin="${WEATHER_ORIGIN:-https://${CLOUDFLARE_PAGES_PROJECT}.pages.dev}"
+          python -m production.build_pages verify --origin "$origin" --expected-dir "$RUNNER_TEMP/weather-site" | tee "$RUNNER_TEMP/weather-verification.json"
+      - name: Record outcome
+        if: always()
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          root = Path(os.environ['RUNNER_TEMP'])
+          result_path = root / 'weather-result.json'
+          result = json.loads(result_path.read_text()) if result_path.exists() else {'published': False}
+          verification = root / 'weather-verification.json'
+          if verification.exists():
+              try:
+                  proof = json.loads(verification.read_text())
+              except ValueError:
+                  proof = {}
+              if proof.get('verified') is True:
+                  result['published'] = True
+                  result['publication'] = proof
+          with Path(os.environ['GITHUB_STEP_SUMMARY']).open('a') as output:
+              output.write('```json\n' + json.dumps(result, ensure_ascii=False, indent=2) + '\n```\n')
+          PY

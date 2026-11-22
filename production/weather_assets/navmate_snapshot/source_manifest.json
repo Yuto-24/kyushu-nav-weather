@@ -1,0 +1,79 @@
+{
+  "repository": "Yuto-24/NavMate",
+  "commit_sha": "62a7896036ca365b734044fd8bde1739abb9173e",
+  "files": [
+    {
+      "repository_path": "src/autonavlog/performance/cruise.py",
+      "snapshot_path": "autonavlog/performance/cruise.py",
+      "sha256": "83ed60383b4b1b9929412da93968f13304772f12db091fe82d2ab3f63fa81587",
+      "git_blob": "5edf18db3cb78594e7713c892af77bc4355dbcaa",
+      "source_url": "https://github.com/Yuto-24/NavMate/blob/62a7896036ca365b734044fd8bde1739abb9173e/src/autonavlog/performance/cruise.py"
+    },
+    {
+      "repository_path": "src/autonavlog/performance/schemas.py",
+      "snapshot_path": "autonavlog/performance/schemas.py",
+      "sha256": "d4c34497bf4b9c89a49aa23e588d578dcb277a93943a085cf129363317a985ef",
+      "git_blob": "403d9072cfc55f826c013703b14b9213aca97fa5",
+      "source_url": "https://github.com/Yuto-24/NavMate/blob/62a7896036ca365b734044fd8bde1739abb9173e/src/autonavlog/performance/schemas.py"
+    },
+    {
+      "repository_path": "src/autonavlog/performance/repository.py",
+      "snapshot_path": "autonavlog/performance/repository.py",
+      "sha256": "6d3f8eb14a2dffaf5082e7654ca574668189d5b85cd98f9b4b313b72bf9c8a9d",
+      "git_blob": "e4c89ddb80bb71843d6482f503ad3c686e847425",
+      "source_url": "https://github.com/Yuto-24/NavMate/blob/62a7896036ca365b734044fd8bde1739abb9173e/src/autonavlog/performance/repository.py"
+    },
+    {
+      "repository_path": "src/autonavlog/nav/airspeed.py",
+      "snapshot_path": "autonavlog/nav/airspeed.py",
+      "sha256": "00be54577eeb1f780d3236c2b08797934dea146732d6dac8c89fe6f3f49ef41f",
+      "git_blob": "17300e452a727001e5a6fa9a00b14e924071b904",
+      "source_url": "https://github.com/Yuto-24/NavMate/blob/62a7896036ca365b734044fd8bde1739abb9173e/src/autonavlog/nav/airspeed.py"
+    },
+    {
+      "repository_path": "src/autonavlog/nav/wind_triangle.py",
+      "snapshot_path": "autonavlog/nav/wind_triangle.py",
+      "sha256": "760cde4ed15433d1e6ac79f810291c5d3bd24bc669dd3dc2cdc2e6df06f07539",
+      "git_blob": "1fcbbe3cb87333b8f4e72d35376fad9ebc511586",
+      "source_url": "https://github.com/Yuto-24/NavMate/blob/62a7896036ca365b734044fd8bde1739abb9173e/src/autonavlog/nav/wind_triangle.py"
+    },
+    {
+      "repository_path": "src/autonavlog/domain/enums.py",
+      "snapshot_path": "autonavlog/domain/enums.py",
+      "sha256": "f3734eb290d07a843c0ff9237e24b997cceb9fc2559073f96e59d6e4c1423354",
+      "git_blob": "d1f8b3e7fcdcc0becd4d5be0d2aa076f11614c5b",
+      "source_url": "https://github.com/Yuto-24/NavMate/blob/62a7896036ca365b734044fd8bde1739abb9173e/src/autonavlog/domain/enums.py"
+    },
+    {
+      "repository_path": "data/performance/manifest.json",
+      "snapshot_path": "data/performance/manifest.json",
+      "sha256": "65c597fa185a26431bde80d2dc87df80537d8ad2f10f5b7a647ec71c45635935",
+      "git_blob": "9e62baa1089df01318d65329a98a78cd9803385d",
+      "source_url": "https://github.com/Yuto-24/NavMate/blob/62a7896036ca365b734044fd8bde1739abb9173e/data/performance/manifest.json"
+    },
+    {
+      "repository_path": "data/performance/cruise_performance.csv",
+      "snapshot_path": "data/performance/cruise_performance.csv",
+      "sha256": "c99c885d3cb9c7f147be1b858769a6582eb10d5a80589092df59e8cd9882edf3",
+      "git_blob": "1260cc9c1145b2d9835229666821e02596d2d3b0",
+      "source_url": "https://github.com/Yuto-24/NavMate/blob/62a7896036ca365b734044fd8bde1739abb9173e/data/performance/cruise_performance.csv"
+    },
+    {
+      "repository_path": "data/performance/climb_time_fuel_distance.csv",
+      "snapshot_path": "data/performance/climb_time_fuel_distance.csv",
+      "sha256": "86bcc208238f6c65795551d0f318db679ecf0c96e4abb9bd4506b51d8f55cc94",
+      "git_blob": "1ac16fd37eaa967c198bd3f89005b67be87da935",
+      "source_url": "https://github.com/Yuto-24/NavMate/blob/62a7896036ca365b734044fd8bde1739abb9173e/data/performance/climb_time_fuel_distance.csv"
+    }
+  ],
+  "packaging_note": "Calculation modules copied unchanged; namespace __init__.py files are minimal local packaging only. NavMate repository not modified.",
+  "conditions": {
+    "power_percent": 65,
+    "mixture": "Best Power",
+    "nose_fairing_enabled": true,
+    "air_conditioning_enabled": false,
+    "pressure_altitude_ft": "same numeric value as requested ft MSL"
+  },
+  "prior_context_snapshot_commit": "ab26080419f1a375db786b045c43aca828b02d7c",
+  "comparison_note": "Prior commit object is not in this local checkout. Existing metadata shows calculation_rules.md blob differs. Current code/data were read directly and pinned; exact unchanged-since-prior claim is not made."
+}

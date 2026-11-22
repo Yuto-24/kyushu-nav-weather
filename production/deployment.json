@@ -1,0 +1,36 @@
+{
+  "provider": "cloudflare_pages",
+  "scheduler": "github_actions",
+  "supplemental_trigger": "cloudflare_worker",
+  "timezone": "Asia/Tokyo",
+  "status": "source_implemented_provider_connection_pending",
+  "audience": "public",
+  "github_repository": "Yuto-24/kyushu-nav-weather",
+  "github_repository_id": 1467275690,
+  "source_visibility": "private",
+  "github_repository_created": true,
+  "pages_project_name": "kyushu-nav-weather",
+  "worker_name": "kyushu-weather-trigger",
+  "cloudflare_status": "browser_sign_in_required",
+  "live_url": null,
+  "automatic_updates_enabled": false,
+  "worker_mode": "not_deployed",
+  "worker_crons_active": false,
+  "source_publication_complete": false,
+  "verification": {
+    "local_weather_tests": 9,
+    "local_actions_tests": 9,
+    "local_pages_tests": 17,
+    "local_worker_tests": 23,
+    "external_pages_readback_verified": false,
+    "external_worker_dispatch_verified": false,
+    "external_cron_verified": false
+  },
+  "superseded_vercel": {
+    "project_id": "prj_MYJPRI2nRuZGaofEeCidl7IUw45Y",
+    "project_name": "kyushu-nav-weather",
+    "deployment_id": null,
+    "active": false,
+    "decision": "Replaced by accepted Cloudflare Pages + Actions + supplemental Worker architecture; no new Vercel deployment."
+  }
+}

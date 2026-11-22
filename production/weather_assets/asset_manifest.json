@@ -1,0 +1,28 @@
+{
+  "schema": "kyushu-weather-fixed-assets-1",
+  "derived_from": {
+    "weights": "analysis/common_sheet/leg_case_means.npz:xy,native_distance_weights_km,leg_lengths_km,leg_ids",
+    "terrain": "analysis/results/fields_strict.npz:terrain"
+  },
+  "historic_weather_cases_included": false,
+  "files": {
+    "fixed_leg_weights.npz": "9fc1d6890c6ff1f0fc58fbdbda34587e7a4f6d1d3c11696783f0f82f81426098",
+    "leg_inventory.json": "caf70fa90819d80582f6c01746e56d2dc84a46c1b8d56f596068bad3ecd91c5b",
+    "navmate_snapshot/autonavlog/__init__.py": "e0b12854748f28531523ca543b3c43342c6d055e7e6b9bf892ec9312f48c1a90",
+    "navmate_snapshot/autonavlog/domain/__init__.py": "e0b12854748f28531523ca543b3c43342c6d055e7e6b9bf892ec9312f48c1a90",
+    "navmate_snapshot/autonavlog/domain/enums.py": "f3734eb290d07a843c0ff9237e24b997cceb9fc2559073f96e59d6e4c1423354",
+    "navmate_snapshot/autonavlog/nav/__init__.py": "e0b12854748f28531523ca543b3c43342c6d055e7e6b9bf892ec9312f48c1a90",
+    "navmate_snapshot/autonavlog/nav/airspeed.py": "00be54577eeb1f780d3236c2b08797934dea146732d6dac8c89fe6f3f49ef41f",
+    "navmate_snapshot/autonavlog/nav/wind_triangle.py": "760cde4ed15433d1e6ac79f810291c5d3bd24bc669dd3dc2cdc2e6df06f07539",
+    "navmate_snapshot/autonavlog/performance/__init__.py": "e0b12854748f28531523ca543b3c43342c6d055e7e6b9bf892ec9312f48c1a90",
+    "navmate_snapshot/autonavlog/performance/cruise.py": "83ed60383b4b1b9929412da93968f13304772f12db091fe82d2ab3f63fa81587",
+    "navmate_snapshot/autonavlog/performance/repository.py": "6d3f8eb14a2dffaf5082e7654ca574668189d5b85cd98f9b4b313b72bf9c8a9d",
+    "navmate_snapshot/autonavlog/performance/schemas.py": "d4c34497bf4b9c89a49aa23e588d578dcb277a93943a085cf129363317a985ef",
+    "navmate_snapshot/data/performance/climb_time_fuel_distance.csv": "86bcc208238f6c65795551d0f318db679ecf0c96e4abb9bd4506b51d8f55cc94",
+    "navmate_snapshot/data/performance/cruise_performance.csv": "c99c885d3cb9c7f147be1b858769a6582eb10d5a80589092df59e8cd9882edf3",
+    "navmate_snapshot/data/performance/manifest.json": "65c597fa185a26431bde80d2dc87df80537d8ad2f10f5b7a647ec71c45635935",
+    "navmate_snapshot/source_manifest.json": "3958e6f54f08261af2c13653b96aa1c3374f3e9415f6cea0dd063ac0875a8fce",
+    "selection_10.json": "743ab56024472c1fbc45d9c8e73477345b93a625757916200f09d89fa3ae73e9",
+    "terrain_source.json": "a4d9affd12527f9284681dd747eb17eb28fc739bd529290978b18e9e20e41c23"
+  }
+}

@@ -1,0 +1,260 @@
+import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
+import test from "node:test";
+import worker, { tick, occurrence, STATUS_LIMIT, WORKFLOW } from "./worker.mjs";
+
+const env = {
+  MODE: "dispatch", STATUS_URL: "https://weather.example.test/status.json",
+  GITHUB_REPOSITORY: "Example/kyushu-weather", GITHUB_BRANCH: "main", GITHUB_TOKEN: "test-secret-only",
+};
+const at = (clock, day = "2026-11-23") => Date.parse(`${day}T${clock}:00+09:00`);
+const pending = () => ({ schema: "kyushu-pages-status-1", slots: { "0900": null, "1400": null } });
+const sheet = (overrides = {}) => ({
+  valid_date: "2026-11-23", quality: "complete", model: "MSM",
+  initial_time_jst: "2026-11-23T00:00:00+09:00", generated_at_jst: "2026-11-23T04:05:00+09:00",
+  release_id: "20261123-0900-example", ...overrides,
+});
+const hint = (entry = sheet(), slot = "0900") => {
+  const value = pending(); value.slots[slot] = entry; return value;
+};
+const json = (value, options = {}) => new Response(JSON.stringify(value), {
+  status: 200, headers: { "content-type": "application/json" }, ...options,
+});
+const receipt = () => ({ workflow_run_id: 987,
+  run_url: "https://api.github.com/repos/Example/kyushu-weather/actions/runs/987",
+  html_url: "https://github.com/Example/kyushu-weather/actions/runs/987" });
+const historyRun = (requestClock = "0420", created = "04:20", id = 1, overrides = {}) => ({
+  id, status: "completed", conclusion: "failure", created_at: new Date(at(created)).toISOString(),
+  display_title: `weather-worker/2026-11-23/0900/worker-20261123-0900-${requestClock}`, ...overrides,
+});
+
+function mock({ status = pending(), active, recent = [], historyTotal, dispatch, afterHistory, historyHeaders } = {}) {
+  const calls = [];
+  const fetcher = async (url, options = {}) => {
+    calls.push({ url, options });
+    assert.equal(options.redirect, "manual");
+    if (url === env.STATUS_URL) {
+      assert.equal(options.cache, "no-store");
+      assert.equal(options.headers?.Authorization, undefined, "Never send GitHub credentials to the site");
+      return status instanceof Response ? status : json(status);
+    }
+    const parsed = new URL(url);
+    assert.equal(parsed.origin, "https://api.github.com");
+    assert.ok(parsed.pathname.includes(`/actions/workflows/${WORKFLOW}`));
+    assert.equal(options.headers.Authorization, `Bearer ${env.GITHUB_TOKEN}`);
+    assert.equal(options.headers["X-GitHub-Api-Version"], "2026-03-10");
+    if (parsed.pathname.endsWith("/dispatches")) {
+      assert.equal(options.method, "POST");
+      if (dispatch) return dispatch(url, options);
+      return json(receipt());
+    }
+    const state = parsed.searchParams.get("status");
+    if (state) {
+      assert.equal(parsed.searchParams.get("per_page"), "1");
+      return json({ total_count: state === active ? 1 : 0, workflow_runs: state === active ? [{ id: 11 }] : [] });
+    }
+    assert.equal(parsed.searchParams.get("event"), "workflow_dispatch");
+    assert.equal(parsed.searchParams.get("created"), ">=2026-11-22T15:00:00.000Z");
+    afterHistory?.();
+    return json({ total_count: historyTotal ?? recent.length, workflow_runs: recent }, historyHeaders ?
+      { headers: { "content-type": "application/json", ...historyHeaders } } : {});
+  };
+  const posts = () => calls.filter(call => call.options.method === "POST");
+  return { calls, posts, fetcher };
+}
+
+test("pending 09 slot dispatches one exact scheduled request, never downloads GPV", async () => {
+  const network = mock();
+  const result = await tick(env, at("04:20"), { fetcher: network.fetcher, now: () => at("04:21") });
+  assert.equal(result.status, "DISPATCH_ACCEPTED");
+  assert.equal(result.publication, "NOT_VERIFIED");
+  assert.equal(result.workflow_run_id, 987);
+  assert.equal(network.calls.length, 8);
+  assert.equal(network.posts().length, 1);
+  assert.deepEqual(JSON.parse(network.posts()[0].options.body), { ref: "main", inputs: {
+    target_date: "2026-11-23", slot: "0900", request_id: "worker-20261123-0900-0420", trigger: "worker",
+    publish: "true", operation: "refresh",
+  } });
+});
+
+test("complete recent MSM needs only the small public hint", async () => {
+  const network = mock({ status: hint() });
+  const result = await tick({ ...env, GITHUB_TOKEN: undefined }, at("04:20"), {
+    fetcher: network.fetcher, now: () => at("04:20"),
+  });
+  assert.equal(result.status, "READY_MSM");
+  assert.equal(network.calls.length, 1);
+});
+
+test("03:02 bootstrap must not suppress the first morning refresh", async () => {
+  const network = mock({ status: hint(sheet({ generated_at_jst: "2026-11-23T03:02:00+09:00" })) });
+  const result = await tick(env, at("04:20"), { fetcher: network.fetcher, now: () => at("04:20") });
+  assert.equal(result.status, "DISPATCH_ACCEPTED");
+});
+
+test("40-minute tick requests the second check if the first completed at 04:05", async () => {
+  const network = mock({ status: hint() });
+  const result = await tick(env, at("04:40"), { fetcher: network.fetcher, now: () => at("04:40") });
+  assert.equal(result.status, "DISPATCH_ACCEPTED");
+  assert.equal(result.request_id, "worker-20261123-0900-0440");
+});
+
+test("40-minute tick accepts completed MSM checked since 04:25", async () => {
+  const network = mock({ status: hint(sheet({ generated_at_jst: "2026-11-23T04:25:00+09:00" })) });
+  const result = await tick(env, at("04:40"), { fetcher: network.fetcher, now: () => at("04:40") });
+  assert.equal(result.status, "READY_MSM");
+  assert.equal(network.calls.length, 1);
+});
+
+test("14 slot uses 09:25 second-check threshold and its own request ID", async () => {
+  const network = mock({ status: hint(sheet({ generated_at_jst: "2026-11-23T09:24:00+09:00" }), "1400") });
+  const result = await tick(env, at("09:40"), { fetcher: network.fetcher, now: () => at("09:40") });
+  assert.equal(result.slot, "1400");
+  assert.equal(result.request_id, "worker-20261123-1400-0940");
+  assert.equal(result.status, "DISPATCH_ACCEPTED");
+});
+
+test("GSM fallback and terrain-partial MSM both remain recovery candidates", async () => {
+  for (const entry of [sheet({ model: "GSM" }), sheet({ quality: "partial" })]) {
+    const network = mock({ status: hint(entry) });
+    assert.equal((await tick(env, at("04:20"), { fetcher: network.fetcher, now: () => at("04:20") })).status,
+      "DISPATCH_ACCEPTED");
+  }
+});
+
+test("yesterday's truthful publication is stale, not malformed", async () => {
+  const network = mock({ status: hint(sheet({ valid_date: "2026-11-22",
+    initial_time_jst: "2026-11-22T00:00:00+09:00", generated_at_jst: "2026-11-22T04:05:00+09:00" })) });
+  assert.equal((await tick(env, at("04:20"), { fetcher: network.fetcher, now: () => at("04:20") })).status,
+    "DISPATCH_ACCEPTED");
+});
+
+test("all active states including old approval waits stop dispatch", async () => {
+  for (const state of ["queued", "in_progress", "waiting", "pending", "requested"]) {
+    const network = mock({ active: state });
+    const result = await tick(env, at("04:20"), { fetcher: network.fetcher, now: () => at("04:20") });
+    assert.equal(result.status, "IN_FLIGHT");
+    assert.equal(network.posts().length, 0);
+  }
+});
+
+test("a job appearing during the active-query race is caught in recent history", async () => {
+  const network = mock({ recent: [historyRun("0420", "04:20", 1, { status: "queued" })] });
+  const result = await tick(env, at("04:20"), { fetcher: network.fetcher, now: () => at("04:21") });
+  assert.equal(result.status, "IN_FLIGHT");
+  assert.equal(network.posts().length, 0);
+});
+
+test("same occurrence is not dispatched again after either success or failure", async () => {
+  for (const conclusion of ["success", "failure", "cancelled"]) {
+    const network = mock({ recent: [historyRun("0420", "04:20", 1, { conclusion })] });
+    const result = await tick(env, at("04:20"), { fetcher: network.fetcher, now: () => at("04:21") });
+    assert.equal(result.status, "DUPLICATE_REQUEST");
+    assert.equal(network.posts().length, 0);
+  }
+});
+
+test("15-minute cooldown uses actual GitHub creation time", async () => {
+  const network = mock({ recent: [historyRun("0420", "04:30")] });
+  const result = await tick(env, at("04:40"), { fetcher: network.fetcher, now: () => at("04:40") });
+  assert.equal(result.status, "COOLDOWN");
+  assert.equal(network.posts().length, 0);
+});
+
+test("two observed worker runs for a slot consume the cap even if both failed", async () => {
+  const network = mock({ recent: [historyRun("0420", "04:20", 1), historyRun("0420", "04:21", 2)] });
+  const result = await tick(env, at("04:40"), { fetcher: network.fetcher, now: () => at("04:40") });
+  assert.equal(result.status, "SLOT_REQUEST_LIMIT");
+  assert.equal(network.posts().length, 0);
+});
+
+test("unknown/truncated history never proves no work exists", async () => {
+  for (const options of [{ historyTotal: 31 }, { historyTotal: 1 },
+    { historyHeaders: { link: '<https://api.github.com/next>; rel="next"' } }]) {
+    const network = mock(options);
+    await assert.rejects(tick(env, at("04:20"), { fetcher: network.fetcher, now: () => at("04:20") }), /TRUNCATED_ACTIONS/);
+    assert.equal(network.posts().length, 0);
+  }
+});
+
+test("malformed worker names cannot evade duplicate/count gates", async () => {
+  const network = mock({ recent: [historyRun("0420", "04:20", 1, {
+    display_title: "weather-worker/2026-11-23/0900/worker-20261123-1400-0920",
+  })] });
+  await assert.rejects(tick(env, at("04:40"), { fetcher: network.fetcher, now: () => at("04:40") }), /UNKNOWN_WORKER_HISTORY/);
+  assert.equal(network.posts().length, 0);
+});
+
+test("missing, HTML, oversized, invalid-schema hints fail closed before GitHub", async () => {
+  for (const status of [new Response("Not found", { status: 404 }),
+    new Response("<html>SPA fallback</html>", { headers: { "content-type": "text/html" } }),
+    { schema: "wrong", slots: {} }, { ...pending(), unexpected: "x".repeat(STATUS_LIMIT) }]) {
+    const network = mock({ status });
+    await assert.rejects(tick(env, at("04:20"), { fetcher: network.fetcher, now: () => at("04:20") }));
+    assert.equal(network.calls.length, 1);
+  }
+});
+
+test("future generation or an invalid date cannot be treated as ready", async () => {
+  for (const entry of [sheet({ generated_at_jst: "2026-11-23T04:22:00+09:00" }),
+    sheet({ valid_date: "2026-02-30" }), sheet({ initial_time_jst: "2026-11-23T04:15:00+09:00" })]) {
+    const network = mock({ status: hint(entry) });
+    await assert.rejects(tick(env, at("04:20"), { fetcher: network.fetcher, now: () => at("04:20") }));
+    assert.equal(network.posts().length, 0);
+  }
+});
+
+test("prior-day, over-15-minute and non-schedule events make no network request", async () => {
+  const network = mock();
+  for (const [eventTime, now] of [[at("04:20", "2026-11-22"), at("04:20")],
+    [at("04:20"), at("04:36")], [at("04:30"), at("04:30")], [at("09:40"), at("10:00")]]) {
+    await assert.rejects(tick(env, eventTime, { fetcher: network.fetcher, now: () => now }));
+  }
+  assert.equal(network.calls.length, 0);
+});
+
+test("slow preflight is rechecked before POST", async () => {
+  let now = at("04:40");
+  const network = mock({ afterHistory: () => { now = at("04:56"); } });
+  await assert.rejects(tick(env, at("04:40"), { fetcher: network.fetcher, now: () => now }), /EXPIRED_OCCURRENCE/);
+  assert.equal(network.posts().length, 0);
+});
+
+test("observe mode exercises the gates and never sends a POST", async () => {
+  const network = mock();
+  const result = await tick({ ...env, MODE: "observe" }, at("04:20"), { fetcher: network.fetcher, now: () => at("04:20") });
+  assert.equal(result.status, "WOULD_DISPATCH");
+  assert.equal(network.calls.length, 7);
+  assert.equal(network.posts().length, 0);
+});
+
+test("dispatch network failure, 403 and ambiguous receipts are never retried", async () => {
+  for (const dispatch of [() => { throw new Error("network failed after send"); },
+    () => new Response("forbidden", { status: 403 }),
+    () => new Response(null, { status: 204 }), () => json({ workflow_run_id: 987 }),
+    () => json({ ...receipt(), html_url: "https://github.com/Other/repo/actions/runs/987" })]) {
+    const network = mock({ dispatch });
+    await assert.rejects(tick(env, at("04:20"), { fetcher: network.fetcher, now: () => at("04:20") }));
+    assert.equal(network.posts().length, 1);
+  }
+});
+
+test("HTTP entry point is closed and checked-in configuration is inactive", async () => {
+  const response = await worker.fetch(new Request("https://worker.test/run"), env);
+  assert.equal(response.status, 404);
+  const config = JSON.parse(await readFile(new URL("wrangler.jsonc", import.meta.url), "utf8"));
+  assert.equal(config.vars.MODE, "observe");
+  assert.deepEqual(config.triggers.crons, []);
+  assert.equal(config.workers_dev, false);
+  assert.equal(config.preview_urls, false);
+  assert.equal(config.kv_namespaces, undefined);
+  assert.equal(config.durable_objects, undefined);
+});
+
+test("JST calendar and readiness floors are derived from the exact occurrence", () => {
+  const first = occurrence(Date.parse("2026-11-22T19:20:00Z"), at("04:20"));
+  assert.equal(first.targetDate, "2026-11-23");
+  assert.equal(first.readyAfter, at("04:00"));
+  const second = occurrence(at("09:40"), at("09:40"));
+  assert.equal(second.readyAfter, at("09:25"));
+});

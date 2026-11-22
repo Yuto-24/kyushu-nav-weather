@@ -1,0 +1,7 @@
+# Renderer only. Install together with the production weather requirements.
+# These versions were used for the approved numeric layout and runtime checks.
+numpy==2.3.5
+shapely==2.1.2
+reportlab==4.4.9
+PyMuPDF==1.26.6
+Pillow==13.0.0

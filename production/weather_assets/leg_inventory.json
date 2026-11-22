@@ -1,0 +1,2658 @@
+{
+  "schema": "common-sheet-31-leg-inventory-1",
+  "count": 31,
+  "legs": [
+    {
+      "id": "L01",
+      "from": "RJFM",
+      "to": "UMK",
+      "label": "宮崎 → UMK・GC",
+      "canonical_undirected_endpoints": [
+        "RJFM",
+        "UMK"
+      ],
+      "direction_independent_weather": true,
+      "length_km": 12.185141440173767,
+      "midpoint_lon_lat": [
+        131.43646191576696,
+        31.931180806043994
+      ],
+      "from_lon_lat": [
+        131.4486111111,
+        31.8772222222
+      ],
+      "to_lon_lat": [
+        131.42429852046251,
+        31.985137767624444
+      ],
+      "nearest_native_mapping": {
+        "nearest_native_node_count": 3,
+        "in_domain_native_node_count": 3,
+        "outside_domain_length_km": 0.0,
+        "outside_domain_length_fraction": 0.0,
+        "nearest_distance_km": {
+          "distance_weighted_mean": 6.140168383036006,
+          "distance_weighted_p95": 7.53472558025465,
+          "maximum": 7.53472558025465
+        }
+      },
+      "occurrences": [
+        {
+          "route_id": "oita",
+          "leg_index": 0,
+          "from": "RJFM",
+          "to": "UMK"
+        }
+      ]
+    },
+    {
+      "id": "L02",
+      "from": "UMK",
+      "to": "OMARU",
+      "label": "UMK・GC → 小丸 / OMARU",
+      "canonical_undirected_endpoints": [
+        "OMARU",
+        "UMK"
+      ],
+      "direction_independent_weather": true,
+      "length_km": 20.148141338917032,
+      "midpoint_lon_lat": [
+        131.4473116034261,
+        32.073846949616495
+      ],
+      "from_lon_lat": [
+        131.42429852046251,
+        31.985137767624444
+      ],
+      "to_lon_lat": [
+        131.47036916946163,
+        32.16255070087476
+      ],
+      "nearest_native_mapping": {
+        "nearest_native_node_count": 4,
+        "in_domain_native_node_count": 4,
+        "outside_domain_length_km": 0.0,
+        "outside_domain_length_fraction": 0.0,
+        "nearest_distance_km": {
+          "distance_weighted_mean": 5.602031694047253,
+          "distance_weighted_p95": 7.385489526321178,
+          "maximum": 7.385489526321178
+        }
+      },
+      "occurrences": [
+        {
+          "route_id": "oita",
+          "leg_index": 1,
+          "from": "UMK",
+          "to": "OMARU"
+        }
+      ]
+    },
+    {
+      "id": "L03",
+      "from": "OMARU",
+      "to": "TSURUMISAKI_OUTBOUND",
+      "label": "小丸 / OMARU → 鶴御崎（往路KML）",
+      "canonical_undirected_endpoints": [
+        "OMARU",
+        "TSURUMISAKI_OUTBOUND"
+      ],
+      "direction_independent_weather": true,
+      "length_km": 102.94900969429139,
+      "midpoint_lon_lat": [
+        131.775257318508,
+        32.54789716861581
+      ],
+      "from_lon_lat": [
+        131.47036916946163,
+        32.16255070087476
+      ],
+      "to_lon_lat": [
+        132.0827590783298,
+        32.93247440159898
+      ],
+      "nearest_native_mapping": {
+        "nearest_native_node_count": 11,
+        "in_domain_native_node_count": 11,
+        "outside_domain_length_km": 0.0,
+        "outside_domain_length_fraction": 0.0,
+        "nearest_distance_km": {
+          "distance_weighted_mean": 4.3056491277587865,
+          "distance_weighted_p95": 7.1222972308719825,
+          "maximum": 7.691896136861094
+        }
+      },
+      "occurrences": [
+        {
+          "route_id": "oita",
+          "leg_index": 2,
+          "from": "OMARU",
+          "to": "TSURUMISAKI_OUTBOUND"
+        }
+      ]
+    },
+    {
+      "id": "L04",
+      "from": "TSURUMISAKI_OUTBOUND",
+      "to": "IWAISHIMA",
+      "label": "鶴御崎（往路KML） → 祝島",
+      "canonical_undirected_endpoints": [
+        "IWAISHIMA",
+        "TSURUMISAKI_OUTBOUND"
+      ],
+      "direction_independent_weather": true,
+      "length_km": 94.41424126108413,
+      "midpoint_lon_lat": [
+        132.03796989271228,
+        33.356449308980515
+      ],
+      "from_lon_lat": [
+        132.0827590783298,
+        32.93247440159898
+      ],
+      "to_lon_lat": [
+        131.9927442967895,
+        33.78037891104157
+      ],
+      "nearest_native_mapping": {
+        "nearest_native_node_count": 11,
+        "in_domain_native_node_count": 11,
+        "outside_domain_length_km": 0.0,
+        "outside_domain_length_fraction": 0.0,
+        "nearest_distance_km": {
+          "distance_weighted_mean": 4.613992428574745,
+          "distance_weighted_p95": 6.95733866528101,
+          "maximum": 7.589842770863188
+        }
+      },
+      "occurrences": [
+        {
+          "route_id": "oita",
+          "leg_index": 3,
+          "from": "TSURUMISAKI_OUTBOUND",
+          "to": "IWAISHIMA"
+        }
+      ]
+    },
+    {
+      "id": "L05",
+      "from": "IWAISHIMA",
+      "to": "RJFO-VREP-GOLF-COURSE",
+      "label": "祝島 → ゴルフコース",
+      "canonical_undirected_endpoints": [
+        "IWAISHIMA",
+        "RJFO-VREP-GOLF-COURSE"
+      ],
+      "direction_independent_weather": true,
+      "length_km": 32.5514395751552,
+      "midpoint_lon_lat": [
+        131.83979769019078,
+        33.70822540298232
+      ],
+      "from_lon_lat": [
+        131.9927442967895,
+        33.78037891104157
+      ],
+      "to_lon_lat": [
+        131.687107,
+        33.635882
+      ],
+      "nearest_native_mapping": {
+        "nearest_native_node_count": 5,
+        "in_domain_native_node_count": 5,
+        "outside_domain_length_km": 0.0,
+        "outside_domain_length_fraction": 0.0,
+        "nearest_distance_km": {
+          "distance_weighted_mean": 4.677326667606918,
+          "distance_weighted_p95": 7.457665250584949,
+          "maximum": 7.457665250584949
+        }
+      },
+      "occurrences": [
+        {
+          "route_id": "oita",
+          "leg_index": 4,
+          "from": "IWAISHIMA",
+          "to": "RJFO-VREP-GOLF-COURSE"
+        }
+      ]
+    },
+    {
+      "id": "L06",
+      "from": "RJFO-VREP-GOLF-COURSE",
+      "to": "RJFO",
+      "label": "ゴルフコース → 大分",
+      "canonical_undirected_endpoints": [
+        "RJFO",
+        "RJFO-VREP-GOLF-COURSE"
+      ],
+      "direction_independent_weather": true,
+      "length_km": 17.964431171105236,
+      "midpoint_lon_lat": [
+        131.71218719675485,
+        33.557666252975125
+      ],
+      "from_lon_lat": [
+        131.687107,
+        33.635882
+      ],
+      "to_lon_lat": [
+        131.7372222222,
+        33.4794444444
+      ],
+      "nearest_native_mapping": {
+        "nearest_native_node_count": 2,
+        "in_domain_native_node_count": 2,
+        "outside_domain_length_km": 0.0,
+        "outside_domain_length_fraction": 0.0,
+        "nearest_distance_km": {
+          "distance_weighted_mean": 4.425134751067768,
+          "distance_weighted_p95": 6.340901756521443,
+          "maximum": 6.340901756521443
+        }
+      },
+      "occurrences": [
+        {
+          "route_id": "oita",
+          "leg_index": 5,
+          "from": "RJFO-VREP-GOLF-COURSE",
+          "to": "RJFO"
+        }
+      ]
+    },
+    {
+      "id": "L07",
+      "from": "RJFM",
+      "to": "OSHIMA",
+      "label": "宮崎 → 大島（日南市南郷大島）",
+      "canonical_undirected_endpoints": [
+        "OSHIMA",
+        "RJFM"
+      ],
+      "direction_independent_weather": true,
+      "length_km": 38.87212125351216,
+      "midpoint_lon_lat": [
+        131.42975894948827,
+        31.702679196029983
+      ],
+      "from_lon_lat": [
+        131.4486111111,
+        31.8772222222
+      ],
+      "to_lon_lat": [
+        131.41097726,
+        31.52812861
+      ],
+      "nearest_native_mapping": {
+        "nearest_native_node_count": 6,
+        "in_domain_native_node_count": 6,
+        "outside_domain_length_km": 0.0,
+        "outside_domain_length_fraction": 0.0,
+        "nearest_distance_km": {
+          "distance_weighted_mean": 5.907523350542948,
+          "distance_weighted_p95": 7.469473479339147,
+          "maximum": 7.624782515889016
+        }
+      },
+      "occurrences": [
+        {
+          "route_id": "tanegashima_via_makurazaki",
+          "leg_index": 0,
+          "from": "RJFM",
+          "to": "OSHIMA"
+        },
+        {
+          "route_id": "tanegashima_via_noma",
+          "leg_index": 0,
+          "from": "RJFM",
+          "to": "OSHIMA"
+        }
+      ]
+    },
+    {
+      "id": "L08",
+      "from": "OSHIMA",
+      "to": "MAKURAZAKI",
+      "label": "大島（日南市南郷大島） → 枕崎",
+      "canonical_undirected_endpoints": [
+        "MAKURAZAKI",
+        "OSHIMA"
+      ],
+      "direction_independent_weather": true,
+      "length_km": 109.56681839522288,
+      "midpoint_lon_lat": [
+        130.85430889287457,
+        31.399854126277692
+      ],
+      "from_lon_lat": [
+        131.41097726,
+        31.52812861
+      ],
+      "to_lon_lat": [
+        130.29916666666668,
+        31.269166666666667
+      ],
+      "nearest_native_mapping": {
+        "nearest_native_node_count": 11,
+        "in_domain_native_node_count": 11,
+        "outside_domain_length_km": 0.0,
+        "outside_domain_length_fraction": 0.0,
+        "nearest_distance_km": {
+          "distance_weighted_mean": 4.2051843638282485,
+          "distance_weighted_p95": 6.886824764370091,
+          "maximum": 7.4712977081769845
+        }
+      },
+      "occurrences": [
+        {
+          "route_id": "tanegashima_via_makurazaki",
+          "leg_index": 1,
+          "from": "OSHIMA",
+          "to": "MAKURAZAKI"
+        }
+      ]
+    },
+    {
+      "id": "L09",
+      "from": "MAKURAZAKI",
+      "to": "RJFG-VREP-NISHINOOMOTE",
+      "label": "枕崎 → 西之表",
+      "canonical_undirected_endpoints": [
+        "MAKURAZAKI",
+        "RJFG-VREP-NISHINOOMOTE"
+      ],
+      "direction_independent_weather": true,
+      "length_km": 88.948432109626,
+      "midpoint_lon_lat": [
+        130.64512136272342,
+        31.000184743087317
+      ],
+      "from_lon_lat": [
+        130.29916666666668,
+        31.269166666666667
+      ],
+      "to_lon_lat": [
+        130.989136,
+        30.73027
+      ],
+      "nearest_native_mapping": {
+        "nearest_native_node_count": 13,
+        "in_domain_native_node_count": 13,
+        "outside_domain_length_km": 0.0,
+        "outside_domain_length_fraction": 0.0,
+        "nearest_distance_km": {
+          "distance_weighted_mean": 4.412862693261998,
+          "distance_weighted_p95": 6.984869560556578,
+          "maximum": 7.375152060223572
+        }
+      },
+      "occurrences": [
+        {
+          "route_id": "tanegashima_via_makurazaki",
+          "leg_index": 2,
+          "from": "MAKURAZAKI",
+          "to": "RJFG-VREP-NISHINOOMOTE"
+        }
+      ]
+    },
+    {
+      "id": "L10",
+      "from": "RJFG-VREP-NISHINOOMOTE",
+      "to": "RJFG",
+      "label": "西之表 → 種子島",
+      "canonical_undirected_endpoints": [
+        "RJFG",
+        "RJFG-VREP-NISHINOOMOTE"
+      ],
+      "direction_independent_weather": true,
+      "length_km": 13.890021909707633,
+      "midpoint_lon_lat": [
+        130.99040214953558,
+        30.667635308335154
+      ],
+      "from_lon_lat": [
+        130.989136,
+        30.73027
+      ],
+      "to_lon_lat": [
+        130.9916666667,
+        30.605
+      ],
+      "nearest_native_mapping": {
+        "nearest_native_node_count": 2,
+        "in_domain_native_node_count": 2,
+        "outside_domain_length_km": 0.0,
+        "outside_domain_length_fraction": 0.0,
+        "nearest_distance_km": {
+          "distance_weighted_mean": 2.881510432500095,
+          "distance_weighted_p95": 5.584933210371685,
+          "maximum": 5.584933210371685
+        }
+      },
+      "occurrences": [
+        {
+          "route_id": "tanegashima_via_makurazaki",
+          "leg_index": 3,
+          "from": "RJFG-VREP-NISHINOOMOTE",
+          "to": "RJFG"
+        },
+        {
+          "route_id": "tanegashima_via_noma",
+          "leg_index": 3,
+          "from": "RJFG-VREP-NISHINOOMOTE",
+          "to": "RJFG"
+        }
+      ]
+    },
+    {
+      "id": "L11",
+      "from": "OSHIMA",
+      "to": "NOMAMISAKI",
+      "label": "大島（日南市南郷大島） → 野間岬（灯台を位置基準とした案）",
+      "canonical_undirected_endpoints": [
+        "NOMAMISAKI",
+        "OSHIMA"
+      ],
+      "direction_independent_weather": true,
+      "length_km": 124.320706139135,
+      "midpoint_lon_lat": [
+        130.75975355512472,
+        31.473732550999113
+      ],
+      "from_lon_lat": [
+        131.41097726,
+        31.52812861
+      ],
+      "to_lon_lat": [
+        130.10930555555555,
+        31.416027777777778
+      ],
+      "nearest_native_mapping": {
+        "nearest_native_node_count": 12,
+        "in_domain_native_node_count": 12,
+        "outside_domain_length_km": 0.0,
+        "outside_domain_length_fraction": 0.0,
+        "nearest_distance_km": {
+          "distance_weighted_mean": 4.276099043666931,
+          "distance_weighted_p95": 6.764757888976435,
+          "maximum": 7.164911280467259
+        }
+      },
+      "occurrences": [
+        {
+          "route_id": "tanegashima_via_noma",
+          "leg_index": 1,
+          "from": "OSHIMA",
+          "to": "NOMAMISAKI"
+        }
+      ]
+    },
+    {
+      "id": "L12",
+      "from": "NOMAMISAKI",
+      "to": "RJFG-VREP-NISHINOOMOTE",
+      "label": "野間岬（灯台を位置基準とした案） → 西之表",
+      "canonical_undirected_endpoints": [
+        "NOMAMISAKI",
+        "RJFG-VREP-NISHINOOMOTE"
+      ],
+      "direction_independent_weather": true,
+      "length_km": 113.27074904757588,
+      "midpoint_lon_lat": [
+        130.55079943512737,
+        31.07390829087419
+      ],
+      "from_lon_lat": [
+        130.10930555555555,
+        31.416027777777778
+      ],
+      "to_lon_lat": [
+        130.989136,
+        30.73027
+      ],
+      "nearest_native_mapping": {
+        "nearest_native_node_count": 15,
+        "in_domain_native_node_count": 15,
+        "outside_domain_length_km": 0.0,
+        "outside_domain_length_fraction": 0.0,
+        "nearest_distance_km": {
+          "distance_weighted_mean": 4.235810022475663,
+          "distance_weighted_p95": 7.17511578783282,
+          "maximum": 7.628917736689808
+        }
+      },
+      "occurrences": [
+        {
+          "route_id": "tanegashima_via_noma",
+          "leg_index": 2,
+          "from": "NOMAMISAKI",
+          "to": "RJFG-VREP-NISHINOOMOTE"
+        }
+      ]
+    },
+    {
+      "id": "L13",
+      "from": "RJFM",
+      "to": "KOMENOTSU_STATION",
+      "label": "宮崎 → 米ノ津駅",
+      "canonical_undirected_endpoints": [
+        "KOMENOTSU_STATION",
+        "RJFM"
+      ],
+      "direction_independent_weather": true,
+      "length_km": 108.02729900744393,
+      "midpoint_lon_lat": [
+        130.89610806567237,
+        32.00095090810821
+      ],
+      "from_lon_lat": [
+        131.4486111111,
+        31.8772222222
+      ],
+      "to_lon_lat": [
+        130.34213362,
+        32.12226487
+      ],
+      "nearest_native_mapping": {
+        "nearest_native_node_count": 12,
+        "in_domain_native_node_count": 12,
+        "outside_domain_length_km": 0.0,
+        "outside_domain_length_fraction": 0.0,
+        "nearest_distance_km": {
+          "distance_weighted_mean": 4.185317921480416,
+          "distance_weighted_p95": 6.625392708150619,
+          "maximum": 7.245161749604991
+        }
+      },
+      "occurrences": [
+        {
+          "route_id": "kumamoto",
+          "leg_index": 0,
+          "from": "RJFM",
+          "to": "KOMENOTSU_STATION"
+        }
+      ]
+    },
+    {
+      "id": "L14",
+      "from": "KOMENOTSU_STATION",
+      "to": "SHIN_TAMANA_STATION",
+      "label": "米ノ津駅 → 新玉名駅",
+      "canonical_undirected_endpoints": [
+        "KOMENOTSU_STATION",
+        "SHIN_TAMANA_STATION"
+      ],
+      "direction_independent_weather": true,
+      "length_km": 93.53288747357331,
+      "midpoint_lon_lat": [
+        130.45729091743343,
+        32.53250123121449
+      ],
+      "from_lon_lat": [
+        130.34213362,
+        32.12226487
+      ],
+      "to_lon_lat": [
+        130.5734997,
+        32.9426044
+      ],
+      "nearest_native_mapping": {
+        "nearest_native_node_count": 10,
+        "in_domain_native_node_count": 10,
+        "outside_domain_length_km": 0.0,
+        "outside_domain_length_fraction": 0.0,
+        "nearest_distance_km": {
+          "distance_weighted_mean": 4.332830788242757,
+          "distance_weighted_p95": 6.743046879372302,
+          "maximum": 7.389928815227171
+        }
+      },
+      "occurrences": [
+        {
+          "route_id": "kumamoto",
+          "leg_index": 1,
+          "from": "KOMENOTSU_STATION",
+          "to": "SHIN_TAMANA_STATION"
+        }
+      ]
+    },
+    {
+      "id": "L15",
+      "from": "SHIN_TAMANA_STATION",
+      "to": "RJFT-VREP-UEKI",
+      "label": "新玉名駅 → 植木",
+      "canonical_undirected_endpoints": [
+        "RJFT-VREP-UEKI",
+        "SHIN_TAMANA_STATION"
+      ],
+      "direction_independent_weather": true,
+      "length_km": 11.395116041601133,
+      "midpoint_lon_lat": [
+        130.6340984844389,
+        32.93728939341759
+      ],
+      "from_lon_lat": [
+        130.5734997,
+        32.9426044
+      ],
+      "to_lon_lat": [
+        130.69469,
+        32.931945
+      ],
+      "nearest_native_mapping": {
+        "nearest_native_node_count": 1,
+        "in_domain_native_node_count": 1,
+        "outside_domain_length_km": 0.0,
+        "outside_domain_length_fraction": 0.0,
+        "nearest_distance_km": {
+          "distance_weighted_mean": 5.253564361476218,
+          "distance_weighted_p95": 6.658497502632996,
+          "maximum": 6.658497502632996
+        }
+      },
+      "occurrences": [
+        {
+          "route_id": "kumamoto",
+          "leg_index": 2,
+          "from": "SHIN_TAMANA_STATION",
+          "to": "RJFT-VREP-UEKI"
+        }
+      ]
+    },
+    {
+      "id": "L16",
+      "from": "RJFT-VREP-UEKI",
+      "to": "RJFT",
+      "label": "植木 → 熊本",
+      "canonical_undirected_endpoints": [
+        "RJFT",
+        "RJFT-VREP-UEKI"
+      ],
+      "direction_independent_weather": true,
+      "length_km": 18.33477158121917,
+      "midpoint_lon_lat": [
+        130.775026598534,
+        32.88460956510023
+      ],
+      "from_lon_lat": [
+        130.69469,
+        32.931945
+      ],
+      "to_lon_lat": [
+        130.8552777778,
+        32.8372222222
+      ],
+      "nearest_native_mapping": {
+        "nearest_native_node_count": 3,
+        "in_domain_native_node_count": 3,
+        "outside_domain_length_km": 0.0,
+        "outside_domain_length_fraction": 0.0,
+        "nearest_distance_km": {
+          "distance_weighted_mean": 4.134026298821275,
+          "distance_weighted_p95": 7.080694999861407,
+          "maximum": 7.080694999861407
+        }
+      },
+      "occurrences": [
+        {
+          "route_id": "kumamoto",
+          "leg_index": 3,
+          "from": "RJFT-VREP-UEKI",
+          "to": "RJFT"
+        }
+      ]
+    },
+    {
+      "id": "L17",
+      "from": "RJFM",
+      "to": "TOIMISAKI",
+      "label": "宮崎 → 都井岬（灯台を位置基準とした案）",
+      "canonical_undirected_endpoints": [
+        "RJFM",
+        "TOIMISAKI"
+      ],
+      "direction_independent_weather": true,
+      "length_km": 57.2997461702217,
+      "midpoint_lon_lat": [
+        131.39755854425678,
+        31.622550928382296
+      ],
+      "from_lon_lat": [
+        131.4486111111,
+        31.8772222222
+      ],
+      "to_lon_lat": [
+        131.34678333333335,
+        31.367849166666666
+      ],
+      "nearest_native_mapping": {
+        "nearest_native_node_count": 7,
+        "in_domain_native_node_count": 7,
+        "outside_domain_length_km": 0.0,
+        "outside_domain_length_fraction": 0.0,
+        "nearest_distance_km": {
+          "distance_weighted_mean": 4.2548150082387,
+          "distance_weighted_p95": 6.793092848877147,
+          "maximum": 7.644219307959289
+        }
+      },
+      "occurrences": [
+        {
+          "route_id": "kagoshima_via_makurazaki",
+          "leg_index": 0,
+          "from": "RJFM",
+          "to": "TOIMISAKI"
+        },
+        {
+          "route_id": "kagoshima_via_noma",
+          "leg_index": 0,
+          "from": "RJFM",
+          "to": "TOIMISAKI"
+        }
+      ]
+    },
+    {
+      "id": "L18",
+      "from": "TOIMISAKI",
+      "to": "MAKURAZAKI",
+      "label": "都井岬（灯台を位置基準とした案） → 枕崎",
+      "canonical_undirected_endpoints": [
+        "MAKURAZAKI",
+        "TOIMISAKI"
+      ],
+      "direction_independent_weather": true,
+      "length_km": 100.31583888142092,
+      "midpoint_lon_lat": [
+        130.82270187109646,
+        31.319576598209807
+      ],
+      "from_lon_lat": [
+        131.34678333333335,
+        31.367849166666666
+      ],
+      "to_lon_lat": [
+        130.29916666666668,
+        31.269166666666667
+      ],
+      "nearest_native_mapping": {
+        "nearest_native_node_count": 11,
+        "in_domain_native_node_count": 11,
+        "outside_domain_length_km": 0.0,
+        "outside_domain_length_fraction": 0.0,
+        "nearest_distance_km": {
+          "distance_weighted_mean": 4.452851873429233,
+          "distance_weighted_p95": 6.952993439655308,
+          "maximum": 7.482301878170812
+        }
+      },
+      "occurrences": [
+        {
+          "route_id": "kagoshima_via_makurazaki",
+          "leg_index": 1,
+          "from": "TOIMISAKI",
+          "to": "MAKURAZAKI"
+        }
+      ]
+    },
+    {
+      "id": "L19",
+      "from": "MAKURAZAKI",
+      "to": "RJFK-VREP-KAJIKI-TOWN",
+      "label": "枕崎 → 加治木タウン",
+      "canonical_undirected_endpoints": [
+        "MAKURAZAKI",
+        "RJFK-VREP-KAJIKI-TOWN"
+      ],
+      "direction_independent_weather": true,
+      "length_km": 61.60475572816899,
+      "midpoint_lon_lat": [
+        130.4799025800599,
+        31.499681729060825
+      ],
+      "from_lon_lat": [
+        130.29916666666668,
+        31.269166666666667
+      ],
+      "to_lon_lat": [
+        130.661527,
+        31.729932
+      ],
+      "nearest_native_mapping": {
+        "nearest_native_node_count": 7,
+        "in_domain_native_node_count": 7,
+        "outside_domain_length_km": 0.0,
+        "outside_domain_length_fraction": 0.0,
+        "nearest_distance_km": {
+          "distance_weighted_mean": 4.306517467822526,
+          "distance_weighted_p95": 7.105243727611852,
+          "maximum": 7.229195253799278
+        }
+      },
+      "occurrences": [
+        {
+          "route_id": "kagoshima_via_makurazaki",
+          "leg_index": 2,
+          "from": "MAKURAZAKI",
+          "to": "RJFK-VREP-KAJIKI-TOWN"
+        }
+      ]
+    },
+    {
+      "id": "L20",
+      "from": "RJFK-VREP-KAJIKI-TOWN",
+      "to": "RJFK",
+      "label": "加治木タウン → 鹿児島",
+      "canonical_undirected_endpoints": [
+        "RJFK",
+        "RJFK-VREP-KAJIKI-TOWN"
+      ],
+      "direction_independent_weather": true,
+      "length_km": 9.815564922591223,
+      "midpoint_lon_lat": [
+        130.6904742916943,
+        31.766636064080195
+      ],
+      "from_lon_lat": [
+        130.661527,
+        31.729932
+      ],
+      "to_lon_lat": [
+        130.7194444444,
+        31.8033333333
+      ],
+      "nearest_native_mapping": {
+        "nearest_native_node_count": 3,
+        "in_domain_native_node_count": 3,
+        "outside_domain_length_km": 0.0,
+        "outside_domain_length_fraction": 0.0,
+        "nearest_distance_km": {
+          "distance_weighted_mean": 5.668468562412334,
+          "distance_weighted_p95": 7.378334275806163,
+          "maximum": 7.378334275806163
+        }
+      },
+      "occurrences": [
+        {
+          "route_id": "kagoshima_via_makurazaki",
+          "leg_index": 3,
+          "from": "RJFK-VREP-KAJIKI-TOWN",
+          "to": "RJFK"
+        },
+        {
+          "route_id": "kagoshima_via_noma",
+          "leg_index": 3,
+          "from": "RJFK-VREP-KAJIKI-TOWN",
+          "to": "RJFK"
+        }
+      ]
+    },
+    {
+      "id": "L21",
+      "from": "TOIMISAKI",
+      "to": "NOMAMISAKI",
+      "label": "都井岬（灯台を位置基準とした案） → 野間岬（灯台を位置基準とした案）",
+      "canonical_undirected_endpoints": [
+        "NOMAMISAKI",
+        "TOIMISAKI"
+      ],
+      "direction_independent_weather": true,
+      "length_km": 117.81879834917473,
+      "midpoint_lon_lat": [
+        130.72820241547066,
+        31.393431367886595
+      ],
+      "from_lon_lat": [
+        131.34678333333335,
+        31.367849166666666
+      ],
+      "to_lon_lat": [
+        130.10930555555555,
+        31.416027777777778
+      ],
+      "nearest_native_mapping": {
+        "nearest_native_node_count": 11,
+        "in_domain_native_node_count": 11,
+        "outside_domain_length_km": 0.0,
+        "outside_domain_length_fraction": 0.0,
+        "nearest_distance_km": {
+          "distance_weighted_mean": 3.537313076437863,
+          "distance_weighted_p95": 6.236762446386883,
+          "maximum": 6.621975602540817
+        }
+      },
+      "occurrences": [
+        {
+          "route_id": "kagoshima_via_noma",
+          "leg_index": 1,
+          "from": "TOIMISAKI",
+          "to": "NOMAMISAKI"
+        }
+      ]
+    },
+    {
+      "id": "L22",
+      "from": "NOMAMISAKI",
+      "to": "RJFK-VREP-KAJIKI-TOWN",
+      "label": "野間岬（灯台を位置基準とした案） → 加治木タウン",
+      "canonical_undirected_endpoints": [
+        "NOMAMISAKI",
+        "RJFK-VREP-KAJIKI-TOWN"
+      ],
+      "direction_independent_weather": true,
+      "length_km": 62.923913555915114,
+      "midpoint_lon_lat": [
+        130.38495371238847,
+        31.57328004581357
+      ],
+      "from_lon_lat": [
+        130.10930555555555,
+        31.416027777777778
+      ],
+      "to_lon_lat": [
+        130.661527,
+        31.729932
+      ],
+      "nearest_native_mapping": {
+        "nearest_native_node_count": 8,
+        "in_domain_native_node_count": 8,
+        "outside_domain_length_km": 0.0,
+        "outside_domain_length_fraction": 0.0,
+        "nearest_distance_km": {
+          "distance_weighted_mean": 4.242909791291624,
+          "distance_weighted_p95": 6.931964372540013,
+          "maximum": 7.333311585541009
+        }
+      },
+      "occurrences": [
+        {
+          "route_id": "kagoshima_via_noma",
+          "leg_index": 2,
+          "from": "NOMAMISAKI",
+          "to": "RJFK-VREP-KAJIKI-TOWN"
+        }
+      ]
+    },
+    {
+      "id": "L23",
+      "from": "RJFM",
+      "to": "SHISHIJIMA",
+      "label": "宮崎 → 獅子島",
+      "canonical_undirected_endpoints": [
+        "RJFM",
+        "SHISHIJIMA"
+      ],
+      "direction_independent_weather": true,
+      "length_km": 123.18295099130259,
+      "midpoint_lon_lat": [
+        130.8484049015828,
+        32.09363633031119
+      ],
+      "from_lon_lat": [
+        131.4486111111,
+        31.8772222222
+      ],
+      "to_lon_lat": [
+        130.245381,
+        32.307186
+      ],
+      "nearest_native_mapping": {
+        "nearest_native_node_count": 14,
+        "in_domain_native_node_count": 14,
+        "outside_domain_length_km": 0.0,
+        "outside_domain_length_fraction": 0.0,
+        "nearest_distance_km": {
+          "distance_weighted_mean": 4.312132835934438,
+          "distance_weighted_p95": 6.7375194768431905,
+          "maximum": 7.618720372260046
+        }
+      },
+      "occurrences": [
+        {
+          "route_id": "nagasaki",
+          "leg_index": 0,
+          "from": "RJFM",
+          "to": "SHISHIJIMA"
+        }
+      ]
+    },
+    {
+      "id": "L24",
+      "from": "SHISHIJIMA",
+      "to": "TAMANA",
+      "label": "獅子島 → 玉名",
+      "canonical_undirected_endpoints": [
+        "SHISHIJIMA",
+        "TAMANA"
+      ],
+      "direction_independent_weather": true,
+      "length_km": 70.53993335298584,
+      "midpoint_lon_lat": [
+        130.39065250529262,
+        32.600416080652224
+      ],
+      "from_lon_lat": [
+        130.245381,
+        32.307186
+      ],
+      "to_lon_lat": [
+        130.5368732463333,
+        32.89346338383958
+      ],
+      "nearest_native_mapping": {
+        "nearest_native_node_count": 9,
+        "in_domain_native_node_count": 9,
+        "outside_domain_length_km": 0.0,
+        "outside_domain_length_fraction": 0.0,
+        "nearest_distance_km": {
+          "distance_weighted_mean": 4.275302081310185,
+          "distance_weighted_p95": 6.531970651796728,
+          "maximum": 7.663176346445318
+        }
+      },
+      "occurrences": [
+        {
+          "route_id": "nagasaki",
+          "leg_index": 1,
+          "from": "SHISHIJIMA",
+          "to": "TAMANA"
+        }
+      ]
+    },
+    {
+      "id": "L25",
+      "from": "TAMANA",
+      "to": "RJFU-VREP-NAGATA",
+      "label": "玉名 → 長田",
+      "canonical_undirected_endpoints": [
+        "RJFU-VREP-NAGATA",
+        "TAMANA"
+      ],
+      "direction_independent_weather": true,
+      "length_km": 42.37203323662108,
+      "midpoint_lon_lat": [
+        130.31141927697456,
+        32.87594581631887
+      ],
+      "from_lon_lat": [
+        130.5368732463333,
+        32.89346338383958
+      ],
+      "to_lon_lat": [
+        130.086055,
+        32.858022
+      ],
+      "nearest_native_mapping": {
+        "nearest_native_node_count": 4,
+        "in_domain_native_node_count": 4,
+        "outside_domain_length_km": 0.0,
+        "outside_domain_length_fraction": 0.0,
+        "nearest_distance_km": {
+          "distance_weighted_mean": 4.051845835388442,
+          "distance_weighted_p95": 6.0321554547857765,
+          "maximum": 6.288116713817338
+        }
+      },
+      "occurrences": [
+        {
+          "route_id": "nagasaki",
+          "leg_index": 2,
+          "from": "TAMANA",
+          "to": "RJFU-VREP-NAGATA"
+        }
+      ]
+    },
+    {
+      "id": "L26",
+      "from": "RJFU-VREP-NAGATA",
+      "to": "RJFU",
+      "label": "長田 → 長崎",
+      "canonical_undirected_endpoints": [
+        "RJFU",
+        "RJFU-VREP-NAGATA"
+      ],
+      "direction_independent_weather": true,
+      "length_km": 17.408831914194568,
+      "midpoint_lon_lat": [
+        129.9998615877867,
+        32.88751301376423
+      ],
+      "from_lon_lat": [
+        130.086055,
+        32.858022
+      ],
+      "to_lon_lat": [
+        129.9136111111,
+        32.9169444444
+      ],
+      "nearest_native_mapping": {
+        "nearest_native_node_count": 3,
+        "in_domain_native_node_count": 3,
+        "outside_domain_length_km": 0.0,
+        "outside_domain_length_fraction": 0.0,
+        "nearest_distance_km": {
+          "distance_weighted_mean": 4.125033429770248,
+          "distance_weighted_p95": 6.440943905735893,
+          "maximum": 6.440943905735893
+        }
+      },
+      "occurrences": [
+        {
+          "route_id": "nagasaki",
+          "leg_index": 3,
+          "from": "RJFU-VREP-NAGATA",
+          "to": "RJFU"
+        }
+      ]
+    },
+    {
+      "id": "L27",
+      "from": "RJFM",
+      "to": "UBUSHIMA",
+      "label": "宮崎 → 産島",
+      "canonical_undirected_endpoints": [
+        "RJFM",
+        "UBUSHIMA"
+      ],
+      "direction_independent_weather": true,
+      "length_km": 130.91814855697245,
+      "midpoint_lon_lat": [
+        130.79610196698627,
+        32.07506466871422
+      ],
+      "from_lon_lat": [
+        131.4486111111,
+        31.8772222222
+      ],
+      "to_lon_lat": [
+        130.14080050000007,
+        32.2695267
+      ],
+      "nearest_native_mapping": {
+        "nearest_native_node_count": 16,
+        "in_domain_native_node_count": 16,
+        "outside_domain_length_km": 0.0,
+        "outside_domain_length_fraction": 0.0,
+        "nearest_distance_km": {
+          "distance_weighted_mean": 4.405621371112445,
+          "distance_weighted_p95": 7.0815850725444704,
+          "maximum": 7.508145359483802
+        }
+      },
+      "occurrences": [
+        {
+          "route_id": "saga",
+          "leg_index": 0,
+          "from": "RJFM",
+          "to": "UBUSHIMA"
+        }
+      ]
+    },
+    {
+      "id": "L28",
+      "from": "UBUSHIMA",
+      "to": "YAME_IC",
+      "label": "産島 → 八女IC",
+      "canonical_undirected_endpoints": [
+        "UBUSHIMA",
+        "YAME_IC"
+      ],
+      "direction_independent_weather": true,
+      "length_km": 110.26020086708725,
+      "midpoint_lon_lat": [
+        130.32958168359252,
+        32.740220440875405
+      ],
+      "from_lon_lat": [
+        130.14080050000007,
+        32.2695267
+      ],
+      "to_lon_lat": [
+        130.5203576,
+        33.2105915
+      ],
+      "nearest_native_mapping": {
+        "nearest_native_node_count": 13,
+        "in_domain_native_node_count": 13,
+        "outside_domain_length_km": 0.0,
+        "outside_domain_length_fraction": 0.0,
+        "nearest_distance_km": {
+          "distance_weighted_mean": 4.347634278372661,
+          "distance_weighted_p95": 6.639200693451143,
+          "maximum": 6.843033830594594
+        }
+      },
+      "occurrences": [
+        {
+          "route_id": "saga",
+          "leg_index": 1,
+          "from": "UBUSHIMA",
+          "to": "YAME_IC"
+        }
+      ]
+    },
+    {
+      "id": "L29",
+      "from": "YAME_IC",
+      "to": "RJFS-VREP-OMUTA",
+      "label": "八女IC → 大牟田",
+      "canonical_undirected_endpoints": [
+        "RJFS-VREP-OMUTA",
+        "YAME_IC"
+      ],
+      "direction_independent_weather": true,
+      "length_km": 21.225049368265505,
+      "midpoint_lon_lat": [
+        130.48204071239,
+        33.12049328138214
+      ],
+      "from_lon_lat": [
+        130.5203576,
+        33.2105915
+      ],
+      "to_lon_lat": [
+        130.443802,
+        33.030382
+      ],
+      "nearest_native_mapping": {
+        "nearest_native_node_count": 3,
+        "in_domain_native_node_count": 3,
+        "outside_domain_length_km": 0.0,
+        "outside_domain_length_fraction": 0.0,
+        "nearest_distance_km": {
+          "distance_weighted_mean": 3.870793790613627,
+          "distance_weighted_p95": 6.574370094214846,
+          "maximum": 6.574370094214846
+        }
+      },
+      "occurrences": [
+        {
+          "route_id": "saga",
+          "leg_index": 2,
+          "from": "YAME_IC",
+          "to": "RJFS-VREP-OMUTA"
+        }
+      ]
+    },
+    {
+      "id": "L30",
+      "from": "RJFS-VREP-OMUTA",
+      "to": "RJFS",
+      "label": "大牟田 → 佐賀",
+      "canonical_undirected_endpoints": [
+        "RJFS",
+        "RJFS-VREP-OMUTA"
+      ],
+      "direction_independent_weather": true,
+      "length_km": 18.70522410422818,
+      "midpoint_lon_lat": [
+        130.37305992639622,
+        33.09007249473117
+      ],
+      "from_lon_lat": [
+        130.443802,
+        33.030382
+      ],
+      "to_lon_lat": [
+        130.3022222222,
+        33.1497222222
+      ],
+      "nearest_native_mapping": {
+        "nearest_native_node_count": 3,
+        "in_domain_native_node_count": 3,
+        "outside_domain_length_km": 0.0,
+        "outside_domain_length_fraction": 0.0,
+        "nearest_distance_km": {
+          "distance_weighted_mean": 4.554222276393008,
+          "distance_weighted_p95": 7.361431497060508,
+          "maximum": 7.361431497060508
+        }
+      },
+      "occurrences": [
+        {
+          "route_id": "saga",
+          "leg_index": 3,
+          "from": "RJFS-VREP-OMUTA",
+          "to": "RJFS"
+        }
+      ]
+    },
+    {
+      "id": "L31",
+      "from": "KOMENOTSU_STATION",
+      "to": "TAMANA",
+      "label": "米ノ津駅 → 玉名",
+      "canonical_undirected_endpoints": [
+        "KOMENOTSU_STATION",
+        "TAMANA"
+      ],
+      "direction_independent_weather": true,
+      "length_km": 87.45843326690309,
+      "midpoint_lon_lat": [
+        130.43908782192494,
+        32.507913635838435
+      ],
+      "from_lon_lat": [
+        130.34213362,
+        32.12226487
+      ],
+      "to_lon_lat": [
+        130.5368732463333,
+        32.89346338383958
+      ],
+      "nearest_native_mapping": {
+        "nearest_native_node_count": 10,
+        "in_domain_native_node_count": 10,
+        "outside_domain_length_km": 0.0,
+        "outside_domain_length_fraction": 0.0,
+        "nearest_distance_km": {
+          "distance_weighted_mean": 4.090248877079765,
+          "distance_weighted_p95": 6.37956879285192,
+          "maximum": 7.110308039897061
+        }
+      },
+      "occurrences": [
+        {
+          "route_id": "explicit_komenotsu_tamana",
+          "leg_index": 0,
+          "from": "KOMENOTSU_STATION",
+          "to": "TAMANA"
+        }
+      ]
+    }
+  ],
+  "geographic_links": [
+    {
+      "a": "L01",
+      "b": "L02",
+      "shared_endpoint": true,
+      "sample_corridor_gap_km": 1.7492998915906703,
+      "midpoint_distance_km": 15.852983471934643
+    },
+    {
+      "a": "L01",
+      "b": "L07",
+      "shared_endpoint": true,
+      "sample_corridor_gap_km": 1.823972030319353,
+      "midpoint_distance_km": 25.34503065439568
+    },
+    {
+      "a": "L01",
+      "b": "L13",
+      "shared_endpoint": true,
+      "sample_corridor_gap_km": 0.9898689315059528,
+      "midpoint_distance_km": 51.66105049739408
+    },
+    {
+      "a": "L01",
+      "b": "L17",
+      "shared_endpoint": true,
+      "sample_corridor_gap_km": 1.8284598105680188,
+      "midpoint_distance_km": 34.41960498042499
+    },
+    {
+      "a": "L01",
+      "b": "L23",
+      "shared_endpoint": true,
+      "sample_corridor_gap_km": 0.8822909777566867,
+      "midpoint_distance_km": 58.40718113644511
+    },
+    {
+      "a": "L01",
+      "b": "L27",
+      "shared_endpoint": true,
+      "sample_corridor_gap_km": 0.928318738156205,
+      "midpoint_distance_km": 62.57561876942225
+    },
+    {
+      "a": "L02",
+      "b": "L03",
+      "shared_endpoint": true,
+      "sample_corridor_gap_km": 1.8728715799551265,
+      "midpoint_distance_km": 60.96910784887087
+    },
+    {
+      "a": "L02",
+      "b": "L07",
+      "shared_endpoint": false,
+      "sample_corridor_gap_km": 13.973859204804397,
+      "midpoint_distance_km": 41.19037118989049
+    },
+    {
+      "a": "L02",
+      "b": "L13",
+      "shared_endpoint": false,
+      "sample_corridor_gap_km": 11.899349548541421,
+      "midpoint_distance_km": 52.687491679527696
+    },
+    {
+      "a": "L02",
+      "b": "L17",
+      "shared_endpoint": false,
+      "sample_corridor_gap_km": 13.968855568195456,
+      "midpoint_distance_km": 50.26265641506247
+    },
+    {
+      "a": "L02",
+      "b": "L23",
+      "shared_endpoint": false,
+      "sample_corridor_gap_km": 11.006963835547738,
+      "midpoint_distance_km": 56.58357370946296
+    },
+    {
+      "a": "L02",
+      "b": "L27",
+      "shared_endpoint": false,
+      "sample_corridor_gap_km": 11.411038224225413,
+      "midpoint_distance_km": 61.48512117334195
+    },
+    {
+      "a": "L03",
+      "b": "L04",
+      "shared_endpoint": true,
+      "sample_corridor_gap_km": 1.8590408984484819,
+      "midpoint_distance_km": 92.9749809274634
+    },
+    {
+      "a": "L04",
+      "b": "L05",
+      "shared_endpoint": true,
+      "sample_corridor_gap_km": 1.0531058108519238,
+      "midpoint_distance_km": 43.141189538843435
+    },
+    {
+      "a": "L05",
+      "b": "L06",
+      "shared_endpoint": true,
+      "sample_corridor_gap_km": 1.5468839479712861,
+      "midpoint_distance_km": 20.470674801488727
+    },
+    {
+      "a": "L07",
+      "b": "L08",
+      "shared_endpoint": true,
+      "sample_corridor_gap_km": 1.6135945332814592,
+      "midpoint_distance_km": 64.13139285784287
+    },
+    {
+      "a": "L07",
+      "b": "L11",
+      "shared_endpoint": true,
+      "sample_corridor_gap_km": 1.5074676405819576,
+      "midpoint_distance_km": 68.47169455043229
+    },
+    {
+      "a": "L07",
+      "b": "L13",
+      "shared_endpoint": true,
+      "sample_corridor_gap_km": 1.49220631427479,
+      "midpoint_distance_km": 60.372449324994
+    },
+    {
+      "a": "L07",
+      "b": "L17",
+      "shared_endpoint": true,
+      "sample_corridor_gap_km": 0.07790374392729381,
+      "midpoint_distance_km": 9.394868673681017
+    },
+    {
+      "a": "L07",
+      "b": "L23",
+      "shared_endpoint": true,
+      "sample_corridor_gap_km": 1.5880651538722126,
+      "midpoint_distance_km": 70.02648454307374
+    },
+    {
+      "a": "L07",
+      "b": "L27",
+      "shared_endpoint": true,
+      "sample_corridor_gap_km": 1.5524202300948433,
+      "midpoint_distance_km": 72.7927783351225
+    },
+    {
+      "a": "L08",
+      "b": "L09",
+      "shared_endpoint": true,
+      "sample_corridor_gap_km": 0.9545133130999645,
+      "midpoint_distance_km": 48.5907196443362
+    },
+    {
+      "a": "L08",
+      "b": "L11",
+      "shared_endpoint": true,
+      "sample_corridor_gap_km": 0.16452342747714369,
+      "midpoint_distance_km": 12.161483481743762
+    },
+    {
+      "a": "L08",
+      "b": "L12",
+      "shared_endpoint": false,
+      "sample_corridor_gap_km": 0.8218083355014264,
+      "midpoint_distance_km": 46.2823560386579
+    },
+    {
+      "a": "L08",
+      "b": "L17",
+      "shared_endpoint": false,
+      "sample_corridor_gap_km": 0.5905193309859087,
+      "midpoint_distance_km": 57.20706950494362
+    },
+    {
+      "a": "L08",
+      "b": "L18",
+      "shared_endpoint": true,
+      "sample_corridor_gap_km": 0.1549168036117102,
+      "midpoint_distance_km": 9.395105880438427
+    },
+    {
+      "a": "L08",
+      "b": "L19",
+      "shared_endpoint": true,
+      "sample_corridor_gap_km": 0.6909476187583992,
+      "midpoint_distance_km": 37.269981214944195
+    },
+    {
+      "a": "L08",
+      "b": "L21",
+      "shared_endpoint": false,
+      "sample_corridor_gap_km": 0.17296364609337544,
+      "midpoint_distance_km": 12.014690285472334
+    },
+    {
+      "a": "L09",
+      "b": "L10",
+      "shared_endpoint": true,
+      "sample_corridor_gap_km": 1.8187894937377111,
+      "midpoint_distance_km": 49.502067637774815
+    },
+    {
+      "a": "L09",
+      "b": "L11",
+      "shared_endpoint": false,
+      "sample_corridor_gap_km": 18.825588975101667,
+      "midpoint_distance_km": 53.627627734571526
+    },
+    {
+      "a": "L09",
+      "b": "L12",
+      "shared_endpoint": true,
+      "sample_corridor_gap_km": 0.005291195814036667,
+      "midpoint_distance_km": 12.161162982870891
+    },
+    {
+      "a": "L09",
+      "b": "L18",
+      "shared_endpoint": true,
+      "sample_corridor_gap_km": 0.8107200391959016,
+      "midpoint_distance_km": 39.25118796128154
+    },
+    {
+      "a": "L09",
+      "b": "L19",
+      "shared_endpoint": true,
+      "sample_corridor_gap_km": 1.4973999049642763,
+      "midpoint_distance_km": 57.573802778204964
+    },
+    {
+      "a": "L09",
+      "b": "L21",
+      "shared_endpoint": false,
+      "sample_corridor_gap_km": 16.175095405685994,
+      "midpoint_distance_km": 44.313553094542364
+    },
+    {
+      "a": "L10",
+      "b": "L12",
+      "shared_endpoint": true,
+      "sample_corridor_gap_km": 1.823726517256622,
+      "midpoint_distance_km": 61.613278586961556
+    },
+    {
+      "a": "L11",
+      "b": "L12",
+      "shared_endpoint": true,
+      "sample_corridor_gap_km": 0.8056515276807742,
+      "midpoint_distance_km": 48.59138547799461
+    },
+    {
+      "a": "L11",
+      "b": "L17",
+      "shared_endpoint": false,
+      "sample_corridor_gap_km": 0.9923886597846346,
+      "midpoint_distance_km": 62.769455024936086
+    },
+    {
+      "a": "L11",
+      "b": "L18",
+      "shared_endpoint": false,
+      "sample_corridor_gap_km": 17.126422976107733,
+      "midpoint_distance_km": 18.110398698671087
+    },
+    {
+      "a": "L11",
+      "b": "L19",
+      "shared_endpoint": false,
+      "sample_corridor_gap_km": 0.6324495751491089,
+      "midpoint_distance_km": 26.745455094086232
+    },
+    {
+      "a": "L11",
+      "b": "L21",
+      "shared_endpoint": true,
+      "sample_corridor_gap_km": 0.14506590133339717,
+      "midpoint_distance_km": 9.395237599893974
+    },
+    {
+      "a": "L11",
+      "b": "L22",
+      "shared_endpoint": true,
+      "sample_corridor_gap_km": 0.47071045412716855,
+      "midpoint_distance_km": 37.269854100630646
+    },
+    {
+      "a": "L12",
+      "b": "L18",
+      "shared_endpoint": false,
+      "sample_corridor_gap_km": 0.7309861964024409,
+      "midpoint_distance_km": 37.595984126187616
+    },
+    {
+      "a": "L12",
+      "b": "L19",
+      "shared_endpoint": false,
+      "sample_corridor_gap_km": 1.1683778516855616,
+      "midpoint_distance_km": 47.68759550545319
+    },
+    {
+      "a": "L12",
+      "b": "L21",
+      "shared_endpoint": true,
+      "sample_corridor_gap_km": 0.675743474039988,
+      "midpoint_distance_km": 39.251733752121844
+    },
+    {
+      "a": "L12",
+      "b": "L22",
+      "shared_endpoint": true,
+      "sample_corridor_gap_km": 1.21243835842791,
+      "midpoint_distance_km": 57.57404716329367
+    },
+    {
+      "a": "L13",
+      "b": "L14",
+      "shared_endpoint": true,
+      "sample_corridor_gap_km": 1.4089744209439587,
+      "midpoint_distance_km": 71.99861227881019
+    },
+    {
+      "a": "L13",
+      "b": "L17",
+      "shared_endpoint": true,
+      "sample_corridor_gap_km": 1.4539106162325024,
+      "midpoint_distance_km": 63.36282279889882
+    },
+    {
+      "a": "L13",
+      "b": "L23",
+      "shared_endpoint": true,
+      "sample_corridor_gap_km": 0.14219220469782717,
+      "midpoint_distance_km": 11.221774657310588
+    },
+    {
+      "a": "L13",
+      "b": "L27",
+      "shared_endpoint": true,
+      "sample_corridor_gap_km": 0.08481735921438588,
+      "midpoint_distance_km": 12.52066094892519
+    },
+    {
+      "a": "L13",
+      "b": "L31",
+      "shared_endpoint": true,
+      "sample_corridor_gap_km": 1.4243547246915798,
+      "midpoint_distance_km": 70.81702518520981
+    },
+    {
+      "a": "L14",
+      "b": "L15",
+      "shared_endpoint": true,
+      "sample_corridor_gap_km": 1.4632218902228502,
+      "midpoint_distance_km": 47.85224916495942
+    },
+    {
+      "a": "L14",
+      "b": "L16",
+      "shared_endpoint": false,
+      "sample_corridor_gap_km": 12.340659864615779,
+      "midpoint_distance_km": 49.11483219646592
+    },
+    {
+      "a": "L14",
+      "b": "L23",
+      "shared_endpoint": false,
+      "sample_corridor_gap_km": 1.2236277965469513,
+      "midpoint_distance_km": 61.03271272757712
+    },
+    {
+      "a": "L14",
+      "b": "L24",
+      "shared_endpoint": false,
+      "sample_corridor_gap_km": 2.2228705444710286,
+      "midpoint_distance_km": 9.792076402419351
+    },
+    {
+      "a": "L14",
+      "b": "L25",
+      "shared_endpoint": false,
+      "sample_corridor_gap_km": 3.024417307028053,
+      "midpoint_distance_km": 40.469092742490886
+    },
+    {
+      "a": "L14",
+      "b": "L27",
+      "shared_endpoint": false,
+      "sample_corridor_gap_km": 0.5272869558222525,
+      "midpoint_distance_km": 59.927713251701995
+    },
+    {
+      "a": "L14",
+      "b": "L28",
+      "shared_endpoint": false,
+      "sample_corridor_gap_km": 14.463579336890996,
+      "midpoint_distance_km": 25.966252034443944
+    },
+    {
+      "a": "L14",
+      "b": "L29",
+      "shared_endpoint": false,
+      "sample_corridor_gap_km": 16.38852001483983,
+      "midpoint_distance_km": 65.25029523526645
+    },
+    {
+      "a": "L14",
+      "b": "L30",
+      "shared_endpoint": false,
+      "sample_corridor_gap_km": 16.93198524180789,
+      "midpoint_distance_km": 62.336394230842686
+    },
+    {
+      "a": "L14",
+      "b": "L31",
+      "shared_endpoint": true,
+      "sample_corridor_gap_km": 0.0234577565124832,
+      "midpoint_distance_km": 3.218660720179294
+    },
+    {
+      "a": "L15",
+      "b": "L16",
+      "shared_endpoint": true,
+      "sample_corridor_gap_km": 1.8072079107761423,
+      "midpoint_distance_km": 14.419950095950622
+    },
+    {
+      "a": "L15",
+      "b": "L24",
+      "shared_endpoint": false,
+      "sample_corridor_gap_km": 7.8549516208775225,
+      "midpoint_distance_km": 43.77228106357325
+    },
+    {
+      "a": "L15",
+      "b": "L25",
+      "shared_endpoint": false,
+      "sample_corridor_gap_km": 7.615093536331139,
+      "midpoint_distance_km": 30.944231120319255
+    },
+    {
+      "a": "L15",
+      "b": "L28",
+      "shared_endpoint": false,
+      "sample_corridor_gap_km": 15.268183376505851,
+      "midpoint_distance_km": 35.92289674071993
+    },
+    {
+      "a": "L15",
+      "b": "L29",
+      "shared_endpoint": false,
+      "sample_corridor_gap_km": 16.66504571610598,
+      "midpoint_distance_km": 24.791739297686746
+    },
+    {
+      "a": "L15",
+      "b": "L30",
+      "shared_endpoint": false,
+      "sample_corridor_gap_km": 17.279390371192235,
+      "midpoint_distance_km": 29.69911510313792
+    },
+    {
+      "a": "L15",
+      "b": "L31",
+      "shared_endpoint": false,
+      "sample_corridor_gap_km": 7.807793392212559,
+      "midpoint_distance_km": 51.00618976834983
+    },
+    {
+      "a": "L16",
+      "b": "L24",
+      "shared_endpoint": false,
+      "sample_corridor_gap_km": 16.562028526100324,
+      "midpoint_distance_km": 47.865581860994524
+    },
+    {
+      "a": "L16",
+      "b": "L25",
+      "shared_endpoint": false,
+      "sample_corridor_gap_km": 16.913617726541837,
+      "midpoint_distance_km": 43.39461746097343
+    },
+    {
+      "a": "L16",
+      "b": "L31",
+      "shared_endpoint": false,
+      "sample_corridor_gap_km": 16.416398997470615,
+      "midpoint_distance_km": 52.32128732075619
+    },
+    {
+      "a": "L17",
+      "b": "L18",
+      "shared_endpoint": true,
+      "sample_corridor_gap_km": 1.5710159837115338,
+      "midpoint_distance_km": 64.13156881934042
+    },
+    {
+      "a": "L17",
+      "b": "L21",
+      "shared_endpoint": true,
+      "sample_corridor_gap_km": 1.4849688356563937,
+      "midpoint_distance_km": 68.4719465070682
+    },
+    {
+      "a": "L17",
+      "b": "L23",
+      "shared_endpoint": true,
+      "sample_corridor_gap_km": 1.5544395436851337,
+      "midpoint_distance_km": 73.68545613739826
+    },
+    {
+      "a": "L17",
+      "b": "L27",
+      "shared_endpoint": true,
+      "sample_corridor_gap_km": 1.516785759114469,
+      "midpoint_distance_km": 75.88335536051898
+    },
+    {
+      "a": "L18",
+      "b": "L19",
+      "shared_endpoint": true,
+      "sample_corridor_gap_km": 0.8291581854349467,
+      "midpoint_distance_km": 38.22833883549685
+    },
+    {
+      "a": "L18",
+      "b": "L21",
+      "shared_endpoint": true,
+      "sample_corridor_gap_km": 0.15467373931873138,
+      "midpoint_distance_km": 12.161375299796507
+    },
+    {
+      "a": "L19",
+      "b": "L20",
+      "shared_endpoint": true,
+      "sample_corridor_gap_km": 1.9751808515575375,
+      "midpoint_distance_km": 35.71015404037117
+    },
+    {
+      "a": "L19",
+      "b": "L21",
+      "shared_endpoint": false,
+      "sample_corridor_gap_km": 0.6747246361403981,
+      "midpoint_distance_km": 26.379191727673966
+    },
+    {
+      "a": "L19",
+      "b": "L22",
+      "shared_endpoint": true,
+      "sample_corridor_gap_km": 0.3856961902703166,
+      "midpoint_distance_km": 12.161302342313089
+    },
+    {
+      "a": "L20",
+      "b": "L22",
+      "shared_endpoint": true,
+      "sample_corridor_gap_km": 1.926678876779493,
+      "midpoint_distance_km": 36.04245217865332
+    },
+    {
+      "a": "L21",
+      "b": "L22",
+      "shared_endpoint": true,
+      "sample_corridor_gap_km": 0.6125840477271117,
+      "midpoint_distance_km": 38.22827535410596
+    },
+    {
+      "a": "L23",
+      "b": "L24",
+      "shared_endpoint": true,
+      "sample_corridor_gap_km": 1.3916457864799199,
+      "midpoint_distance_km": 70.81687696058852
+    },
+    {
+      "a": "L23",
+      "b": "L27",
+      "shared_endpoint": true,
+      "sample_corridor_gap_km": 0.057809058934760627,
+      "midpoint_distance_km": 5.349981958175538
+    },
+    {
+      "a": "L23",
+      "b": "L28",
+      "shared_endpoint": false,
+      "sample_corridor_gap_km": 8.979044983703277,
+      "midpoint_distance_km": 86.73416954721864
+    },
+    {
+      "a": "L23",
+      "b": "L31",
+      "shared_endpoint": false,
+      "sample_corridor_gap_km": 1.0278062683997127,
+      "midpoint_distance_km": 59.972023182054585
+    },
+    {
+      "a": "L24",
+      "b": "L25",
+      "shared_endpoint": true,
+      "sample_corridor_gap_km": 0.9991786175513477,
+      "midpoint_distance_km": 31.44570119911625
+    },
+    {
+      "a": "L24",
+      "b": "L27",
+      "shared_endpoint": false,
+      "sample_corridor_gap_km": 8.197449220214697,
+      "midpoint_distance_km": 69.64885155001076
+    },
+    {
+      "a": "L24",
+      "b": "L28",
+      "shared_endpoint": false,
+      "sample_corridor_gap_km": 8.089943030005621,
+      "midpoint_distance_km": 16.52851687199543
+    },
+    {
+      "a": "L24",
+      "b": "L29",
+      "shared_endpoint": false,
+      "sample_corridor_gap_km": 18.782802138414223,
+      "midpoint_distance_km": 58.308432678226175
+    },
+    {
+      "a": "L24",
+      "b": "L30",
+      "shared_endpoint": false,
+      "sample_corridor_gap_km": 19.005679435213484,
+      "midpoint_distance_km": 54.32870217554199
+    },
+    {
+      "a": "L24",
+      "b": "L31",
+      "shared_endpoint": true,
+      "sample_corridor_gap_km": 0.1858003271414821,
+      "midpoint_distance_km": 11.221616892359771
+    },
+    {
+      "a": "L25",
+      "b": "L26",
+      "shared_endpoint": true,
+      "sample_corridor_gap_km": 1.8746899269691495,
+      "midpoint_distance_km": 29.18305012474753
+    },
+    {
+      "a": "L25",
+      "b": "L28",
+      "shared_endpoint": false,
+      "sample_corridor_gap_km": 0.4206267423019279,
+      "midpoint_distance_km": 15.147894360218086
+    },
+    {
+      "a": "L25",
+      "b": "L29",
+      "shared_endpoint": false,
+      "sample_corridor_gap_km": 16.789807450420252,
+      "midpoint_distance_km": 31.461505403971845
+    },
+    {
+      "a": "L25",
+      "b": "L30",
+      "shared_endpoint": false,
+      "sample_corridor_gap_km": 16.652687042109232,
+      "midpoint_distance_km": 24.436484308508934
+    },
+    {
+      "a": "L25",
+      "b": "L31",
+      "shared_endpoint": true,
+      "sample_corridor_gap_km": 1.159706636172678,
+      "midpoint_distance_km": 42.53411021750885
+    },
+    {
+      "a": "L27",
+      "b": "L28",
+      "shared_endpoint": true,
+      "sample_corridor_gap_km": 1.401570142678679,
+      "midpoint_distance_km": 85.83006406793587
+    },
+    {
+      "a": "L27",
+      "b": "L31",
+      "shared_endpoint": false,
+      "sample_corridor_gap_km": 0.7231391402864792,
+      "midpoint_distance_km": 58.607101471484526
+    },
+    {
+      "a": "L28",
+      "b": "L29",
+      "shared_endpoint": true,
+      "sample_corridor_gap_km": 0.02361143890568203,
+      "midpoint_distance_km": 44.518750234685115
+    },
+    {
+      "a": "L28",
+      "b": "L30",
+      "shared_endpoint": false,
+      "sample_corridor_gap_km": 1.1312404842655897,
+      "midpoint_distance_km": 39.01220060781244
+    },
+    {
+      "a": "L28",
+      "b": "L31",
+      "shared_endpoint": false,
+      "sample_corridor_gap_km": 13.005732249871441,
+      "midpoint_distance_km": 27.736448734650672
+    },
+    {
+      "a": "L29",
+      "b": "L30",
+      "shared_endpoint": true,
+      "sample_corridor_gap_km": 1.0152070498458918,
+      "midpoint_distance_km": 10.717391777124407
+    },
+    {
+      "a": "L29",
+      "b": "L31",
+      "shared_endpoint": false,
+      "sample_corridor_gap_km": 18.919170861967782,
+      "midpoint_distance_km": 68.05477244737634
+    },
+    {
+      "a": "L30",
+      "b": "L31",
+      "shared_endpoint": false,
+      "sample_corridor_gap_km": 19.14844639201856,
+      "midpoint_distance_km": 64.85746317316556
+    }
+  ],
+  "sharing_rule": "Exact same/reverse endpoint pair is one undirected leg regardless of route occurrences. A native node traversed by distinct unique legs contributes once per traversing leg's represented distance; overlapping distinct legs are intentionally a multiset, not deduplicated geographic area.",
+  "coordinate_provenance": [
+    {
+      "id": "RJFG",
+      "label": "種子島",
+      "kind": "airport",
+      "latitude_deg": 30.605,
+      "longitude_deg": 130.9916666667,
+      "status": "CURRENT_NAVMATE_MASTER",
+      "source": "https://github.com/Yuto-24/NavMate/blob/main/data/reference/default/airports.csv",
+      "source_blob_sha": "d7d212ed8a3186098f8333d0643e62c9ad9d50a6",
+      "source_metadata": {
+        "id": "RJFG",
+        "icao": "RJFG",
+        "name": "種子島",
+        "latitude_deg": "30.6050000000",
+        "longitude_deg": "130.9916666667",
+        "elevation_ft_msl": "768",
+        "pattern_altitude_ft_msl": "1800",
+        "pattern_altitude_source": "AutoNavLog validated reference policy",
+        "pattern_altitude_source_revision": "public-policy-v1",
+        "pattern_altitude_validation_status": "VERIFIED",
+        "source": "Civil Aviation Bureau Japan AIP AD 2.2 via public mirror; JMA Aviation Climatological Information 2025 cross-check",
+        "source_revision": "AIP https://nagodede.github.io/aip/japan/documents/RJFG_full.pdf; RJFG AD2-1 EFF 24 FEB 2022 retrieved 2026-08-11; JMA 2025"
+      }
+    },
+    {
+      "id": "RJFK",
+      "label": "鹿児島",
+      "kind": "airport",
+      "latitude_deg": 31.8033333333,
+      "longitude_deg": 130.7194444444,
+      "status": "CURRENT_NAVMATE_MASTER",
+      "source": "https://github.com/Yuto-24/NavMate/blob/main/data/reference/default/airports.csv",
+      "source_blob_sha": "d7d212ed8a3186098f8333d0643e62c9ad9d50a6",
+      "source_metadata": {
+        "id": "RJFK",
+        "icao": "RJFK",
+        "name": "鹿児島",
+        "latitude_deg": "31.8033333333",
+        "longitude_deg": "130.7194444444",
+        "elevation_ft_msl": "891",
+        "pattern_altitude_ft_msl": "1900",
+        "pattern_altitude_source": "AutoNavLog validated reference policy",
+        "pattern_altitude_source_revision": "public-policy-v1",
+        "pattern_altitude_validation_status": "VERIFIED",
+        "source": "Civil Aviation Bureau Japan AIP AD 2.2 via public mirror; JMA Aviation Climatological Information 2025 cross-check",
+        "source_revision": "AIP https://nagodede.github.io/aip/japan/documents/RJFK_full.pdf; RJFK AD2-1 EFF 18 APR 2024 retrieved 2026-08-11; JMA 2025"
+      }
+    },
+    {
+      "id": "RJFM",
+      "label": "宮崎",
+      "kind": "airport",
+      "latitude_deg": 31.8772222222,
+      "longitude_deg": 131.4486111111,
+      "status": "CURRENT_NAVMATE_MASTER",
+      "source": "https://github.com/Yuto-24/NavMate/blob/main/data/reference/default/airports.csv",
+      "source_blob_sha": "d7d212ed8a3186098f8333d0643e62c9ad9d50a6",
+      "source_metadata": {
+        "id": "RJFM",
+        "icao": "RJFM",
+        "name": "宮崎",
+        "latitude_deg": "31.8772222222",
+        "longitude_deg": "131.4486111111",
+        "elevation_ft_msl": "19",
+        "pattern_altitude_ft_msl": "1000",
+        "pattern_altitude_source": "AutoNavLog validated reference policy",
+        "pattern_altitude_source_revision": "public-policy-v1",
+        "pattern_altitude_validation_status": "VERIFIED",
+        "source": "Civil Aviation Bureau Japan AIP AD 2.2 via public mirror; JMA Aviation Climatological Information 2025 cross-check",
+        "source_revision": "AIP https://nagodede.github.io/aip/japan/documents/RJFM_full.pdf; RJFM AD2-1 EFF 22 OCT 2009 retrieved 2026-08-11; JMA 2025"
+      }
+    },
+    {
+      "id": "RJFO",
+      "label": "大分",
+      "kind": "airport",
+      "latitude_deg": 33.4794444444,
+      "longitude_deg": 131.7372222222,
+      "status": "CURRENT_NAVMATE_MASTER",
+      "source": "https://github.com/Yuto-24/NavMate/blob/main/data/reference/default/airports.csv",
+      "source_blob_sha": "d7d212ed8a3186098f8333d0643e62c9ad9d50a6",
+      "source_metadata": {
+        "id": "RJFO",
+        "icao": "RJFO",
+        "name": "大分",
+        "latitude_deg": "33.4794444444",
+        "longitude_deg": "131.7372222222",
+        "elevation_ft_msl": "17",
+        "pattern_altitude_ft_msl": "1000",
+        "pattern_altitude_source": "AutoNavLog validated reference policy",
+        "pattern_altitude_source_revision": "public-policy-v1",
+        "pattern_altitude_validation_status": "VERIFIED",
+        "source": "Civil Aviation Bureau Japan AIP AD 2.2 via public mirror; JMA Aviation Climatological Information 2025 cross-check",
+        "source_revision": "AIP https://nagodede.github.io/aip/japan/documents/RJFO_full.pdf; RJFO AD2-1 EFF 19 FEB 2026 retrieved 2026-08-11; JMA 2025"
+      }
+    },
+    {
+      "id": "RJFS",
+      "label": "佐賀",
+      "kind": "airport",
+      "latitude_deg": 33.1497222222,
+      "longitude_deg": 130.3022222222,
+      "status": "CURRENT_NAVMATE_MASTER",
+      "source": "https://github.com/Yuto-24/NavMate/blob/main/data/reference/default/airports.csv",
+      "source_blob_sha": "d7d212ed8a3186098f8333d0643e62c9ad9d50a6",
+      "source_metadata": {
+        "id": "RJFS",
+        "icao": "RJFS",
+        "name": "佐賀",
+        "latitude_deg": "33.1497222222",
+        "longitude_deg": "130.3022222222",
+        "elevation_ft_msl": "6",
+        "pattern_altitude_ft_msl": "1000",
+        "pattern_altitude_source": "AutoNavLog validated reference policy",
+        "pattern_altitude_source_revision": "public-policy-v1",
+        "pattern_altitude_validation_status": "VERIFIED",
+        "source": "Civil Aviation Bureau Japan AIP AD 2.2 via public mirror; JMA Aviation Climatological Information 2025 cross-check",
+        "source_revision": "AIP https://nagodede.github.io/aip/japan/documents/RJFS_full.pdf; RJFS AD2-1 EFF 27 AUG 2009 retrieved 2026-08-11; JMA 2025"
+      }
+    },
+    {
+      "id": "RJFT",
+      "label": "熊本",
+      "kind": "airport",
+      "latitude_deg": 32.8372222222,
+      "longitude_deg": 130.8552777778,
+      "status": "CURRENT_NAVMATE_MASTER",
+      "source": "https://github.com/Yuto-24/NavMate/blob/main/data/reference/default/airports.csv",
+      "source_blob_sha": "d7d212ed8a3186098f8333d0643e62c9ad9d50a6",
+      "source_metadata": {
+        "id": "RJFT",
+        "icao": "RJFT",
+        "name": "熊本",
+        "latitude_deg": "32.8372222222",
+        "longitude_deg": "130.8552777778",
+        "elevation_ft_msl": "632",
+        "pattern_altitude_ft_msl": "1700",
+        "pattern_altitude_source": "AutoNavLog validated reference policy",
+        "pattern_altitude_source_revision": "public-policy-v1",
+        "pattern_altitude_validation_status": "VERIFIED",
+        "source": "Civil Aviation Bureau Japan AIP AD 2.2 via public mirror; JMA Aviation Climatological Information 2025 cross-check",
+        "source_revision": "AIP https://nagodede.github.io/aip/japan/documents/RJFT_full.pdf; RJFT AD2-1 EFF 17 NOV 2011 retrieved 2026-08-11; JMA 2025"
+      }
+    },
+    {
+      "id": "RJFU",
+      "label": "長崎",
+      "kind": "airport",
+      "latitude_deg": 32.9169444444,
+      "longitude_deg": 129.9136111111,
+      "status": "CURRENT_NAVMATE_MASTER",
+      "source": "https://github.com/Yuto-24/NavMate/blob/main/data/reference/default/airports.csv",
+      "source_blob_sha": "d7d212ed8a3186098f8333d0643e62c9ad9d50a6",
+      "source_metadata": {
+        "id": "RJFU",
+        "icao": "RJFU",
+        "name": "長崎",
+        "latitude_deg": "32.9169444444",
+        "longitude_deg": "129.9136111111",
+        "elevation_ft_msl": "8",
+        "pattern_altitude_ft_msl": "1000",
+        "pattern_altitude_source": "AutoNavLog validated reference policy",
+        "pattern_altitude_source_revision": "public-policy-v1",
+        "pattern_altitude_validation_status": "VERIFIED",
+        "source": "Civil Aviation Bureau Japan AIP AD 2.2 via public mirror; JMA Aviation Climatological Information 2025 cross-check",
+        "source_revision": "AIP https://nagodede.github.io/aip/japan/documents/RJFU_full.pdf; RJFU AD2-1 EFF 15 DEC 2011 retrieved 2026-08-11; JMA 2025"
+      }
+    },
+    {
+      "id": "RJFG-VREP-NISHINOOMOTE",
+      "label": "西之表",
+      "canonical_label": "NISHINOOMOTE",
+      "kind": "vrep",
+      "latitude_deg": 30.73027,
+      "longitude_deg": 130.989136,
+      "status": "CURRENT_NAVMATE_MASTER_DERIVED_FROM_AIP_BEARING_DISTANCE",
+      "source": "https://github.com/Yuto-24/NavMate/blob/main/data/reference/vrep.json",
+      "source_blob_sha": "88fddfeebb05a4c4cd0c2fe7de0f0687a27a0aac",
+      "derivation": "Geodesic.WGS84.Direct(arp_latitude_deg, arp_longitude_deg, bearing_true_deg, distance_nm * 1852); lat2/lon2 rounded to 6 decimals; no magnetic variation",
+      "source_metadata": {
+        "url": "https://github.com/Yuto-24/AutoNavLog/issues/169#issuecomment-6415872164",
+        "filename": "RJFG__20241128.pdf",
+        "sha256": "654936b205cf31290ccbbada2c71fe45479bfe50855fe9c5bf847c6ee506c10b",
+        "table_pdf_page": 29,
+        "table_page": "RJFG AD2.24-OTHER-1",
+        "table_effective_date": "2022-02-24",
+        "arp_pdf_page": 1,
+        "arp_effective_date": "2022-02-24",
+        "arp_latitude_dms": "303618N",
+        "arp_longitude_dms": "1305930E",
+        "arp_latitude_deg": 30.605,
+        "arp_longitude_deg": 130.99166666666665
+      }
+    },
+    {
+      "id": "RJFK-VREP-KAJIKI-TOWN",
+      "label": "加治木タウン",
+      "canonical_label": "KAJIKI TOWN",
+      "kind": "vrep",
+      "latitude_deg": 31.729932,
+      "longitude_deg": 130.661527,
+      "status": "CURRENT_NAVMATE_MASTER_DERIVED_FROM_AIP_BEARING_DISTANCE",
+      "source": "https://github.com/Yuto-24/NavMate/blob/main/data/reference/vrep.json",
+      "source_blob_sha": "88fddfeebb05a4c4cd0c2fe7de0f0687a27a0aac",
+      "derivation": "Geodesic.WGS84.Direct(arp_latitude_deg, arp_longitude_deg, bearing_true_deg, distance_nm * 1852); lat2/lon2 rounded to 6 decimals; no magnetic variation",
+      "source_metadata": {
+        "url": "https://github.com/Yuto-24/AutoNavLog/issues/169#issuecomment-6415872164",
+        "filename": "RJFK__20260806.pdf",
+        "sha256": "ab15885a5d4eb533ba89dc14dfa7a236edad9c10656fa241103a87d0e546e0af",
+        "table_pdf_page": 46,
+        "table_page": "RJFK AD2.24-OTHER-2",
+        "table_effective_date": "2022-11-03",
+        "arp_pdf_page": 1,
+        "arp_effective_date": "2026-08-06",
+        "arp_latitude_dms": "314812N",
+        "arp_longitude_dms": "1304310E",
+        "arp_latitude_deg": 31.803333333333335,
+        "arp_longitude_deg": 130.71944444444443
+      }
+    },
+    {
+      "id": "RJFO-VREP-GOLF-COURSE",
+      "label": "ゴルフコース",
+      "canonical_label": "GOLF COURSE",
+      "kind": "vrep",
+      "latitude_deg": 33.635882,
+      "longitude_deg": 131.687107,
+      "status": "CURRENT_NAVMATE_MASTER_DERIVED_FROM_AIP_BEARING_DISTANCE",
+      "source": "https://github.com/Yuto-24/NavMate/blob/main/data/reference/vrep.json",
+      "source_blob_sha": "88fddfeebb05a4c4cd0c2fe7de0f0687a27a0aac",
+      "derivation": "Geodesic.WGS84.Direct(arp_latitude_deg, arp_longitude_deg, bearing_true_deg, distance_nm * 1852); lat2/lon2 rounded to 6 decimals; no magnetic variation",
+      "source_metadata": {
+        "url": "https://github.com/Yuto-24/AutoNavLog/issues/169#issuecomment-6415872164",
+        "filename": "RJFO__20261001.pdf",
+        "sha256": "ec8bfda481e6ed33399e2119bec7e9053e1eccec77024c5701fc5ceaa81f4391",
+        "table_pdf_page": 45,
+        "table_page": "RJFO AD2.24-OTHER-1",
+        "table_effective_date": "2026-10-01",
+        "arp_pdf_page": 1,
+        "arp_effective_date": "2026-10-01",
+        "arp_latitude_dms": "332846N",
+        "arp_longitude_dms": "1314414E",
+        "arp_latitude_deg": 33.47944444444445,
+        "arp_longitude_deg": 131.73722222222221
+      },
+      "alternatives": [
+        {
+          "latitude_deg": 33.6299482427053,
+          "longitude_deg": 131.6789378245261,
+          "label": "V-REP ゴルフコース 2400ft(TFE 351/8.8 ゴルフ場)",
+          "source": "https://github.com/Yuto-24/NavMate/blob/main/tests/fixtures/connected_oita_routes.kml",
+          "status": "OLDER_ROUTE_FIXTURE_NOT_ADOPTED_FOR_DRAFT"
+        }
+      ]
+    },
+    {
+      "id": "RJFS-VREP-OMUTA",
+      "label": "大牟田",
+      "canonical_label": "OMUTA",
+      "kind": "vrep",
+      "latitude_deg": 33.030382,
+      "longitude_deg": 130.443802,
+      "status": "CURRENT_NAVMATE_MASTER_DERIVED_FROM_AIP_BEARING_DISTANCE",
+      "source": "https://github.com/Yuto-24/NavMate/blob/main/data/reference/vrep.json",
+      "source_blob_sha": "88fddfeebb05a4c4cd0c2fe7de0f0687a27a0aac",
+      "derivation": "Geodesic.WGS84.Direct(arp_latitude_deg, arp_longitude_deg, bearing_true_deg, distance_nm * 1852); lat2/lon2 rounded to 6 decimals; no magnetic variation",
+      "source_metadata": {
+        "url": "https://github.com/Yuto-24/AutoNavLog/issues/169#issuecomment-6415872164",
+        "filename": "RJFS__20260611.pdf",
+        "sha256": "bfbd8b7075b323b98e4218e30c3393d2cee1e4362a9eb5f86934ad5fbd6c0a5e",
+        "table_pdf_page": 39,
+        "table_page": "RJFS AD2.24-OTHER-1",
+        "table_effective_date": "2025-07-01",
+        "arp_pdf_page": 1,
+        "arp_effective_date": "2021-10-01",
+        "arp_latitude_dms": "330859N",
+        "arp_longitude_dms": "1301808E",
+        "arp_latitude_deg": 33.14972222222222,
+        "arp_longitude_deg": 130.30222222222224
+      }
+    },
+    {
+      "id": "RJFT-VREP-UEKI",
+      "label": "植木",
+      "canonical_label": "UEKI",
+      "kind": "vrep",
+      "latitude_deg": 32.931945,
+      "longitude_deg": 130.69469,
+      "status": "CURRENT_NAVMATE_MASTER_DERIVED_FROM_AIP_BEARING_DISTANCE",
+      "source": "https://github.com/Yuto-24/NavMate/blob/main/data/reference/vrep.json",
+      "source_blob_sha": "88fddfeebb05a4c4cd0c2fe7de0f0687a27a0aac",
+      "derivation": "Geodesic.WGS84.Direct(arp_latitude_deg, arp_longitude_deg, bearing_true_deg, distance_nm * 1852); lat2/lon2 rounded to 6 decimals; no magnetic variation",
+      "source_metadata": {
+        "url": "https://github.com/Yuto-24/AutoNavLog/issues/169#issuecomment-6415872164",
+        "filename": "RJFT__20261001.pdf",
+        "sha256": "be16dd707cc661400f581ca66be99abc01426ebfec6493312fb0169cce7d6674",
+        "table_pdf_page": 46,
+        "table_page": "RJFT AD2.24-OTHER-3",
+        "table_effective_date": "2022-07-14",
+        "arp_pdf_page": 1,
+        "arp_effective_date": "2026-08-06",
+        "arp_latitude_dms": "325014N",
+        "arp_longitude_dms": "1305119E",
+        "arp_latitude_deg": 32.83722222222222,
+        "arp_longitude_deg": 130.8552777777778
+      }
+    },
+    {
+      "id": "RJFU-VREP-NAGATA",
+      "label": "長田",
+      "canonical_label": "NAGATA",
+      "kind": "vrep",
+      "latitude_deg": 32.858022,
+      "longitude_deg": 130.086055,
+      "status": "CURRENT_NAVMATE_MASTER_DERIVED_FROM_AIP_BEARING_DISTANCE",
+      "source": "https://github.com/Yuto-24/NavMate/blob/main/data/reference/vrep.json",
+      "source_blob_sha": "88fddfeebb05a4c4cd0c2fe7de0f0687a27a0aac",
+      "derivation": "Geodesic.WGS84.Direct(arp_latitude_deg, arp_longitude_deg, bearing_true_deg, distance_nm * 1852); lat2/lon2 rounded to 6 decimals; no magnetic variation",
+      "source_metadata": {
+        "url": "https://github.com/Yuto-24/AutoNavLog/issues/169#issuecomment-6415872164",
+        "filename": "RJFU__20261001.pdf",
+        "sha256": "d5758f59fee86a399ccc9f5b21076816348215ab8c1d094cad9d1164e51eed72",
+        "table_pdf_page": 43,
+        "table_page": "RJFU AD2.24-OTHER-1",
+        "table_effective_date": "2026-10-01",
+        "arp_pdf_page": 1,
+        "arp_effective_date": "2026-10-01",
+        "arp_latitude_dms": "325501N",
+        "arp_longitude_dms": "1295449E",
+        "arp_latitude_deg": 32.91694444444444,
+        "arp_longitude_deg": 129.91361111111112
+      }
+    },
+    {
+      "id": "UMK",
+      "label": "UMK・GC",
+      "kind": "route_point",
+      "latitude_deg": 31.985137767624444,
+      "longitude_deg": 131.42429852046251,
+      "status": "UNVERIFIED_MAP_DIGITIZATION",
+      "estimated_error_nm": 0.35,
+      "source": "https://github.com/Yuto-24/NavMate/blob/main/data/reference/rjfm/rjfm-reference.json",
+      "source_blob_sha": "4fdf0900f57af02d40f5e3442bbaeb5babe9c634",
+      "notes": "Reviewed operational-map coordinate. Use a matching KML coordinate in preference to this master value when available.",
+      "source_ids": [
+        "cac-rjfm-training-reference"
+      ]
+    },
+    {
+      "id": "OMARU",
+      "label": "小丸 / OMARU",
+      "kind": "route_point",
+      "latitude_deg": 32.16255070087476,
+      "longitude_deg": 131.47036916946163,
+      "status": "UNVERIFIED_MAP_DIGITIZATION",
+      "estimated_error_nm": 0.35,
+      "source": "https://github.com/Yuto-24/NavMate/blob/main/data/reference/rjfm/rjfm-reference.json",
+      "source_blob_sha": "4fdf0900f57af02d40f5e3442bbaeb5babe9c634",
+      "notes": "Reviewed operational-map coordinate. Use a matching KML coordinate in preference to this master value when available.",
+      "source_ids": [
+        "cac-rjfm-training-reference"
+      ]
+    },
+    {
+      "id": "TSURUMISAKI_OUTBOUND",
+      "label": "鶴御崎（往路KML）",
+      "canonical_label": "鶴見崎(TFE 159/37.8)",
+      "kind": "route_point",
+      "latitude_deg": 32.93247440159898,
+      "longitude_deg": 132.0827590783298,
+      "status": "EXISTING_OUTBOUND_ROUTE_FIXTURE_NOT_CONFIRMED_USER_COORDINATE",
+      "source": "https://github.com/Yuto-24/NavMate/blob/main/tests/fixtures/connected_oita_routes.kml",
+      "source_blob_sha": "b3f4eb8099df8d8b667d9c549bd3fbc2bb1df1f4",
+      "notes": "往路RJFM→RJFO②（祝島経由）のPoint座標。帰路では同名地点が異なる。",
+      "alternatives": [
+        {
+          "latitude_deg": 32.95363837860089,
+          "longitude_deg": 132.0333581581308,
+          "label": "変針点 鶴御崎(TFE 162/35.6)",
+          "status": "INBOUND_ROUTE_FIXTURE_DIFFERENT_POINT"
+        }
+      ]
+    },
+    {
+      "id": "IWAISHIMA",
+      "label": "祝島",
+      "canonical_label": "変針点 祝島(TFE 044/21.9)",
+      "kind": "route_point",
+      "latitude_deg": 33.78037891104157,
+      "longitude_deg": 131.9927442967895,
+      "status": "EXISTING_ROUTE_FIXTURE_NOT_CONFIRMED_USER_COORDINATE",
+      "source": "https://github.com/Yuto-24/NavMate/blob/main/tests/fixtures/connected_oita_routes.kml",
+      "source_blob_sha": "b3f4eb8099df8d8b667d9c549bd3fbc2bb1df1f4"
+    },
+    {
+      "id": "TAMANA",
+      "label": "玉名",
+      "kind": "route_point",
+      "latitude_deg": 32.89346338383958,
+      "longitude_deg": 130.5368732463333,
+      "status": "EXISTING_ROUTE_FIXTURE_NOT_CONFIRMED_USER_COORDINATE",
+      "source": "https://github.com/Yuto-24/NavMate/blob/main/tests/fixtures/issue_117_ftd_golden.json",
+      "notes": "新玉名駅とは別地点。名称が玉名である既存経路の座標を保持。"
+    },
+    {
+      "id": "KOMENOTSU_STATION",
+      "label": "米ノ津駅",
+      "kind": "railway_station",
+      "latitude_deg": 32.12226487,
+      "longitude_deg": 130.34213362,
+      "status": "MAP_PROVIDER_STATION_REFERENCE_NOT_USER_CONFIRMED_EXACT_COORDINATE",
+      "alternatives": [
+        {
+          "label": "既存経路の米ノ津（駅と同一とは未確認）",
+          "latitude_deg": 32.1156353433264,
+          "longitude_deg": 130.3376784271216,
+          "source": "https://github.com/Yuto-24/NavMate/blob/main/tests/fixtures/issue_117_ftd_golden.json",
+          "status": "DO_NOT_SUBSTITUTE_FOR_STATION"
+        },
+        {
+          "label": "米ノ津駅 public encyclopedia candidate",
+          "latitude_deg": 32.12215,
+          "longitude_deg": 130.34198,
+          "source": "https://en.wikipedia.org/wiki/Komenotsu_Station",
+          "status": "SECONDARY_SOURCE_CANDIDATE"
+        }
+      ],
+      "source": "https://www.mapion.co.jp/station/ST28961/",
+      "source_linked_map_url": "https://www.mapion.co.jp/m2/15.00/32.12226487/130.34213362/0/0?poi=ST28961",
+      "source_coordinate_method": "Latitude/longitude parameters in the map provider link for this named station.",
+      "notes": "Mapionの米ノ津駅ページが指す座標。気象セクターと概略経路図の参照位置。利用者が航法変針点の正確な座標を確認したという意味ではない。既存fixtureの米ノ津は駅と異なるため採用しない。",
+      "coordinate_use": "APPROXIMATE_MAP_AND_SECTOR_COVERAGE_ONLY",
+      "user_confirmed_exact_coordinates": false
+    },
+    {
+      "id": "SHIN_TAMANA_STATION",
+      "label": "新玉名駅",
+      "kind": "railway_station",
+      "latitude_deg": 32.9426044,
+      "longitude_deg": 130.5734997,
+      "status": "MAP_PROVIDER_STATION_REFERENCE_NOT_USER_CONFIRMED_EXACT_COORDINATE",
+      "alternatives": [
+        {
+          "latitude_deg": 32.94306,
+          "longitude_deg": 130.57306,
+          "source": "https://zh.wikipedia.org/wiki/新玉名車站",
+          "status": "SECONDARY_SOURCE_CANDIDATE"
+        }
+      ],
+      "source": "https://mapfan.com/spots/SCH,J,HX9",
+      "source_coordinate_method": "MapFan station page, Degree形式, 世界測地系.",
+      "notes": "MapFan掲載の新玉名駅座標。気象セクターと概略経路図の参照位置。利用者が航法変針点の正確な座標を確認したという意味ではない。玉名と別地点。",
+      "coordinate_use": "APPROXIMATE_MAP_AND_SECTOR_COVERAGE_ONLY",
+      "user_confirmed_exact_coordinates": false
+    },
+    {
+      "id": "OSHIMA",
+      "label": "大島（日南市南郷大島）",
+      "kind": "island",
+      "latitude_deg": 31.52812861,
+      "longitude_deg": 131.41097726,
+      "status": "USER_CONFIRMED_ISLAND_IDENTITY_MAP_PROVIDER_APPROXIMATE_POSITION",
+      "notes": "利用者が大島の同定を日南市南郷大島と確認済み。座標はMapionの島の参照位置を概略図に使用するもので、島内の特定変針点や正確なlat/lonが利用者確認済みという意味ではない。南端の鞍埼灯台を島中心に代用しない。",
+      "source": "https://www.mapion.co.jp/phonebook/M07005/45204/L0913760/",
+      "alternatives": [
+        {
+          "label": "南郷大島南端・鞍埼灯台（島中心ではない）",
+          "latitude_deg": 31.515597777777778,
+          "longitude_deg": 131.4198422222222,
+          "status": "OFFICIAL_LANDMARK_COORDINATE_CANDIDATE_NOT_ADOPTED",
+          "source": "https://www.bunka.go.jp/kindai/todai/064/index.html",
+          "source_coordinate_dms": "31°30′56.152″N 131°25′11.432″E"
+        }
+      ],
+      "identity_status": "USER_CONFIRMED_NICHINAN_NANGO_OSHIMA",
+      "user_confirmed_exact_coordinates": false,
+      "source_linked_map_url": "https://www.mapion.co.jp/m2/15.00/31.52812861/131.41097726/0/0?poi=L0913760",
+      "identity_corroboration_source": "https://www.mlit.go.jp/kokudoseisaku/chirit/kokudoseisaku_chirit_tk_000039.html",
+      "source_coordinate_method": "Latitude/longitude parameters in the map provider link for 日南市南郷町中村乙の大島.",
+      "coordinate_use": "APPROXIMATE_MAP_AND_SECTOR_COVERAGE_ONLY"
+    },
+    {
+      "id": "TOIMISAKI",
+      "label": "都井岬（灯台を位置基準とした案）",
+      "kind": "cape",
+      "latitude_deg": 31.367849166666666,
+      "longitude_deg": 131.34678333333335,
+      "status": "OFFICIAL_LANDMARK_COORDINATE_NOT_CONFIRMED_ROUTE_WAYPOINT",
+      "source": "https://www.bunka.go.jp/kindai/todai/065/index.html",
+      "source_coordinate_dms": "31°22′04.257″N 131°20′48.420″E",
+      "notes": "都井岬灯台の公開座標。実際に使う航法変針点の確定座標ではない。"
+    },
+    {
+      "id": "NOMAMISAKI",
+      "label": "野間岬（灯台を位置基準とした案）",
+      "kind": "cape",
+      "latitude_deg": 31.416027777777778,
+      "longitude_deg": 130.10930555555555,
+      "status": "OFFICIAL_LANDMARK_COORDINATE_NOT_CONFIRMED_ROUTE_WAYPOINT",
+      "source": "https://www.kaiho.mlit.go.jp/10kanku/kushikino/lh/l36.htm",
+      "source_coordinate_dms": "31°24′57.7″N 130°06′33.5″E",
+      "notes": "薩摩野間岬灯台の公開座標。実際に使う航法変針点の確定座標ではない。"
+    },
+    {
+      "id": "MAKURAZAKI",
+      "label": "枕崎",
+      "kind": "area_placeholder",
+      "latitude_deg": 31.269166666666667,
+      "longitude_deg": 130.29916666666668,
+      "status": "CITY_AREA_PLACEHOLDER_USING_OFFICIAL_CITY_HALL_REFERENCE",
+      "notes": "枕崎市公式統計書の市役所位置を枕崎市街地の概略プレースホルダーとして使う。利用者の枕崎変針点を市役所と決めたものではなく、旧空港・港・VOR等を指すとも断定しない。広めの気象セクター配置案専用。",
+      "source": "https://www.city.makurazaki.lg.jp/uploaded/attachment/21461.pdf",
+      "source_title": "枕崎の統計 令和7年度刊行 A 土地・気象 1 位置及び面積",
+      "source_coordinate_dms": "31°16′09″N 130°17′57″E",
+      "source_coordinate_method": "DMS city hall coordinate converted to decimal degrees.",
+      "coordinate_use": "APPROXIMATE_MAP_AND_SECTOR_COVERAGE_ONLY",
+      "user_confirmed_exact_coordinates": false
+    },
+    {
+      "id": "SHISHIJIMA",
+      "label": "獅子島",
+      "kind": "island",
+      "latitude_deg": 32.307186,
+      "longitude_deg": 130.245381,
+      "status": "OFFICIAL_CENSUS_GEOMETRY_CENTROID_NOT_CONFIRMED_ROUTE_WAYPOINT",
+      "source": "https://geoshape.ex.nii.ac.jp/ka/resource/46/464040010.html",
+      "notes": "国勢調査町丁・字等別境界データセットの鹿児島県長島町大字獅子島の図形中心点。島の航法変針点としての確定ではない。"
+    },
+    {
+      "id": "UBUSHIMA",
+      "label": "産島",
+      "kind": "island",
+      "latitude_deg": 32.2695267,
+      "longitude_deg": 130.14080050000007,
+      "status": "LOCAL_TOURISM_OFFICIAL_MAP_MARKER_APPROXIMATE_ISLAND_REFERENCE",
+      "notes": "天草観光ガイドの産島海水浴場ページがリンクする地点。天草市河浦町宮野河内の産島の概略位置として採用。利用者が指定した航法変針点の正確なlat/lonという意味ではない。八代の産島貝塚は別地点。",
+      "alternatives": [
+        {
+          "label": "産島海水浴場（島中心ではない）",
+          "latitude_deg": 32.275211,
+          "longitude_deg": 130.137707,
+          "source": "https://arealog.net/64313/",
+          "status": "SECONDARY_SOURCE_LANDMARK_CANDIDATE"
+        }
+      ],
+      "source": "https://www.t-island.jp/spot/2704",
+      "source_linked_map_url": "https://www.google.co.jp/maps/place/32.2695267,130.14080050000007",
+      "source_coordinate_method": "GoogleMapsで見る link on the official 天草観光ガイド page for 産島海水浴場.",
+      "coordinate_use": "APPROXIMATE_MAP_AND_SECTOR_COVERAGE_ONLY",
+      "user_confirmed_exact_coordinates": false
+    },
+    {
+      "id": "YAME_IC",
+      "label": "八女IC",
+      "kind": "interchange",
+      "latitude_deg": 33.2105915,
+      "longitude_deg": 130.5203576,
+      "status": "MAP_PROVIDER_IC_ENTRANCE_COORDINATE_NOT_CONFIRMED_ROUTE_WAYPOINT",
+      "source": "https://mapfan.com/spots/S3Y%2CJ%2CDIW",
+      "notes": "MapFanのIC入口位置。本線との分岐中心とは一致しない。"
+    }
+  ],
+  "route_reference_sha256": "a9160be82459240b2828df00ab6113e0358a831fbab5426178fe7764a4452bca"
+}

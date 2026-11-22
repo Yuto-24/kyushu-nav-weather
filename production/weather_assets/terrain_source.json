@@ -1,0 +1,93 @@
+{
+  "retrieved_at_utc": "2026-11-20T16:11:49.490805+00:00",
+  "sources": [
+    {
+      "url": "https://database.rish.kyoto-u.ac.jp/arch/jmadata/data/gpv/original/etc/TOPO.MSM_5K",
+      "final_url": "https://database.rish.kyoto-u.ac.jp/arch/jmadata/data/gpv/original/etc/TOPO.MSM_5K",
+      "http_status": 200,
+      "content_length_header": "971620",
+      "last_modified": "Mon, 30 Jan 2017 12:52:36 GMT",
+      "etag": "\"ed364-5474f4a2ced00\"",
+      "local_filename": "TOPO.MSM_5K",
+      "bytes": 971620,
+      "sha256": "47b18148619b63ca749ee67f783b938aac81c12f427ec28aff004ae922f74429"
+    },
+    {
+      "url": "https://database.rish.kyoto-u.ac.jp/arch/jmadata/data/gpv/original/etc/README%EF%BC%88%E6%94%AF%E6%8F%B4%E3%82%BB%E3%83%B3%E3%82%BF%E3%83%BC%EF%BC%89_201702.txt",
+      "final_url": "https://database.rish.kyoto-u.ac.jp/arch/jmadata/data/gpv/original/etc/README%EF%BC%88%E6%94%AF%E6%8F%B4%E3%82%BB%E3%83%B3%E3%82%BF%E3%83%BC%EF%BC%89_201702.txt",
+      "http_status": 200,
+      "content_length_header": "2002",
+      "last_modified": "Mon, 30 Jan 2017 13:51:36 GMT",
+      "etag": "\"7d2-547501d2d0a00\"",
+      "local_filename": "README_201702_original.txt",
+      "bytes": 2002,
+      "sha256": "51aacfdc0e8e8e3652638332d96625affaabcfd214f30090a14ce4dfdda2fc0d"
+    }
+  ],
+  "source_specification": {
+    "dtype": ">f4",
+    "full_shape_lat_lon": [
+      505,
+      481
+    ],
+    "scan": "row-major; longitude eastward first; latitude southward second",
+    "latitude_start_deg": 47.6,
+    "longitude_start_deg": 120.0,
+    "latitude_step_deg": -0.05,
+    "longitude_step_deg": 0.0625,
+    "units": "m",
+    "quantity": "model surface geopotential height interpolated to GPV grid; not actual terrain DEM",
+    "invalid_outside_model_domain_m": -999.0
+  },
+  "requested_bbox_deg": {
+    "lat_min": 30.4,
+    "lat_max": 34.0,
+    "lon_min": 129.35,
+    "lon_max": 132.45
+  },
+  "crop_rule": "include grid centres within requested bounds, inclusive; no resampling",
+  "crop_shape_lat_lon": [
+    73,
+    50
+  ],
+  "crop_indices": {
+    "rows_inclusive": [
+      272,
+      344
+    ],
+    "cols_inclusive": [
+      150,
+      199
+    ]
+  },
+  "actual_grid_center_bounds_deg": {
+    "lat_min": 30.400000000000002,
+    "lat_max": 34.0,
+    "lon_min": 129.375,
+    "lon_max": 132.4375
+  },
+  "npz_keys": [
+    "lat",
+    "lon",
+    "elevation_m",
+    "valid"
+  ],
+  "latitude_order": "descending",
+  "longitude_order": "ascending",
+  "valid_cells": 3650,
+  "invalid_cells": 0,
+  "valid_elevation_range_m": [
+    0.0,
+    1115.2901611328125
+  ],
+  "limitations": [
+    "Archive terrain file is dated 2017-01-30; exact consistency with each 2026 MSM run has not been established.",
+    "This is smoothed model surface geopotential height, not a high-resolution observed ground surface.",
+    "Terrain-mask sensitivity and pressure-level below-ground masking must be assessed separately; no safe-flight-altitude interpretation."
+  ],
+  "derived_npz": {
+    "filename": "terrain_msm_5k.npz",
+    "bytes": 11198,
+    "sha256": "8bc6351362746753723e3d9df4b2577f62b507f145c272fb2dadbf1a3a1f621d"
+  }
+}
