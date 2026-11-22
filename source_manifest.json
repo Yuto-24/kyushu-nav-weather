@@ -44,8 +44,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 8353,
-      "sha256": "da85c9eaf359b64e7809905a7d5cf9f3c1fb3aa471c30e353752c49493cf889e"
+      "bytes": 8591,
+      "sha256": "b46da18d3ef01a1d158b074a8cbd6d770d070395cd3b1d589ec151c7069d985e"
     },
     {
       "path": "analysis/geographic_revision/build_geographic_sheet.py",
@@ -159,8 +159,8 @@
     },
     {
       "path": "production/README.md",
-      "bytes": 8106,
-      "sha256": "23e0075dd676b05ceba1f4d8f27ec57f9fa0292c6d44c33cb759e88b009f5631"
+      "bytes": 8344,
+      "sha256": "b7f8526e845213da465e0aa3f091f4af8bdaf0d9ff7d127063be94e31059f4e5"
     },
     {
       "path": "production/WEATHER_PIPELINE.md",
@@ -179,8 +179,8 @@
     },
     {
       "path": "production/deployment.json",
-      "bytes": 1835,
-      "sha256": "7cb156a6f501d4f3cc85287b513caf49264e3068362f1b371a298d5d5a6177de"
+      "bytes": 2653,
+      "sha256": "1861b4ec0501c94735d9cab9b9206e580d248b1e0bd4ec0c53c838705322c6f6"
     },
     {
       "path": "production/export_cloudflare.py",
@@ -189,8 +189,8 @@
     },
     {
       "path": "production/infra_reuse_notes.md",
-      "bytes": 32870,
-      "sha256": "170e1d9d2eabfe0e9021aa10a6bcacfee1c12429ba6d0b27719365bb77470475"
+      "bytes": 34403,
+      "sha256": "fdd58c949d74bcfbc84e146d50f2977eaeda67a2e2368a9f1f9e1bee394af6ec"
     },
     {
       "path": "production/pages_publication.py",
@@ -379,8 +379,8 @@
     },
     {
       "path": "services/weather-trigger/README.md",
-      "bytes": 8846,
-      "sha256": "8bd802d923db1d057e997fba710347bc869d265134fa25ea1227452da1e94027"
+      "bytes": 9184,
+      "sha256": "355064a1c8c8a18a28f844c11492c2edd0be22d0d008179b0d90e2c9630e261e"
     },
     {
       "path": "services/weather-trigger/package-lock.json",
@@ -404,8 +404,8 @@
     },
     {
       "path": "services/weather-trigger/wrangler.jsonc",
-      "bytes": 416,
-      "sha256": "9358a4e4e637d9822c52db7627ebab6fe7f1e4d00e1940fdc77253d5a3a68b50"
+      "bytes": 421,
+      "sha256": "fce65e921e7e391814cb83923e548c5a5ea2083c69ed00da73870edd54faee3b"
     }
   ]
 }

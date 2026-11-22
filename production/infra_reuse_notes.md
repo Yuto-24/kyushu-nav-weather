@@ -8,7 +8,13 @@ Actions schedules at JST04:03/04:33 and09:03/09:33 always reselect the latest av
 
 Review caught two concrete publication errors before deployment: candidate-build time cannot establish actual public availability, so deadline claims move to the complete public readback result; and candidate date/base identity must be rechecked after dependency installation immediately before upload. Another correction preserves source preference when a newer valid Run has terrain-only exclusions: these exclusions must not pin the publication to an older complete Run. True missing/source failures still prevent publication.
 
-A separate private repository `Yuto-24/kyushu-nav-weather` was created. The Cloudflare dashboard currently requires sign-in; implementation and local dry-run success do not mean that Pages or the supplemental Cron is live. No existing NavMate resources were changed.
+A separate private repository `Yuto-24/kyushu-nav-weather` was created. On 2026-11-22 the authenticated Cloudflare dashboard accepted a dedicated Pages project, the supplemental Worker in observe mode without Cron/HTTP routes, and the `weather.yuto24.com` custom domain with its CNAME. Cloudflare subsequently showed the domain as active with SSL enabled at 16:28 JST; no Pages deployment had been uploaded. Credentials remain unconfigured; source, resource creation, and Worker deployment do not establish live daily updates. Current state is recorded in `deployment.json`. No existing NavMate resources were changed.
+
+### Credential and dashboard observations — 2026-11-22 JST
+
+- The account-token form exposes Pages Write at account scope. Its narrower resource selectors include individual Workers but no individual Pages project. The intended deployment is limited by workflow configuration to `kyushu-nav-weather`; this does not make the credential itself project-scoped. Approval must disclose the account-wide Pages capability and the target GitHub repository secret.
+- GitHub required sudo-mode reauthentication before opening the fine-grained token form. This is distinct from the signed-in session that could edit ordinary Actions variables. Existing sealed credentials are not a substitute and were not extracted.
+- Cloudflare Quick Edit reported a TypeScript diagnostic for the omitted `TextDecoder` `ignoreBOM` option, while accepting and activating the unchanged JavaScript module. Editor contents matched the source after CRLF normalization before deployment. This observation establishes upload acceptance only; scheduled execution and decoding remain part of provider verification. It is not a reason to change tested runtime code solely to silence the editor's type declaration.
 
 ## Provider-choice review — 2026-11-22 JST
 

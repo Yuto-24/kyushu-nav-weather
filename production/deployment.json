@@ -3,7 +3,7 @@
   "scheduler": "github_actions",
   "supplemental_trigger": "cloudflare_worker",
   "timezone": "Asia/Tokyo",
-  "status": "source_published_ci_verified_cloudflare_sign_in_pending",
+  "status": "infrastructure_created_credentials_pending",
   "audience": "public",
   "github_repository": "Yuto-24/kyushu-nav-weather",
   "github_repository_id": 1467275690,
@@ -11,11 +11,36 @@
   "github_repository_created": true,
   "pages_project_name": "kyushu-nav-weather",
   "worker_name": "kyushu-weather-trigger",
-  "cloudflare_status": "browser_sign_in_required",
+  "cloudflare_status": "projects_created_custom_domain_active",
   "live_url": null,
+  "intended_url": "https://weather.yuto24.com",
+  "pages_project_created": true,
+  "pages_deployment_created": false,
+  "custom_domain": {
+    "hostname": "weather.yuto24.com",
+    "cname_target": "kyushu-nav-weather.pages.dev",
+    "configured": true,
+    "verification_status": "active",
+    "observed_at_jst": "2026-11-22T16:28:49+09:00",
+    "ssl_enabled": true
+  },
   "automatic_updates_enabled": false,
-  "worker_mode": "not_deployed",
+  "worker_deployed": true,
+  "worker_mode": "observe",
   "worker_crons_active": false,
+  "worker_http_enabled": false,
+  "worker_preview_urls_enabled": false,
+  "worker_status_url": "https://weather.yuto24.com/status.json",
+  "github_variables_configured": [
+    "CLOUDFLARE_ACCOUNT_ID",
+    "CLOUDFLARE_PAGES_PROJECT",
+    "WEATHER_AUTOMATION_ENABLED"
+  ],
+  "weather_origin_configured": false,
+  "credentials": {
+    "cloudflare_pages_token_configured": false,
+    "worker_github_token_configured": false
+  },
   "source_publication_complete": true,
   "verification": {
     "local_weather_tests": 9,

@@ -8,8 +8,8 @@
   "triggers": { "crons": [] },
   "vars": {
     "MODE": "observe",
-    "STATUS_URL": "https://weather.example.invalid/status.json",
-    "GITHUB_REPOSITORY": "OWNER/REPOSITORY",
+    "STATUS_URL": "https://weather.yuto24.com/status.json",
+    "GITHUB_REPOSITORY": "Yuto-24/kyushu-nav-weather",
     "GITHUB_BRANCH": "main"
   }
 }

@@ -4,7 +4,7 @@
 
 ## 運用状態
 
-実際の状態は `production/deployment.json` に記録する。2026-11-22時点では、専用GitHub repositoryを作成し、取得・描画・Actions・補完Worker・Pages配信処理を実装した。Cloudflareの管理画面がログイン待ちのため、Pagesへの公開とWorkerのCronはまだ有効化していない。
+実際の状態は `production/deployment.json` に記録する。2026-11-22時点では、専用Pages projectと補完Workerを作成し、独自ドメイン `weather.yuto24.com` の接続とDNSを設定した。ドメインはアクティブでSSL有効を確認済み。Workerはobserve、Cronなし、HTTP入口なしで配置済み。Actionsの接続先変数は保存済みだが、2つの専用認証は未設定のため、気象図の公開と自動更新の有効化は未完了。
 
 GitHub repository: https://github.com/Yuto-24/kyushu-nav-weather
 
@@ -67,8 +67,8 @@ python -m production.build_pages build \
 
 1. Cloudflareで独立Pages project `kyushu-nav-weather` を作成する。Direct Uploadを使う。既存 `navmate` projectへこの図だけをdeployしない。
 2. GitHubのこのrepositoryにVariablesを設定する: `CLOUDFLARE_ACCOUNT_ID`、`CLOUDFLARE_PAGES_PROJECT=kyushu-nav-weather`。`WEATHER_AUTOMATION_ENABLED` は初回確認までfalse。Pages Edit権限の認証をSecret `CLOUDFLARE_PAGES_TOKEN` へ設定する。実値をsourceやchatへ書かない。
-3. `weather-daily` を `operation=initialize, trigger=manual, publish=true` で一度だけ実行し、空siteを公開する。この初回は `WEATHER_ORIGIN` 未設定とする。生成されたPagesの実URLを確認し、以後 `WEATHER_ORIGIN` に設定する。
-4. `operation=refresh, slot=both, target_date=当日JST, trigger=manual, publish=true` で実生成・公開・全読戻しを確認する。画像の日付・初期値・生成時刻を確認する。独自ドメインは実際の公開確認後に設定する。
+3. `weather-daily` を `operation=initialize, trigger=manual, publish=true` で一度だけ実行し、空siteを公開する。この初回は `WEATHER_ORIGIN` 未設定とする。接続済みの独自ドメイン `https://weather.yuto24.com` でHTTPSとstatusの読戻しを確認し、以後 `WEATHER_ORIGIN` に設定する。
+4. `operation=refresh, slot=both, target_date=当日JST, trigger=manual, publish=true` で実生成・公開・全読戻しを確認する。画像の日付・初期値・生成時刻を確認する。利用者向け固定URLとWorkerの参照先には独自ドメインを使う。
 5. `services/weather-trigger/README.md` に従い、新しいWorkerにこのrepositoryだけを対象とするGitHub Actions Read/Write認証をSecret `GITHUB_TOKEN` として接続する。Workerの `STATUS_URL` は確認済みoriginの `/status.json`、repositoryは `Yuto-24/kyushu-nav-weather`、branchはmain。配備時に認証値をログやファイルへ出さない。
 6. Workerをobserveで確認後、`WEATHER_AUTOMATION_ENABLED=true` とWorkerのdispatch/Cronを有効化する。外部設定・予定時刻・実行結果を読み戻して、`production/deployment.json` の状態を更新する。
 

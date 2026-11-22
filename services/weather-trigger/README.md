@@ -4,6 +4,8 @@ GitHub Actions の日次更新を補う、紙面専用の独立 Worker。公開�
 
 このディレクトリの設定は **`MODE=observe`、Cron 空、HTTP 入口なし**。既存 NavMate の Worker、KV、GitHub workflow、公開サイトは変更しない。テストとローカル bundle の成功は、本番に配置されたことや定刻更新の成功を意味しない。
 
+2026-11-22に、同じソースと上記設定を専用Workerへ配置した。`STATUS_URL` は `https://weather.yuto24.com/status.json`、対象repositoryは `Yuto-24/kyushu-nav-weather`。GitHub認証は未接続で、実status取得、dispatch、自然Cronはまだ未検証。運用状態の正本は `production/deployment.json`。
+
 ## 時刻と完成判定
 
 | 紙面 | Actions の基本起動（JST） | Worker の補完確認（JST） | 公開締切 |
