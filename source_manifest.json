@@ -104,8 +104,8 @@
     },
     {
       "path": "production/deployment.json",
-      "bytes": 1273,
-      "sha256": "85a0cc4e9299085ec88c894b7952c45329ddeac69a700d8109df968694373292"
+      "bytes": 1835,
+      "sha256": "7cb156a6f501d4f3cc85287b513caf49264e3068362f1b371a298d5d5a6177de"
     },
     {
       "path": "production/export_cloudflare.py",

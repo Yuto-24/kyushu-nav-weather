@@ -3,7 +3,7 @@
   "scheduler": "github_actions",
   "supplemental_trigger": "cloudflare_worker",
   "timezone": "Asia/Tokyo",
-  "status": "source_implemented_provider_connection_pending",
+  "status": "source_published_ci_verified_cloudflare_sign_in_pending",
   "audience": "public",
   "github_repository": "Yuto-24/kyushu-nav-weather",
   "github_repository_id": 1467275690,
@@ -16,7 +16,7 @@
   "automatic_updates_enabled": false,
   "worker_mode": "not_deployed",
   "worker_crons_active": false,
-  "source_publication_complete": false,
+  "source_publication_complete": true,
   "verification": {
     "local_weather_tests": 9,
     "local_actions_tests": 9,
@@ -24,7 +24,21 @@
     "local_worker_tests": 23,
     "external_pages_readback_verified": false,
     "external_worker_dispatch_verified": false,
-    "external_cron_verified": false
+    "external_cron_verified": false,
+    "github_ci": {
+      "conclusion": "success",
+      "commit": "6583153fa3f003e1e0931f268a572b0622a0bab0",
+      "run_url": "https://github.com/Yuto-24/kyushu-nav-weather/actions/runs/44994515085"
+    },
+    "standalone_export": {
+      "original_workspace_and_navmate_reads_denied": true,
+      "blocked_access_attempts": 0,
+      "source_hashes_match": true,
+      "real_msm_1400_rendered": true,
+      "valid_rows": 90,
+      "partial_rows": 0,
+      "published": false
+    }
   },
   "superseded_vercel": {
     "project_id": "prj_MYJPRI2nRuZGaofEeCidl7IUw45Y",
@@ -32,5 +46,6 @@
     "deployment_id": null,
     "active": false,
     "decision": "Replaced by accepted Cloudflare Pages + Actions + supplemental Worker architecture; no new Vercel deployment."
-  }
+  },
+  "implementation_commit": "6583153fa3f003e1e0931f268a572b0622a0bab0"
 }
