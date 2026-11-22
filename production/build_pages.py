@@ -42,7 +42,7 @@ HEADERS = """/*
   Cache-Control: public, max-age=31536000, immutable
 """
 NOT_FOUND = """<!doctype html><html lang="ja"><meta charset="utf-8"><title>404</title>
-<p>このファイルは見つかりません。</p><p><a href="/">九州 NAV LOG</a></p></html>
+<p>このファイルは見つかりません。</p><p><a href="/">九州 上空風・気温</a></p></html>
 """
 
 

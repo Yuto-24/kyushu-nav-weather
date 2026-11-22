@@ -44,8 +44,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 8745,
-      "sha256": "9307534df384e98ba07870e61dd845411d8fa799f7c3722494b6a8ba84ea3373"
+      "bytes": 8756,
+      "sha256": "15bfc0289e254ab1938c1128a285d23b00758b68ea18505b7887e0dd31b99584"
     },
     {
       "path": "analysis/geographic_revision/build_geographic_sheet.py",
@@ -54,8 +54,8 @@
     },
     {
       "path": "analysis/pseudo_sectors/build_pseudo_sheet.py",
-      "bytes": 18618,
-      "sha256": "3b9d565f38ffa12f48dbc039d7a54f625862027a83c7a717533f6d3b3b5d113a"
+      "bytes": 18639,
+      "sha256": "b37c2b7ca4d0d0936b5ff27e746d87d2dd3fe1cee733c1e1d20c7a389be3cbc6"
     },
     {
       "path": "analysis/pseudo_sectors/design/selection_10.json",
@@ -154,13 +154,13 @@
     },
     {
       "path": "output/kyushu_weather_sector_requirements.md",
-      "bytes": 53134,
-      "sha256": "345928dddb2e79b5d6265cbfcf34094b9bc298db8c47fca4a8a6f0874528c14d"
+      "bytes": 53123,
+      "sha256": "f817e6505e5cb36db4d8f15a089f1d9f2bb384769d4690a0b2b7ab8e91962575"
     },
     {
       "path": "production/README.md",
-      "bytes": 8498,
-      "sha256": "74e23f3e42d84ddfe454c2439572fa53f0a9c87507085a45d6bf5d94dc502cef"
+      "bytes": 8509,
+      "sha256": "c6c20c0ebc355a076a985fdab12dc60872b5f844b43baf4a8f83ec5242836df9"
     },
     {
       "path": "production/WEATHER_PIPELINE.md",
@@ -174,8 +174,8 @@
     },
     {
       "path": "production/build_pages.py",
-      "bytes": 10254,
-      "sha256": "4bfd2d47d0f71b9733a6838484a47a44a8d5908009dde57ae8676734b8a78082"
+      "bytes": 10265,
+      "sha256": "992d059bebd4d3368f1217b22ea0f2137a19a637f7cd446a515980e54d066317"
     },
     {
       "path": "production/deployment.json",
@@ -204,8 +204,8 @@
     },
     {
       "path": "production/render_daily.py",
-      "bytes": 14573,
-      "sha256": "088faef05902d279df48d5eb4e0f38d08f9a4f49b96088d30cd9c20d625b224c"
+      "bytes": 14585,
+      "sha256": "c43f97f3fd69610e6c8c13736a174c7c29b21fd637bf3abc6a155b776a283868"
     },
     {
       "path": "production/renderer_README.md",
@@ -349,13 +349,13 @@
     },
     {
       "path": "production/web/app.js",
-      "bytes": 13371,
-      "sha256": "b748eec0124225987bd58f8469da405d1e43993833cf31fe3354aecda00b8d4c"
+      "bytes": 13382,
+      "sha256": "2a2dbd8b2ac88bf1d369c4a14b3078d1cbbb3e481bde610639b85d2bd3c0a36d"
     },
     {
       "path": "production/web/index.html",
-      "bytes": 2616,
-      "sha256": "5936beb2913316af0c34fc315e74b0865ddab6c01da8ad3060a7c38aeeb59530"
+      "bytes": 2638,
+      "sha256": "2fe4a47a2602541af4ffcc22ed20d3e4fb8713d482e5a5be91f07c92d1cc2bad"
     },
     {
       "path": "production/web/style.css",

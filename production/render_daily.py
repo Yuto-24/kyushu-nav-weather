@@ -219,7 +219,7 @@ def render_daily(input_path: Path, output_dir: Path, *, generated_at: str | None
                 for report in reports:
                     with renderer.fitz.open(staging / Path(report["pdf"]).name) as single:
                         doc.insert_pdf(single)
-                doc.set_metadata({"title": f"九州NAV LOG {target_date} 09:00 / 14:00 JST"})
+                doc.set_metadata({"title": f"九州 上空風・気温 {target_date} 09:00 / 14:00 JST"})
                 doc.save(combined_path)
             combined = file_record(combined_path, "application/pdf")
         layout_path = staging / f"layout_checks_{date_tag}_{hours_tag}.json"
