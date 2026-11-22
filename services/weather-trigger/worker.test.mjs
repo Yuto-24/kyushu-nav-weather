@@ -239,12 +239,12 @@ test("dispatch network failure, 403 and ambiguous receipts are never retried", a
   }
 });
 
-test("HTTP entry point is closed and checked-in configuration is inactive", async () => {
+test("HTTP entry point is closed and checked-in configuration uses the approved daily schedule", async () => {
   const response = await worker.fetch(new Request("https://worker.test/run"), env);
   assert.equal(response.status, 404);
   const config = JSON.parse(await readFile(new URL("wrangler.jsonc", import.meta.url), "utf8"));
-  assert.equal(config.vars.MODE, "observe");
-  assert.deepEqual(config.triggers.crons, []);
+  assert.equal(config.vars.MODE, "dispatch");
+  assert.deepEqual(config.triggers.crons, ["20,40 0,19 * * *"]);
   assert.equal(config.workers_dev, false);
   assert.equal(config.preview_urls, false);
   assert.equal(config.kv_namespaces, undefined);

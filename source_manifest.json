@@ -44,8 +44,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 8353,
-      "sha256": "da85c9eaf359b64e7809905a7d5cf9f3c1fb3aa471c30e353752c49493cf889e"
+      "bytes": 8745,
+      "sha256": "9307534df384e98ba07870e61dd845411d8fa799f7c3722494b6a8ba84ea3373"
     },
     {
       "path": "analysis/geographic_revision/build_geographic_sheet.py",
@@ -159,8 +159,8 @@
     },
     {
       "path": "production/README.md",
-      "bytes": 8106,
-      "sha256": "23e0075dd676b05ceba1f4d8f27ec57f9fa0292c6d44c33cb759e88b009f5631"
+      "bytes": 8498,
+      "sha256": "74e23f3e42d84ddfe454c2439572fa53f0a9c87507085a45d6bf5d94dc502cef"
     },
     {
       "path": "production/WEATHER_PIPELINE.md",
@@ -179,8 +179,8 @@
     },
     {
       "path": "production/deployment.json",
-      "bytes": 1835,
-      "sha256": "7cb156a6f501d4f3cc85287b513caf49264e3068362f1b371a298d5d5a6177de"
+      "bytes": 6579,
+      "sha256": "57ea99dea367f2346727762558f30f80674f9b91227ccd4105381ccf5ab38591"
     },
     {
       "path": "production/export_cloudflare.py",
@@ -189,8 +189,8 @@
     },
     {
       "path": "production/infra_reuse_notes.md",
-      "bytes": 32870,
-      "sha256": "170e1d9d2eabfe0e9021aa10a6bcacfee1c12429ba6d0b27719365bb77470475"
+      "bytes": 36496,
+      "sha256": "050067f97535545ad4561ba0292e87d01da45dcd34b124c074fe415c34f24436"
     },
     {
       "path": "production/pages_publication.py",
@@ -379,8 +379,8 @@
     },
     {
       "path": "services/weather-trigger/README.md",
-      "bytes": 8846,
-      "sha256": "8bd802d923db1d057e997fba710347bc869d265134fa25ea1227452da1e94027"
+      "bytes": 9728,
+      "sha256": "d2103ef36788a5189e045ae1293cbda4cd5d760f1d012be488d69751dd16fc19"
     },
     {
       "path": "services/weather-trigger/package-lock.json",
@@ -399,13 +399,13 @@
     },
     {
       "path": "services/weather-trigger/worker.test.mjs",
-      "bytes": 13286,
-      "sha256": "cecb579ef0394b894056d0c34c09e9346e97f44c85455f0764f990c646467275"
+      "bytes": 13326,
+      "sha256": "40b6acfe70807204a80fcc596bd5914d68c6534f3b752da8b35ac9ea4505c658"
     },
     {
       "path": "services/weather-trigger/wrangler.jsonc",
-      "bytes": 416,
-      "sha256": "9358a4e4e637d9822c52db7627ebab6fe7f1e4d00e1940fdc77253d5a3a68b50"
+      "bytes": 442,
+      "sha256": "6615e08fd7f339b54f78a383fa2444ba970468e6ce80e659433ca3ac663b20c8"
     }
   ]
 }

@@ -3,7 +3,7 @@
   "scheduler": "github_actions",
   "supplemental_trigger": "cloudflare_worker",
   "timezone": "Asia/Tokyo",
-  "status": "source_published_ci_verified_cloudflare_sign_in_pending",
+  "status": "live_automation_configured_acceptance_pending",
   "audience": "public",
   "github_repository": "Yuto-24/kyushu-nav-weather",
   "github_repository_id": 1467275690,
@@ -11,24 +11,56 @@
   "github_repository_created": true,
   "pages_project_name": "kyushu-nav-weather",
   "worker_name": "kyushu-weather-trigger",
-  "cloudflare_status": "browser_sign_in_required",
-  "live_url": null,
-  "automatic_updates_enabled": false,
-  "worker_mode": "not_deployed",
-  "worker_crons_active": false,
+  "cloudflare_status": "custom_domain_live_automation_configured",
+  "live_url": "https://kyushu-wx.yuto24.com",
+  "intended_url": "https://kyushu-wx.yuto24.com",
+  "pages_project_created": true,
+  "pages_deployment_created": true,
+  "custom_domain": {
+    "hostname": "kyushu-wx.yuto24.com",
+    "cname_target": "kyushu-nav-weather.pages.dev",
+    "configured": true,
+    "verification_status": "active",
+    "observed_on_jst": "2026-11-22",
+    "ssl_enabled": true,
+    "replaced_hostname": "weather.yuto24.com",
+    "replaced_hostname_association_and_cname_removed": true
+  },
+  "automatic_updates_enabled": true,
+  "worker_deployed": true,
+  "worker_mode": "dispatch",
+  "worker_crons_active": true,
+  "worker_http_enabled": false,
+  "worker_preview_urls_enabled": false,
+  "worker_status_url": "https://kyushu-wx.yuto24.com/status.json",
+  "github_variables_configured": [
+    "CLOUDFLARE_ACCOUNT_ID",
+    "CLOUDFLARE_PAGES_PROJECT",
+    "WEATHER_ORIGIN",
+    "WEATHER_AUTOMATION_ENABLED"
+  ],
+  "weather_origin_configured": true,
+  "credentials": {
+    "cloudflare_pages_token_configured": true,
+    "cloudflare_pages_token_scope": "Account Pages Write",
+    "worker_github_token_configured": true,
+    "worker_github_token_scope": "Yuto-24/kyushu-nav-weather only: Actions read/write, Metadata read",
+    "expiration": "No expiration; explicitly approved by user"
+  },
   "source_publication_complete": true,
   "verification": {
     "local_weather_tests": 9,
     "local_actions_tests": 9,
     "local_pages_tests": 17,
     "local_worker_tests": 23,
-    "external_pages_readback_verified": false,
+    "external_pages_readback_verified": true,
     "external_worker_dispatch_verified": false,
     "external_cron_verified": false,
     "github_ci": {
       "conclusion": "success",
-      "commit": "6583153fa3f003e1e0931f268a572b0622a0bab0",
-      "run_url": "https://github.com/Yuto-24/kyushu-nav-weather/actions/runs/44994515085"
+      "commit": "e8474b0f0b3ef1c6fd84c01460813964886b9f79",
+      "run_url": "https://github.com/Yuto-24/kyushu-nav-weather/actions/runs/44997892687",
+      "scope": "Merged application and governance source; does not cover this later configuration change"
     },
     "standalone_export": {
       "original_workspace_and_navmate_reads_denied": true,
@@ -38,6 +70,98 @@
       "valid_rows": 90,
       "partial_rows": 0,
       "published": false
+    },
+    "viewer_automation_status_verified": true,
+    "external_worker_read_paths_verified": true,
+    "external_worker_cpu_verified": false,
+    "publication": {
+      "run_url": "https://github.com/Yuto-24/kyushu-nav-weather/actions/runs/45002001320",
+      "operation": "manual refresh, both slots, publish=true",
+      "automatic_updates_enabled": true,
+      "verified": true,
+      "origin": "https://kyushu-wx.yuto24.com",
+      "deployment_id": "pages-de7099d0af01bda68a717c01",
+      "slots": {
+        "1400": {
+          "generated_at_jst": "2026-11-22T17:16:51+09:00",
+          "image_generated_at_jst": "2026-11-22T17:16:51+09:00",
+          "initial_time_jst": "2026-11-22T06:00:00+09:00",
+          "model": "MSM",
+          "pointer": {
+            "bytes": 8158,
+            "media_type": "application/json",
+            "path": "latest/1400.json",
+            "sha256": "59092decd63698816b89cf53e1b22e9c97a3251d690821075c8f46e0e6c0b71c"
+          },
+          "quality": "complete",
+          "release_id": "20261122T081651000000Z-65c418f8cf8c",
+          "valid_date": "2026-11-22"
+        },
+        "0900": {
+          "generated_at_jst": "2026-11-22T17:16:41+09:00",
+          "image_generated_at_jst": "2026-11-22T17:16:41+09:00",
+          "initial_time_jst": "2026-11-22T00:00:00+09:00",
+          "model": "MSM",
+          "pointer": {
+            "bytes": 8088,
+            "media_type": "application/json",
+            "path": "latest/0900.json",
+            "sha256": "59d20bdfe05839b0eec5f2f279b44cf1edf896f027774f899f71ae67d30688df"
+          },
+          "quality": "complete",
+          "release_id": "20261122T081641000000Z-efb95a1f2d46",
+          "valid_date": "2026-11-22"
+        }
+      },
+      "files_verified": 11,
+      "bytes_verified": 2052429,
+      "verified_publication_at_jst": "2026-11-22T17:17:09.110934+09:00",
+      "deadline_met": {
+        "1400": false,
+        "0900": false
+      },
+      "deadline_assessment_basis": "Successful full readback is an upper bound on publication time; late verification alone does not prove late initial availability."
+    },
+    "worker_provider_read_check": {
+      "execution": "Unpublished Cloudflare Quick Edit preview; GET-only diagnostic with real bindings and current clock",
+      "checked_at_utc": "2026-11-22T08:07:53.468Z",
+      "source_module_changed": false,
+      "production_occurrence_executed": false,
+      "dispatch_attempted": false,
+      "preview_handler_deployed": false,
+      "original_source_restored": true,
+      "requests": [
+        {
+          "stage": "status",
+          "http_status": 200,
+          "bytes": 1583
+        },
+        {
+          "stage": "github_active_states",
+          "states": [
+            "queued",
+            "in_progress",
+            "waiting",
+            "pending",
+            "requested"
+          ],
+          "http_status": 200,
+          "bytes_per_response": 36
+        },
+        {
+          "stage": "github_recent",
+          "http_status": 200,
+          "bytes": 25964
+        }
+      ],
+      "cpu_time_ms": null
+    },
+    "scheduling": {
+      "configuration_read_back": true,
+      "observed_on_jst": "2026-11-22",
+      "first_scheduled_actions_at_jst": "2026-11-23T04:03:00+09:00",
+      "first_scheduled_worker_at_jst": "2026-11-23T04:20:00+09:00",
+      "actual_delivery_observed": false
     }
   },
   "superseded_vercel": {
@@ -47,5 +171,7 @@
     "active": false,
     "decision": "Replaced by accepted Cloudflare Pages + Actions + supplemental Worker architecture; no new Vercel deployment."
   },
-  "implementation_commit": "6583153fa3f003e1e0931f268a572b0622a0bab0"
+  "implementation_commit": "6583153fa3f003e1e0931f268a572b0622a0bab0",
+  "worker_cron_utc": "20,40 0,19 * * *",
+  "worker_version_prefix": "878488a9"
 }

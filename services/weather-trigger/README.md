@@ -2,7 +2,9 @@
 
 GitHub Actions の日次更新を補う、紙面専用の独立 Worker。公開された小さな `/status.json` と GitHub の実行履歴だけを読み、必要なときだけ `weather-daily.yml` を起動する。MSM/GSM の取得・GRIB デコード・計算・描画・Pages 公開は Actions 側で行う。
 
-このディレクトリの設定は **`MODE=observe`、Cron 空、HTTP 入口なし**。既存 NavMate の Worker、KV、GitHub workflow、公開サイトは変更しない。テストとローカル bundle の成功は、本番に配置されたことや定刻更新の成功を意味しない。
+このディレクトリは **`MODE=dispatch`、Cron `20,40 0,19 * * *`（UTC）、HTTP入口なし** の本番設定を保持する。既存NavMateのWorker、KV、GitHub workflow、公開サイトは変更しない。新しい環境の初回確認では、下記手順に従ってobserve・Cronなしから始める。
+
+2026-11-22に専用GitHub認証を接続し、`STATUS_URL=https://kyushu-wx.yuto24.com/status.json`、対象repository `Yuto-24/kyushu-nav-weather` で上記設定を有効化した。provider上の未公開previewでstatusとGitHub履歴の読み取りは成功した。previewのGET検証では本番の時刻判定・dispatchを実行していない。CPU時間、Workerからのdispatch、自然Cronは未確認であり、本番受入完了とは扱わない。運用状態の正本は `production/deployment.json`。
 
 ## 時刻と完成判定
 
@@ -11,7 +13,7 @@ GitHub Actions の日次更新を補う、紙面専用の独立 Worker。公開�
 | 09:00 | 04:03 / 04:33 | 04:20 / 04:40 | 05:00 |
 | 14:00 | 09:03 / 09:33 | 09:20 / 09:40 | 10:00 |
 
-有効化後の Worker Cron 候補は `20,40 0,19 * * *`（UTC）。これは同じ JST 日の 04:20・04:40・09:20・09:40 に相当する。設定ファイルにはまだ適用していない。
+Worker Cronは `20,40 0,19 * * *`（UTC）。これは同じJST日の04:20・04:40・09:20・09:40に相当する。本番と設定ファイルの両方に適用済み。
 
 20 分の確認は、当日の `complete` な MSM が **04:00 / 09:00 以降**に生成済みなら終了する。40 分の確認では **04:25 / 09:25 以降**を必要とする。03 時台の初期表示や、前半の古い予報だけで後半の取得確認が省略されることを防ぐ。GSM と `partial` は追加取得の候補に残す。
 
@@ -103,6 +105,8 @@ npm run bundle
 `bundle` は `wrangler deploy --dry-run` で `/tmp/kyushu-weather-trigger-bundle` に bundle を作るだけで、本番に送信しない。Worker は HTTP を常に 404 とし、`workers_dev`・preview URL も無効。公開の手動起動 endpoint は設けない。
 
 本番配置前に、対象 URL/repository/Secret と Actions gate を確認する。まず `observe` のまま provider 上の status 経路・GitHub 経路の CPU と結果を確認し、その後に本番 Cron と dispatch を有効にする。既存 MSM では比較的大きな metadata の読み取りでも Free の 10 ms CPU 枠を超えた観測があり、今回のローカルテスト時間や小さい bundle だけで provider CPU 合格と扱わない。
+
+2026-11-22の初回設定では、未公開previewで読み取り結果まで確認して有効化した。previewからCPU時間を取得できなかったため、上記のCPU確認は未了として残す。現在時刻が正規の実行窓外の場合、時刻を偽装したり本番の時刻検証を緩めたりして自然Cronの証拠を作らない。
 
 ## 再利用した判断
 

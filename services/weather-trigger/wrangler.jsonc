@@ -5,11 +5,11 @@
   "compatibility_date": "2026-11-22",
   "workers_dev": false,
   "preview_urls": false,
-  "triggers": { "crons": [] },
+  "triggers": { "crons": ["20,40 0,19 * * *"] },
   "vars": {
-    "MODE": "observe",
-    "STATUS_URL": "https://weather.example.invalid/status.json",
-    "GITHUB_REPOSITORY": "OWNER/REPOSITORY",
+    "MODE": "dispatch",
+    "STATUS_URL": "https://kyushu-wx.yuto24.com/status.json",
+    "GITHUB_REPOSITORY": "Yuto-24/kyushu-nav-weather",
     "GITHUB_BRANCH": "main"
   }
 }
