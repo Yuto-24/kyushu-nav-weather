@@ -24,8 +24,8 @@
     },
     {
       "path": ".github/workflows/weather-daily.yml",
-      "bytes": 6492,
-      "sha256": "e9bf1d60fd486dae2182f95d5bf38bbbf1b4660ff379177929db5dda0e4e15e6"
+      "bytes": 6537,
+      "sha256": "cffced486570aa181f986458ea54fa6962ff93f7cc1b043ca2fa6390c57b026a"
     },
     {
       "path": ".gitignore",
@@ -159,8 +159,8 @@
     },
     {
       "path": "production/README.md",
-      "bytes": 8509,
-      "sha256": "c6c20c0ebc355a076a985fdab12dc60872b5f844b43baf4a8f83ec5242836df9"
+      "bytes": 10841,
+      "sha256": "036b08a2cc88184309ae03ac41fdad1e3a524b5fc44a2b847b7b8f9f4427eb9e"
     },
     {
       "path": "production/WEATHER_PIPELINE.md",
@@ -169,13 +169,13 @@
     },
     {
       "path": "production/actions_job.py",
-      "bytes": 18223,
-      "sha256": "1ccae3fa48b3be553591e9c767e4fcdbffd18dd80125d0dfcc643957dab840b8"
+      "bytes": 18246,
+      "sha256": "7ee297052dd04e62354d4d814eda281e2a439f4e09cdebfa0d6db0f293fcf6ef"
     },
     {
       "path": "production/build_pages.py",
-      "bytes": 10265,
-      "sha256": "992d059bebd4d3368f1217b22ea0f2137a19a637f7cd446a515980e54d066317"
+      "bytes": 10493,
+      "sha256": "444eb5b2324c7e943ca91ce38d6e9c1b7477b62b3b74cd0c250a6ede18542f3c"
     },
     {
       "path": "production/deployment.json",
@@ -189,13 +189,13 @@
     },
     {
       "path": "production/infra_reuse_notes.md",
-      "bytes": 36496,
-      "sha256": "050067f97535545ad4561ba0292e87d01da45dcd34b124c074fe415c34f24436"
+      "bytes": 41882,
+      "sha256": "e75bbf80608baaa60c663f8518c8cede97fe4b5041e3dc3108215773c8565f3f"
     },
     {
       "path": "production/pages_publication.py",
-      "bytes": 30113,
-      "sha256": "e83fa66beb28409a5fea3e2ebda6b057e4a1e01fad82690197a120d810be24e3"
+      "bytes": 39273,
+      "sha256": "21382abe77bdd9703b39059007b87ada0a6362cf8179e8995775f541269954a4"
     },
     {
       "path": "production/publication.py",
@@ -229,8 +229,8 @@
     },
     {
       "path": "production/test_pages_publication.py",
-      "bytes": 15647,
-      "sha256": "0fd67a374d011925094c975084abbdd1c3874d57a95ee36220d65a6a5d4fe931"
+      "bytes": 35474,
+      "sha256": "1fcde751352c8be0e4c23436d2257a8555eb47a4509dec8c6fb937c2a4b4940d"
     },
     {
       "path": "production/test_weather_pipeline.py",

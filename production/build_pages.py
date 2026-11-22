@@ -140,7 +140,7 @@ def build_pages(manifest_paths, output_dir: Path, *, previous_dir: Path | None =
         staging = work / "site"
         staging.mkdir()
         pages.write_snapshot(staging, files)
-        verified = pages.local_snapshot(staging, now=now)
+        verified = pages.local_snapshot(staging, now=now, include_frontend=True)
         pages.require(verified.status == status, "Candidate status changed during local verification")
         pages.commit_directory(staging, output_dir)
     return {"directory": str(output_dir), "deployment_id": status["deployment_id"],
@@ -171,6 +171,8 @@ def main() -> int:
     verify = commands.add_parser("verify", help="Verify status/pointers/manifests/assets after external deployment")
     verify.add_argument("--origin", required=True)
     verify.add_argument("--expected-dir", type=Path)
+    verify.add_argument("--wait-seconds", type=int, default=0,
+                        help="Retry transient publication reads for 0-120 seconds (requires --expected-dir)")
     args = parser.parse_args()
     if args.command == "build":
         result = build_pages(args.manifest, args.output, previous_dir=args.previous_dir,
@@ -181,7 +183,7 @@ def main() -> int:
     elif args.command == "restore":
         result = pages.restore_previous(args.origin, args.output, allow_empty=args.allow_empty_origin)
     else:
-        result = pages.verify_published(args.origin, args.expected_dir)
+        result = pages.verify_published(args.origin, args.expected_dir, wait_seconds=args.wait_seconds)
     print(json.dumps(result, ensure_ascii=False, allow_nan=False))
     return 0
 
