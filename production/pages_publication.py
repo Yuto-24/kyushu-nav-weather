@@ -21,7 +21,9 @@ import os
 from pathlib import Path
 import re
 import shutil
+import sys
 import tempfile
+from time import monotonic, sleep
 from typing import Callable
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlsplit, urlunsplit
@@ -63,6 +65,10 @@ class RestoreError(PagesError):
 
 class MissingRemote(RestoreError):
     code = "previous_publication_missing"
+
+
+class DeploymentMismatch(common.InvalidPackage):
+    """A well-formed status identifies a different deployment candidate."""
 
 
 @dataclass
@@ -396,10 +402,12 @@ def snapshot_from_reader(reader: Callable[[str, int], bytes], *, now: datetime |
         return body
 
     status_body = get("status.json", MAX_STATUS_BYTES)
-    if expected_status is not None:
-        require(status_body == expected_status, "Live deployment differs from the expected candidate")
     status = json_object(status_body)
     validate_status(status)
+    if expected_status is not None and status_body != expected_status:
+        expected_id = json_object(expected_status)["deployment_id"]
+        raise DeploymentMismatch("Live deployment differs from the expected candidate "
+                                 f"(expected {expected_id}, observed {status['deployment_id']})")
     files, pointers = {"status.json": status_body}, {}
     with tempfile.TemporaryDirectory(prefix="kyushu-pages-verify-") as temporary:
         for slot in SLOTS:
@@ -533,14 +541,32 @@ def restore_previous(origin: str, destination: Path, *, allow_empty: bool = Fals
 
 
 def verify_published(origin: str, expected_dir: Path | None = None, *, reader: Callable | None = None,
-                     now: datetime | None = None) -> dict:
-    """Read status, both pointers, manifests and every asset back after deployment."""
+                     now: datetime | None = None, wait_seconds: int = 0) -> dict:
+    """Read back every weather asset, optionally waiting for the expected status."""
     origin = origin_url(origin)
+    require(type(wait_seconds) is int and 0 <= wait_seconds <= 120,
+            "Deployment wait must be an integer from 0 to 120 seconds")
+    require(not wait_seconds or expected_dir is not None, "Deployment wait requires an expected directory")
     expected = None
     if expected_dir is not None:
         local = local_snapshot(expected_dir, now=now)
         expected = local.files["status.json"]
-    snapshot = snapshot_from_reader(reader or HTTPReader(origin), now=now, expected_status=expected)
+    source = reader or HTTPReader(origin)
+    deadline = monotonic() + wait_seconds
+    while True:
+        try:
+            snapshot = snapshot_from_reader(source, now=now, expected_status=expected)
+            break
+        except DeploymentMismatch as exc:
+            remaining = deadline - monotonic()
+            if remaining <= 0:
+                raise
+            delay = min(5, remaining)
+            # Keep stdout machine-readable for the workflow's publication proof.
+            print(f"{exc}; waiting {delay:g}s for publication", file=sys.stderr, flush=True)
+            sleep(delay)
+            if monotonic() >= deadline:
+                raise
     verified_at = common.timestamp(now or common.utc_now()).astimezone(JST)
     return {"verified": True, "origin": origin, "deployment_id": snapshot.status["deployment_id"],
             "slots": snapshot.status["slots"], "files_verified": len(snapshot.files),

@@ -121,7 +121,7 @@ jobs:
         shell: bash
         run: |
           origin="${WEATHER_ORIGIN:-https://${CLOUDFLARE_PAGES_PROJECT}.pages.dev}"
-          python -m production.build_pages verify --origin "$origin" --expected-dir "$RUNNER_TEMP/weather-site" | tee "$RUNNER_TEMP/weather-verification.json"
+          python -m production.build_pages verify --origin "$origin" --expected-dir "$RUNNER_TEMP/weather-site" --wait-seconds 90 | tee "$RUNNER_TEMP/weather-verification.json"
       - name: Record outcome
         if: always()
         shell: bash

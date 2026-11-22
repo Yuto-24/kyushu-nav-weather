@@ -2,13 +2,17 @@
 from __future__ import annotations
 
 from copy import deepcopy
+from contextlib import contextmanager, redirect_stderr, redirect_stdout
 from datetime import datetime, timedelta
+from io import StringIO
+import json
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import Mock, patch
 
 from production import pages_publication as p
-from production.build_pages import build_pages
+from production.build_pages import build_pages, main as pages_main
 
 
 class PagesPublicationTests(unittest.TestCase):
@@ -101,6 +105,19 @@ class PagesPublicationTests(unittest.TestCase):
     def state(self, directory):
         return {str(path.relative_to(directory)): p.common.sha256(path.read_bytes())
                 for path in directory.rglob("*") if path.is_file()}
+
+    @contextmanager
+    def passing_time(self, start):
+        elapsed = 0.
+
+        def advance(seconds):
+            nonlocal elapsed
+            elapsed += seconds
+
+        with patch.object(p, "monotonic", side_effect=lambda: elapsed), \
+                patch.object(p, "sleep", side_effect=advance) as sleeper, \
+                patch.object(p.common, "utc_now", side_effect=lambda: start + timedelta(seconds=elapsed)):
+            yield sleeper
 
     def test_initial_pending_is_explicit_and_has_real_status_contract(self):
         output = self.root / "pending"
@@ -256,6 +273,99 @@ class PagesPublicationTests(unittest.TestCase):
         with self.assertRaises(p.common.InvalidPackage):
             p.verify_published("https://nav-test.pages.dev", candidate, reader=reader, now=later)
         self.assertEqual(len(reader.calls), 1)
+
+    def test_verify_cli_waits_for_expected_status_then_records_actual_completion(self):
+        previous = self.initial_site()
+        prepared = self.now.replace(hour=4, minute=59, second=58)
+        candidate = self.root / "candidate"
+        build_pages([self.package(now=prepared)], candidate, previous_dir=previous, now=prepared)
+        old_status = (previous / "status.json").read_bytes()
+        reader = self.reader(candidate, lambda path, body, calls: old_status if len(calls) == 1 else body)
+        stdout, stderr = StringIO(), StringIO()
+        argv = ["build_pages", "verify", "--origin", "https://nav-test.pages.dev",
+                "--expected-dir", str(candidate), "--wait-seconds", "90"]
+        with self.passing_time(prepared) as sleeper, patch.object(p, "HTTPReader", return_value=reader), \
+                patch("sys.argv", argv), redirect_stdout(stdout), redirect_stderr(stderr):
+            self.assertEqual(pages_main(), 0)
+        report = json.loads(stdout.getvalue())
+        self.assertTrue(report["verified"])
+        self.assertEqual(report["deployment_id"], p.bounded_json(candidate / "status.json")["deployment_id"])
+        self.assertEqual(report["files_verified"], 11)
+        self.assertEqual(report["verified_publication_at_jst"], "2026-11-22T05:00:03+09:00")
+        self.assertFalse(report["deadline_met"]["0900"])
+        self.assertEqual(reader.calls[:2], [("status.json", p.MAX_STATUS_BYTES)] * 2)
+        sleeper.assert_called_once_with(5)
+        self.assertIn("waiting 5s", stderr.getvalue())
+
+    def test_wait_expires_without_downloading_a_different_deployment(self):
+        previous = self.initial_site()
+        later = self.now + timedelta(minutes=5)
+        candidate = self.root / "candidate"
+        build_pages([self.package(now=later)], candidate, previous_dir=previous, now=later)
+        reader = self.reader(previous)
+        with self.passing_time(later) as sleeper, redirect_stderr(StringIO()), \
+                self.assertRaises(p.DeploymentMismatch) as raised:
+            p.verify_published("https://nav-test.pages.dev", candidate, reader=reader, wait_seconds=12)
+        self.assertEqual([call.args[0] for call in sleeper.call_args_list], [5, 5, 2])
+        self.assertEqual(reader.calls, [("status.json", p.MAX_STATUS_BYTES)] * 3)
+        for directory in (previous, candidate):
+            self.assertIn(p.bounded_json(directory / "status.json")["deployment_id"], str(raised.exception))
+
+    def test_wait_does_not_retry_invalid_status_or_read_errors(self):
+        candidate = self.initial_site()
+        tampered = p.bounded_json(candidate / "status.json")
+        tampered["built_at_jst"] = (self.now - timedelta(seconds=1)).isoformat()
+        cases = [b"{", b"x" * (p.MAX_STATUS_BYTES + 1), p.common.json_bytes(tampered),
+                 p.MissingRemote("HTTP 404"), p.RestoreError("HTTP 403")]
+        for response in cases:
+            reader = Mock(side_effect=response) if isinstance(response, Exception) else Mock(return_value=response)
+            with self.subTest(response=type(response).__name__), patch.object(p, "sleep") as sleeper, \
+                    self.assertRaises((p.common.InvalidPackage, p.RestoreError)):
+                p.verify_published("https://nav-test.pages.dev", candidate, reader=reader,
+                                   now=self.now, wait_seconds=90)
+            self.assertEqual(reader.call_count, 1)
+            sleeper.assert_not_called()
+
+    def test_wait_does_not_hide_corrupt_assets_after_status_converges(self):
+        previous = self.initial_site()
+        later = self.now + timedelta(minutes=5)
+        candidate = self.root / "candidate"
+        build_pages([self.package(now=later)], candidate, previous_dir=previous, now=later)
+
+        def corrupt(path, body, calls):
+            if len(calls) == 1:
+                return (previous / "status.json").read_bytes()
+            return body[:-1] + b"X" if path.endswith(".png") else body
+
+        reader = self.reader(candidate, corrupt)
+        with self.passing_time(later) as sleeper, redirect_stderr(StringIO()), \
+                self.assertRaises(p.common.InvalidPackage):
+            p.verify_published("https://nav-test.pages.dev", candidate, reader=reader, wait_seconds=90)
+        sleeper.assert_called_once_with(5)
+        self.assertTrue(reader.calls[-1][0].endswith(".png"))
+        self.assertEqual(sum(path == "status.json" for path, _ in reader.calls), 2)
+
+    def test_wait_does_not_retry_a_change_during_full_readback(self):
+        candidate = self.initial_site()
+
+        def changed(path, body, calls):
+            if path == "status.json" and len(calls) > 1:
+                return body + b" "
+            return body
+
+        reader = self.reader(candidate, changed)
+        with patch.object(p, "sleep") as sleeper, self.assertRaises(p.common.InvalidPackage):
+            p.verify_published("https://nav-test.pages.dev", candidate, reader=reader,
+                               now=self.now, wait_seconds=90)
+        sleeper.assert_not_called()
+        self.assertEqual(sum(path == "status.json" for path, _ in reader.calls), 2)
+
+    def test_wait_requires_a_bounded_integer_and_an_expected_candidate(self):
+        reader = Mock()
+        for seconds in (-1, 121, 1.5, True, 5):
+            with self.subTest(seconds=seconds), self.assertRaises(p.common.InvalidPackage):
+                p.verify_published("https://nav-test.pages.dev", reader=reader, wait_seconds=seconds)
+        reader.assert_not_called()
 
     def test_oversized_or_path_escaped_pointer_is_rejected_before_asset_requests(self):
         public = self.initial_site()

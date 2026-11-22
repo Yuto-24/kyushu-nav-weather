@@ -171,6 +171,8 @@ def main() -> int:
     verify = commands.add_parser("verify", help="Verify status/pointers/manifests/assets after external deployment")
     verify.add_argument("--origin", required=True)
     verify.add_argument("--expected-dir", type=Path)
+    verify.add_argument("--wait-seconds", type=int, default=0,
+                        help="Wait up to 0–120 seconds for the expected deployment status (requires --expected-dir)")
     args = parser.parse_args()
     if args.command == "build":
         result = build_pages(args.manifest, args.output, previous_dir=args.previous_dir,
@@ -181,7 +183,7 @@ def main() -> int:
     elif args.command == "restore":
         result = pages.restore_previous(args.origin, args.output, allow_empty=args.allow_empty_origin)
     else:
-        result = pages.verify_published(args.origin, args.expected_dir)
+        result = pages.verify_published(args.origin, args.expected_dir, wait_seconds=args.wait_seconds)
     print(json.dumps(result, ensure_ascii=False, allow_nan=False))
     return 0
 
