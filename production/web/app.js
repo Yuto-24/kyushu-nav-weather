@@ -161,7 +161,7 @@
       elements["forecast-generated"].textContent = `${timestampFormatter.format(entry.generated)} JST`;
       elements["pdf-link"].href = entry.pdf;
       elements["png-link"].href = entry.png;
-      elements["forecast-image"].alt = `${entry.date} ${CLOCKS[selected]} JST 九州 NAV LOG`;
+      elements["forecast-image"].alt = `${entry.date} ${CLOCKS[selected]} JST 九州 上空風・気温`;
       if (elements["forecast-image"].src !== entry.png) elements["forecast-image"].src = entry.png;
     }
     const error = errors.get(selected) || configError;

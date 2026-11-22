@@ -1,4 +1,4 @@
-# 九州 NAV LOG — Cloudflare Pages と日次更新
+# 九州 上空風・気温 — Cloudflare Pages と日次更新
 
 固定A〜Jの疑似セクターによる九州共通A4資料を、毎日09:00・14:00の2版として更新する。GitHub ActionsがMSM/GSM取得・計算・描画を担当し、Cloudflare Pagesから生成済みHTML・PNG・PDF・JSONを配信する。Cloudflare Workerは更新状況を確認してActionsを補完起動する。ChatGPTや利用者PCの常時起動に依存しない。
 

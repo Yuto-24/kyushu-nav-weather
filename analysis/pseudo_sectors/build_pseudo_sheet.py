@@ -243,9 +243,9 @@ def is_historical(metadata, generated_at):
 def draw_header(c, metadata, generated_at):
     date = metadata["target_date"].replace("-", ".")
     valid = f"{date}  {metadata['valid_time_jst']} JST"
-    base.text(c,8*mm,198.5*mm,"九州 NAV LOG",14)
+    base.text(c,8*mm,198.5*mm,"九州 上空風・気温",14)
     if is_historical(metadata, generated_at):
-        base.text(c,47.8*mm,198.8*mm,"過去予報",7.9)
+        base.text(c,55*mm,198.8*mm,"過去予報",7.9)
     base.text(c,289*mm,198*mm,valid,18,font="Helvetica-Bold",align="right")
     base.text(c,8*mm,191.8*mm,"SR22 65% BP / フェアリング有 / A/C OFF / MSL=PA",7.3)
     model = metadata.get("model", "MSM")
@@ -265,7 +265,7 @@ def render(forecast, shapes, refs, *, output_dir=OUTPUT, weather_path=WEATHER,
     stem=f"kyushu_pseudo_{m['valid_time_jst'].replace(':','')}_{date.replace('-','')}"
     path=output_dir/f"{stem}.pdf"
     c=canvas.Canvas(str(path),pagesize=(base.W,base.H))
-    c.setTitle(f"九州NAV LOG {date} {m['valid_time_jst']} JST")
+    c.setTitle(f"九州 上空風・気温 {date} {m['valid_time_jst']} JST")
     period = "Historical forecast" if is_historical(m, generated_at) else "Forecast"
     c.setSubject(f"{period}, {m.get('model', 'MSM')}, fixed representative-leg means, SR22 65% BP. Coastline: Natural Earth public domain.")
     header=draw_header(c,m,generated_at)
