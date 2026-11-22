@@ -8,6 +8,16 @@
       "sha256": "d16080798e4997ed05a9dafbf0ee829958c6023e65209ba545e0e58665a90d21"
     },
     {
+      "path": ".github/ISSUE_TEMPLATE/issue.yml",
+      "bytes": 2838,
+      "sha256": "654834b547b8b845a83847f3b327c0e09a578f0914c99a7c7d5a32cc982dcc99"
+    },
+    {
+      "path": ".github/pull_request_template.md",
+      "bytes": 1638,
+      "sha256": "f70b370479712a0f5bff8c0779a081be7b3b5a7110f7285ced400de1dec04b19"
+    },
+    {
       "path": ".github/workflows/verify.yml",
       "bytes": 1620,
       "sha256": "5d25c6ad18ed96613dffe3d8353f7a609c913e7a6c8084f26bbf4a52e117b012"
@@ -26,6 +36,16 @@
       "path": ".python-version",
       "bytes": 5,
       "sha256": "7b55f8e67b5623c4bef3fa691288da9437d79d3aba156de48d481db32ac7d16d"
+    },
+    {
+      "path": "AGENTS.md",
+      "bytes": 12159,
+      "sha256": "70beb2750022cf4b46a6200866149b6b3b2db15a0fa6a4ffa6ec7f5884019daa"
+    },
+    {
+      "path": "README.md",
+      "bytes": 8353,
+      "sha256": "da85c9eaf359b64e7809905a7d5cf9f3c1fb3aa471c30e353752c49493cf889e"
     },
     {
       "path": "analysis/geographic_revision/build_geographic_sheet.py",
@@ -73,14 +93,69 @@
       "sha256": "c9fadf0c1a1a66d22a37e4cdd6bdae73b2fbe40c238a335b4b9b18a4ca2d4157"
     },
     {
+      "path": "docs/README.md",
+      "bytes": 1042,
+      "sha256": "77822b2ee53ffbce48a1478a38c815d33c1646956706a694df2638fd3e524dfa"
+    },
+    {
+      "path": "docs/agent_workflow.md",
+      "bytes": 5504,
+      "sha256": "22e58c6f6fef2978193e9492dcebd83713eb37e6c75b3ccc70a9b040b998d9be"
+    },
+    {
+      "path": "docs/development_worktrees.md",
+      "bytes": 1487,
+      "sha256": "bae8dcacdf7f6714a74fe014f5740330b1378eedbb1f7a434a56440856e88141"
+    },
+    {
+      "path": "docs/knowledge/INDEX.md",
+      "bytes": 1135,
+      "sha256": "1257a8e6e8110f33a03e51f6a6156882d13bf9c2583cde74c10602990fd0a5a4"
+    },
+    {
+      "path": "docs/knowledge/README.md",
+      "bytes": 3620,
+      "sha256": "c2a8e49664e575fa8bfda2a2487cc14731081b7249c9b453c51209ab325bde3c"
+    },
+    {
+      "path": "docs/knowledge/TEMPLATE.md",
+      "bytes": 909,
+      "sha256": "2a320e162bc1c3b65603a97b05af97bc5c0d98b7ee37542895cf91d7fbdd1e3f"
+    },
+    {
+      "path": "docs/knowledge/entries/navmate-defaults.md",
+      "bytes": 2238,
+      "sha256": "1bf0944a59b0536237dccafabc42629a2993d84d1b9c6b3104d90ed4c2ac369e"
+    },
+    {
+      "path": "docs/navmate-wind-input.md",
+      "bytes": 1845,
+      "sha256": "757821947fdc5d6a3d5e50b20163a756c7fb5164245fb614e48c2c129c89c5d8"
+    },
+    {
+      "path": "docs/testing.md",
+      "bytes": 1880,
+      "sha256": "036702881e1c1813bd1bf50fa31f78a500c033cbce4f9c338cbbaabe6c980bcd"
+    },
+    {
+      "path": "docs/ui_copy_review.md",
+      "bytes": 5124,
+      "sha256": "f5dd5c10bf7019f84359d2d831e5ecf652966c9a5137d57ecac093a0b7bb8e09"
+    },
+    {
+      "path": "docs/writing-style.md",
+      "bytes": 9297,
+      "sha256": "f3d653b9c13eb93eb299e77dcdfc192cf3624a35c059ad8b6561746e68a90a66"
+    },
+    {
       "path": "kyushu_coastline.geojson",
       "bytes": 113407,
       "sha256": "0161537ec167e70834eac38c8f00d9a921fa93a53e4190f3af361b839c444bbc"
     },
     {
       "path": "output/kyushu_weather_sector_requirements.md",
-      "bytes": 52711,
-      "sha256": "59e334b4578bdf32b503effbec47031da666eeea7202598b40fc5241a8878e09"
+      "bytes": 53134,
+      "sha256": "345928dddb2e79b5d6265cbfcf34094b9bc298db8c47fca4a8a6f0874528c14d"
     },
     {
       "path": "production/README.md",
@@ -109,8 +184,8 @@
     },
     {
       "path": "production/export_cloudflare.py",
-      "bytes": 4332,
-      "sha256": "fe219db209388987fb8e5c9ca0b1e840e6b9c97f371f945344cc739b1e17f168"
+      "bytes": 4340,
+      "sha256": "8ff2dd0a7a09e2f97512659db0f5688459c2fea8e27a872b4032bde9c5f109a0"
     },
     {
       "path": "production/infra_reuse_notes.md",
@@ -298,6 +373,11 @@
       "sha256": "a9160be82459240b2828df00ab6113e0358a831fbab5426178fe7764a4452bca"
     },
     {
+      "path": "scripts/ui_copy_review.py",
+      "bytes": 9332,
+      "sha256": "fe573aa461f606508a50324a2fac7e9c1d41af1862e017f063a7365f78fc32f9"
+    },
+    {
       "path": "services/weather-trigger/README.md",
       "bytes": 8846,
       "sha256": "8bd802d923db1d057e997fba710347bc869d265134fa25ea1227452da1e94027"
@@ -326,11 +406,6 @@
       "path": "services/weather-trigger/wrangler.jsonc",
       "bytes": 416,
       "sha256": "9358a4e4e637d9822c52db7627ebab6fe7f1e4d00e1940fdc77253d5a3a68b50"
-    },
-    {
-      "path": "README.md",
-      "bytes": 8106,
-      "sha256": "23e0075dd676b05ceba1f4d8f27ec57f9fa0292c6d44c33cb759e88b009f5631"
     }
   ]
 }

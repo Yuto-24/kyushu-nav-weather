@@ -420,3 +420,10 @@ A4横・左右5表の構成を用い、表幅を56 mmから66 mmへ広げる。�
 日付と2枠の一貫性、古い処理の上書き拒否、MSM優先、欠損と地形除外、失敗時の前回完成版保持を引き継ぐ。Workerは小さなstatusと実行metadataだけを扱い、GPV計算を実行しない。画像・PDFはPagesの配布物に含め、Blob/R2は必須としない。外部の受付と公開成功は区別し、アップロード後の読戻しをもって公開を確認する。
 
 専用の非公開repository `Yuto-24/kyushu-nav-weather` を作成した。2026-11-22の実装時点ではCloudflareログインが必要で、Pages公開・Worker配備・Cronは未稼働。Vercelは旧候補として停止状態のまま。既存NavMateのrepositoryやMSM用Worker・Secretは変更していない。
+
+
+## 20. 将来のNavMate連携に用いる風（2026-11-22確定）
+
+紙から手入力する場合と同じ、紙面に表示した丸め後の風向・風速をNAVLOG計算へ入力する。
+風向は10度単位とし、丸め前の成分を計算に混ぜない。リポジトリは分離を維持する。
+適用範囲と未実装部分は [NavMateへ取り込む風の値](../docs/navmate-wind-input.md) に記す。
