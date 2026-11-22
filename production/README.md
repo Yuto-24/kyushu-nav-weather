@@ -4,7 +4,9 @@
 
 ## 運用状態
 
-実際の状態は `production/deployment.json` に記録する。2026-11-22時点では、専用Pages projectと補完Workerを作成し、独自ドメイン `weather.yuto24.com` の接続とDNSを設定した。ドメインはアクティブでSSL有効を確認済み。Workerはobserve、Cronなし、HTTP入口なしで配置済み。Actionsの接続先変数は保存済みだが、2つの専用認証は未設定のため、気象図の公開と自動更新の有効化は未完了。
+公開先は **https://kyushu-wx.yuto24.com**。2026-11-22に09:00・14:00版をMSMの実データで生成し、独自ドメインから画像・PDF・JSONを読み戻して確認した。2つの専用認証を接続し、Actionsの自動更新とWorkerのdispatch/Cronを有効にした。旧 `weather.yuto24.com` の接続とCNAMEは削除済み。
+
+設定と実行の確認結果は `production/deployment.json` に記録する。初回は午後の手動公開であり、締切内の定時更新実績ではない。Workerの実環境でのstatus・GitHub読み取りは成功したが、CPU時間、Workerからのdispatch、自然Cronの実行は未確認。
 
 GitHub repository: https://github.com/Yuto-24/kyushu-nav-weather
 
@@ -17,7 +19,7 @@ GitHub repository: https://github.com/Yuto-24/kyushu-nav-weather
 | 09:00版 | 04:03 / 04:33 | 04:20 / 04:40 | 05:00 |
 | 14:00版 | 09:03 / 09:33 | 09:20 / 09:40 | 10:00 |
 
-ActionsのcronはUTCの `3,33 19 * * *` と `3,33 0 * * *`。Workerは有効化時にUTCの `20,40 0,19 * * *` を設定する。
+ActionsのcronはUTCの `3,33 19 * * *` と `3,33 0 * * *`。Workerの設定はUTCの `20,40 0,19 * * *`。
 
 定時実行では、前のMSM版が完成済みでも最新の取得可能Runを選び直す。20分のWorkerは00分以降、40分のWorkerは25分以降に取得・計算された当日complete MSMが公開されていれば終了する。GSM、地形由来partial、未更新は補完候補とし、GitHubの実行中状態・同じ要求ID・再試行間隔・回数を確認して起動する。画像の再描画時刻で鮮度を更新しない。
 
@@ -64,7 +66,7 @@ python -m production.build_pages build \
 
 1. Cloudflareで独立Pages project `kyushu-nav-weather` を作成する。Direct Uploadを使う。既存 `navmate` projectへこの図だけをdeployしない。
 2. GitHubのこのrepositoryにVariablesを設定する: `CLOUDFLARE_ACCOUNT_ID`、`CLOUDFLARE_PAGES_PROJECT=kyushu-nav-weather`。`WEATHER_AUTOMATION_ENABLED` は初回確認までfalse。Pages Edit権限の認証をSecret `CLOUDFLARE_PAGES_TOKEN` へ設定する。実値をsourceやchatへ書かない。
-3. `weather-daily` を `operation=initialize, trigger=manual, publish=true` で一度だけ実行し、空siteを公開する。この初回は `WEATHER_ORIGIN` 未設定とする。接続済みの独自ドメイン `https://weather.yuto24.com` でHTTPSとstatusの読戻しを確認し、以後 `WEATHER_ORIGIN` に設定する。
+3. `weather-daily` を `operation=initialize, trigger=manual, publish=true` で一度だけ実行し、空siteを公開する。この初回は `WEATHER_ORIGIN` 未設定とする。接続済みの独自ドメイン `https://kyushu-wx.yuto24.com` でHTTPSとstatusの読戻しを確認し、以後 `WEATHER_ORIGIN` に設定する。
 4. `operation=refresh, slot=both, target_date=当日JST, trigger=manual, publish=true` で実生成・公開・全読戻しを確認する。画像の日付・初期値・生成時刻を確認する。利用者向け固定URLとWorkerの参照先には独自ドメインを使う。
 5. `services/weather-trigger/README.md` に従い、新しいWorkerにこのrepositoryだけを対象とするGitHub Actions Read/Write認証をSecret `GITHUB_TOKEN` として接続する。Workerの `STATUS_URL` は確認済みoriginの `/status.json`、repositoryは `Yuto-24/kyushu-nav-weather`、branchはmain。配備時に認証値をログやファイルへ出さない。
 6. Workerをobserveで確認後、`WEATHER_AUTOMATION_ENABLED=true` とWorkerのdispatch/Cronを有効化する。外部設定・予定時刻・実行結果を読み戻して、`production/deployment.json` の状態を更新する。
