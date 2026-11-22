@@ -15,12 +15,14 @@ from __future__ import annotations
 from copy import deepcopy
 from dataclasses import dataclass
 from datetime import datetime, time, timedelta
+from http.client import IncompleteRead
 import json
 import math
 import os
 from pathlib import Path
 import re
 import shutil
+import ssl
 import sys
 import tempfile
 from time import monotonic, sleep
@@ -48,11 +50,28 @@ MAX_WEATHER_BYTES = 4 * 1024 * 1024
 ASSET_LIMITS = {"png": 12 * 1024 * 1024, "pdf": 4 * 1024 * 1024,
                 "weather_json": MAX_WEATHER_BYTES}
 ASSET_MEDIA = {"png": "image/png", "pdf": "application/pdf", "weather_json": "application/json"}
-MAX_SNAPSHOT_BYTES = 44 * 1024 * 1024
-MAX_FETCHES = 16
+MAX_FRONTEND_BYTES = 1024 * 1024
+PUBLIC_FRONTEND = ("index.html", "app.js", "style.css", "config.json", "bootstrap/manifest.json")
+LOCAL_FRONTEND = (*PUBLIC_FRONTEND, "404.html", "_headers")
+MAX_SNAPSHOT_BYTES = 52 * 1024 * 1024
+MAX_FETCHES = 19  # Two status reads, ten forecast files and seven local frontend files.
+MAX_VERIFICATION_SECONDS = 300
+MAX_VERIFICATION_REQUESTS = 96
+MAX_VERIFICATION_BYTES = 128 * 1024 * 1024
 RELEASE_ID = re.compile(r"\d{8}T\d{12}Z-[a-f0-9]{12}")
 FILE_NAME = re.compile(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,179}")
 SHA256 = re.compile(r"[a-f0-9]{64}")
+# The single insertion observed on this origin also matches NavMate's reviewed
+# allowlist. Never learn or broaden this exception from a remote response.
+HTML_END = b"</body>\n</html>\n"
+CLOUDFLARE_ANALYTICS = (
+    b'<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/'
+    b'vce701823e78c4301a35b7e07294d87301792088814092" '
+    b'integrity="sha512-UKNk8GbxkABxKcXYuLkO16EleLGUkcvJWtpSNmExE0Too3ZaFAxTscNWEc1OdAv5/'
+    b'BikHawapSCaiD2XCmp+Bw==" '
+    b'data-cf-beacon=\'{"version":"2024.11.0","token":"95f71c67cb5a41d3ab040fe18f7bcaa4",'
+    b'"r":1,"spa":2}\' crossorigin="anonymous"></script>\n'
+)
 
 
 class PagesError(common.PublicationError):
@@ -67,8 +86,20 @@ class MissingRemote(RestoreError):
     code = "previous_publication_missing"
 
 
-class DeploymentMismatch(common.InvalidPackage):
+class PublicationChanged(common.InvalidPackage):
+    """Mutable published files have not converged to one complete candidate."""
+
+
+class DeploymentMismatch(PublicationChanged):
     """A well-formed status identifies a different deployment candidate."""
+
+
+class TransientReadError(RestoreError):
+    """A read-only HTTP request may succeed after a bounded retry."""
+
+
+class VerificationTimeout(PagesError):
+    """The complete readback exceeded its wall-clock budget."""
 
 
 @dataclass
@@ -132,6 +163,43 @@ def checked_body(record: dict, body: bytes) -> bytes:
     require(len(body) == record["bytes"] and common.sha256(body) == record["sha256"],
             "Artifact byte count or SHA-256 mismatch")
     return body
+
+
+def release_asset_path(record: dict, kind: str, prefix: str) -> str:
+    path = validate_descriptor(record, limit=ASSET_LIMITS[kind], media_type=ASSET_MEDIA[kind])
+    name = path.removeprefix(prefix)
+    require(path.startswith(prefix) and FILE_NAME.fullmatch(name) and name != "manifest.json"
+            and record.get("url") == "/" + path and record.get("download_url") == "/" + path,
+            "Artifact path/URL escaped its immutable release")
+    return path
+
+
+def validate_pointer_paths(pointer: dict, slot: str) -> None:
+    require(pointer.get("schema") == POINTER_SCHEMA and pointer.get("slot") == slot,
+            "Invalid published slot pointer")
+    day = common.day_string(pointer.get("valid_date"))
+    release_id = pointer.get("release_id")
+    require(isinstance(release_id, str) and bool(RELEASE_ID.fullmatch(release_id)), "Invalid release identity")
+    prefix = f"releases/{day}/{slot}/{release_id}/"
+    path = validate_descriptor(pointer.get("manifest", {}), limit=MAX_MANIFEST_BYTES,
+                               expected_path=prefix + "manifest.json")
+    require(pointer.get("manifest_url") == "/" + path, "Manifest URL escaped the fixed site")
+    files = pointer.get("files")
+    require(isinstance(files, dict) and set(files) == set(ASSET_LIMITS), "Invalid release artifact set")
+    for kind, record in files.items():
+        release_asset_path(record, kind, prefix)
+
+
+def check_frontend(path: str, body: bytes, expected_hash: str, *, allow_analytics: bool) -> None:
+    if common.sha256(body) == expected_hash:
+        return
+    suffix = CLOUDFLARE_ANALYTICS + HTML_END
+    if (allow_analytics and path == "index.html" and body.endswith(suffix)
+            and body.count(CLOUDFLARE_ANALYTICS) == 1):
+        original = body[:-len(suffix)] + HTML_END
+        if common.sha256(original) == expected_hash:
+            return
+    raise PublicationChanged(f"Published frontend differs from the candidate: {path}")
 
 
 def local_asset(directory: Path, record: dict, kind: str) -> bytes:
@@ -347,6 +415,20 @@ def validate_status(status: dict) -> None:
     identity = {key: value for key, value in status.items() if key != "deployment_id"}
     require(status["deployment_id"] == "pages-" + common.sha256(common.json_bytes(identity))[:24],
             "Deployment status identity mismatch")
+    for slot, summary in status["slots"].items():
+        if summary is None:
+            continue
+        require(isinstance(summary, dict), "Invalid status slot")
+        common.day_string(summary.get("valid_date"))
+        require(summary.get("quality") in ("complete", "partial") and summary.get("model") in ("MSM", "GSM"),
+                "Invalid status source/quality")
+        release_id = summary.get("release_id")
+        require(isinstance(release_id, str) and bool(RELEASE_ID.fullmatch(release_id)), "Invalid release identity")
+        initial, generated, image_generated = (common.timestamp(summary.get(key)) for key in
+                                                ("initial_time_jst", "generated_at_jst", "image_generated_at_jst"))
+        require(initial <= generated <= image_generated, "Invalid status timestamp order")
+        validate_descriptor(summary.get("pointer", {}), limit=MAX_POINTER_BYTES,
+                            expected_path=f"latest/{slot}.json")
 
 
 class _NoRedirects(HTTPRedirectHandler):
@@ -355,39 +437,70 @@ class _NoRedirects(HTTPRedirectHandler):
 
 
 class HTTPReader:
-    def __init__(self, origin: str):
+    def __init__(self, origin: str, *, deadline: float | None = None):
         self.origin = origin_url(origin)
         self.opener = build_opener(_NoRedirects)
         self.nonce = uuid.uuid4().hex
         self.sequence = 0
+        self.deadline = monotonic() + MAX_VERIFICATION_SECONDS if deadline is None else deadline
+
+    def remaining(self) -> float:
+        seconds = self.deadline - monotonic()
+        if seconds <= 0:
+            raise VerificationTimeout("Publication readback exceeded its 300-second budget")
+        return min(20, seconds)
 
     def __call__(self, path: str, limit: int) -> bytes:
         common.safe_key(path)
         self.sequence += 1
-        request = Request(f"{self.origin}/{path}?_snapshot={self.nonce}-{self.sequence}",
+        # Pages redirects /index.html to /; select the canonical path explicitly.
+        request_path = "" if path == "index.html" else path
+        request = Request(f"{self.origin}/{request_path}?_snapshot={self.nonce}-{self.sequence}",
                           headers={"Accept-Encoding": "identity", "Cache-Control": "no-cache",
                                    "User-Agent": "KyushuNavWeather-PagesPublication/1"})
         try:
-            with self.opener.open(request, timeout=20) as response:
+            with self.opener.open(request, timeout=self.remaining()) as response:
                 if response.status != 200:
                     raise RestoreError("Publication did not return HTTP 200")
                 declared = response.headers.get("Content-Length")
                 if declared is not None and (not declared.isdecimal() or int(declared) > limit):
                     raise RestoreError("Remote artifact exceeds its byte bound")
-                body = response.read(limit + 1)
+                chunks, received = [], 0
+                while received <= limit:
+                    self.remaining()
+                    chunk = response.read1(min(64 * 1024, limit + 1 - received))
+                    self.remaining()
+                    if not chunk:
+                        break
+                    chunks.append(chunk)
+                    received += len(chunk)
+                body = b"".join(chunks)
+                if len(body) > limit:
+                    raise RestoreError("Remote artifact exceeds its byte bound")
+                if declared is not None and len(body) != int(declared):
+                    raise TransientReadError(f"Incomplete published response: {path}")
         except HTTPError as exc:
             if exc.code == 404:
                 raise MissingRemote("Required published file returned HTTP 404") from exc
+            if exc.code in (408, 429) or 500 <= exc.code < 600:
+                raise TransientReadError(f"Publication read failed with HTTP {exc.code}: {path}") from exc
             raise RestoreError(f"Publication read failed with HTTP {exc.code}") from exc
-        except (OSError, URLError) as exc:
-            raise RestoreError("Publication could not be downloaded") from exc
-        if not body or len(body) > limit:
-            raise RestoreError("Remote artifact is empty or exceeds its byte bound")
+        except ssl.SSLError as exc:
+            raise RestoreError("Publication TLS verification failed") from exc
+        except URLError as exc:
+            if isinstance(exc.reason, ssl.SSLError):
+                raise RestoreError("Publication TLS verification failed") from exc
+            raise TransientReadError(f"Publication transport failed: {path}") from exc
+        except (OSError, IncompleteRead) as exc:
+            raise TransientReadError(f"Publication transport was interrupted: {path}") from exc
+        if not body:
+            raise TransientReadError(f"Remote artifact is empty: {path}")
         return body
 
 
 def snapshot_from_reader(reader: Callable[[str, int], bytes], *, now: datetime | None = None,
-                         expected_status: bytes | None = None) -> Snapshot:
+                         expected_status: bytes | None = None, frontend_paths: tuple[str, ...] = (),
+                         allow_analytics: bool = False) -> Snapshot:
     now = now or common.utc_now()
     total, calls = 0, 0
 
@@ -409,22 +522,32 @@ def snapshot_from_reader(reader: Callable[[str, int], bytes], *, now: datetime |
         raise DeploymentMismatch("Live deployment differs from the expected candidate "
                                  f"(expected {expected_id}, observed {status['deployment_id']})")
     files, pointers = {"status.json": status_body}, {}
+    if frontend_paths:
+        hashes = status.get("frontend_sha256")
+        require(isinstance(hashes, dict) and set(hashes) == set(LOCAL_FRONTEND)
+                and all(isinstance(value, str) and SHA256.fullmatch(value) for value in hashes.values()),
+                "Invalid candidate frontend inventory")
+        for path in frontend_paths:
+            require(path in LOCAL_FRONTEND, "Unknown frontend artifact")
+            body = get(path, MAX_FRONTEND_BYTES)
+            check_frontend(path, body, hashes[path], allow_analytics=allow_analytics)
+            files[path] = body
     with tempfile.TemporaryDirectory(prefix="kyushu-pages-verify-") as temporary:
         for slot in SLOTS:
             summary = status["slots"][slot]
             if summary is None:
                 continue
-            require(isinstance(summary, dict), "Invalid status slot")
-            day = common.day_string(summary.get("valid_date"))
-            require(summary.get("quality") in ("complete", "partial") and summary.get("model") in ("MSM", "GSM"),
-                    "Invalid status source/quality")
-            release_id = summary.get("release_id", "")
-            require(isinstance(release_id, str) and bool(RELEASE_ID.fullmatch(release_id)), "Invalid release identity")
+            day, release_id = summary["valid_date"], summary["release_id"]
             prefix = f"releases/{day}/{slot}/{release_id}/"
-            record = summary.get("pointer", {})
-            path = validate_descriptor(record, limit=MAX_POINTER_BYTES, expected_path=f"latest/{slot}.json")
-            pointer_body = checked_body(record, get(path, record["bytes"]))
+            record = summary["pointer"]
+            path = record["path"]
+            pointer_body = get(path, MAX_POINTER_BYTES)
             pointer = json_object(pointer_body)
+            validate_pointer_paths(pointer, slot)
+            try:
+                checked_body(record, pointer_body)
+            except common.InvalidPackage as exc:
+                raise PublicationChanged(f"Published pointer differs from its status: {path}") from exc
             require(pointer.get("schema") == POINTER_SCHEMA and pointer.get("slot") == slot
                     and pointer.get("release_id") == release_id, "Slot pointer identity mismatch")
             for status_key, pointer_key in (("valid_date", "valid_date"), ("quality", "quality"), ("model", "model"),
@@ -449,12 +572,8 @@ def snapshot_from_reader(reader: Callable[[str, int], bytes], *, now: datetime |
             directory = Path(temporary) / slot
             directory.mkdir()
             for kind, record in public_files.items():
-                artifact_path = validate_descriptor(record, limit=ASSET_LIMITS[kind], media_type=ASSET_MEDIA[kind])
+                artifact_path = release_asset_path(record, kind, prefix)
                 name = artifact_path.removeprefix(prefix)
-                require(artifact_path.startswith(prefix) and FILE_NAME.fullmatch(name)
-                        and name != "manifest.json" and record.get("url") == "/" + artifact_path
-                        and record.get("download_url") == "/" + artifact_path,
-                        "Artifact path/URL escaped its immutable release")
                 body = checked_body(record, get(artifact_path, record["bytes"]))
                 files[artifact_path] = body
                 (directory / name).write_bytes(body)
@@ -468,12 +587,14 @@ def snapshot_from_reader(reader: Callable[[str, int], bytes], *, now: datetime |
                         all(public[key] == local[key] for key in ("bytes", "sha256", "media_type")),
                         "Public artifact differs from renderer manifest")
             pointers[slot] = pointer
-    require(get("status.json", MAX_STATUS_BYTES) == status_body,
-            "Publication changed during restoration; retry from its new status")
+    final_status = get("status.json", MAX_STATUS_BYTES)
+    if final_status != status_body:
+        validate_status(json_object(final_status))
+        raise PublicationChanged("Publication changed during readback; restart a complete snapshot")
     return Snapshot(status, pointers, files)
 
 
-def local_snapshot(directory: Path, *, now: datetime | None = None) -> Snapshot:
+def local_snapshot(directory: Path, *, now: datetime | None = None, include_frontend: bool = False) -> Snapshot:
     directory = Path(directory).resolve()
 
     def reader(path, limit):
@@ -482,7 +603,7 @@ def local_snapshot(directory: Path, *, now: datetime | None = None) -> Snapshot:
                 "A required local publication file is absent, outside the site or too large")
         return source.read_bytes()
 
-    return snapshot_from_reader(reader, now=now)
+    return snapshot_from_reader(reader, now=now, frontend_paths=LOCAL_FRONTEND if include_frontend else ())
 
 
 def write_snapshot(directory: Path, files: dict[str, bytes]) -> None:
@@ -542,35 +663,62 @@ def restore_previous(origin: str, destination: Path, *, allow_empty: bool = Fals
 
 def verify_published(origin: str, expected_dir: Path | None = None, *, reader: Callable | None = None,
                      now: datetime | None = None, wait_seconds: int = 0) -> dict:
-    """Read back every weather asset, optionally waiting for the expected status."""
+    """Read a complete weather/viewer snapshot with bounded post-upload retries."""
     origin = origin_url(origin)
     require(type(wait_seconds) is int and 0 <= wait_seconds <= 120,
             "Deployment wait must be an integer from 0 to 120 seconds")
     require(not wait_seconds or expected_dir is not None, "Deployment wait requires an expected directory")
     expected = None
     if expected_dir is not None:
-        local = local_snapshot(expected_dir, now=now)
+        local = local_snapshot(expected_dir, now=now, include_frontend=True)
         expected = local.files["status.json"]
-    source = reader or HTTPReader(origin)
-    deadline = monotonic() + wait_seconds
+    started = monotonic()
+    retry_deadline, deadline = started + wait_seconds, started + MAX_VERIFICATION_SECONDS
+    source = reader or HTTPReader(origin, deadline=deadline)
+    requests, reserved_bytes, attempts = 0, 0, 0
+
+    def read(path, limit):
+        nonlocal requests, reserved_bytes
+        if monotonic() >= deadline:
+            raise VerificationTimeout("Publication readback exceeded its 300-second budget")
+        requests += 1
+        # Reserve the maximum response before issuing a request, including failed
+        # and partial reads. This bounds all attempts without trusting received data.
+        reserved_bytes += limit + 1
+        require(requests <= MAX_VERIFICATION_REQUESTS, "Publication exhausted its cumulative request budget")
+        require(reserved_bytes <= MAX_VERIFICATION_BYTES, "Publication exhausted its cumulative byte budget")
+        body = source(path, limit)
+        if monotonic() >= deadline:
+            raise VerificationTimeout("Publication readback exceeded its 300-second budget")
+        return body
+
     while True:
+        attempts += 1
         try:
-            snapshot = snapshot_from_reader(source, now=now, expected_status=expected)
+            snapshot = snapshot_from_reader(read, now=now, expected_status=expected,
+                                            frontend_paths=PUBLIC_FRONTEND, allow_analytics=True)
             break
-        except DeploymentMismatch as exc:
-            remaining = deadline - monotonic()
+        except (PublicationChanged, TransientReadError, MissingRemote) as exc:
+            remaining = min(retry_deadline, deadline) - monotonic()
             if remaining <= 0:
                 raise
             delay = min(5, remaining)
             # Keep stdout machine-readable for the workflow's publication proof.
             print(f"{exc}; waiting {delay:g}s for publication", file=sys.stderr, flush=True)
             sleep(delay)
-            if monotonic() >= deadline:
+            if monotonic() >= min(retry_deadline, deadline):
                 raise
+    if monotonic() >= deadline:
+        raise VerificationTimeout("Publication readback exceeded its 300-second budget")
     verified_at = common.timestamp(now or common.utc_now()).astimezone(JST)
     return {"verified": True, "origin": origin, "deployment_id": snapshot.status["deployment_id"],
             "slots": snapshot.status["slots"], "files_verified": len(snapshot.files),
             "bytes_verified": sum(map(len, snapshot.files.values())),
+            "attempts": attempts, "requests": requests,
+            "frontend_verified": list(PUBLIC_FRONTEND),
+            "root_html_transform": ("none" if common.sha256(snapshot.files["index.html"])
+                                    == snapshot.status["frontend_sha256"]["index.html"]
+                                    else "pinned_cloudflare_analytics"),
             "verified_publication_at_jst": verified_at.isoformat(),
             "deadline_met": {slot: verified_at <= common.timestamp(pointer["publication_deadline_jst"])
                              for slot, pointer in snapshot.pointers.items()},

@@ -316,7 +316,7 @@ def predeploy(args) -> dict:
     report = json.loads(args.report.read_text())
     if not plan.publish or not report.get("changed"):
         raise JobError("This job did not prepare an authorized publication")
-    snapshot = local_snapshot(args.directory)
+    snapshot = local_snapshot(args.directory, include_frontend=True)
     if snapshot.status["deployment_id"] != report["build"]["deployment_id"]:
         raise JobError("Candidate identity changed after assembly")
     if plan.operation == "refresh":

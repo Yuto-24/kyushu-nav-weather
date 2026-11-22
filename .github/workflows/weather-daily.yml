@@ -114,6 +114,7 @@ jobs:
           python -m production.actions_job predeploy "${args[@]}"
           services/weather-trigger/node_modules/.bin/wrangler pages deploy "$RUNNER_TEMP/weather-site" --project-name "$CLOUDFLARE_PAGES_PROJECT" --branch main
       - name: Verify public files and both forecast identities
+        timeout-minutes: 5
         if: steps.candidate.outputs.changed == 'true' && steps.plan.outputs.publish == 'true'
         env:
           WEATHER_ORIGIN: ${{ vars.WEATHER_ORIGIN }}

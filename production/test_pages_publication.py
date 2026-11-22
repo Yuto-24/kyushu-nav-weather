@@ -4,12 +4,13 @@ from __future__ import annotations
 from copy import deepcopy
 from contextlib import contextmanager, redirect_stderr, redirect_stdout
 from datetime import datetime, timedelta
-from io import StringIO
+from io import BytesIO, StringIO
 import json
 from pathlib import Path
 import tempfile
 import unittest
 from unittest.mock import Mock, patch
+from urllib.parse import urlsplit
 
 from production import pages_publication as p
 from production.build_pages import build_pages, main as pages_main
@@ -174,7 +175,7 @@ class PagesPublicationTests(unittest.TestCase):
             self.assertEqual((restored / f"latest/{slot}.json").read_bytes(), (public / f"latest/{slot}.json").read_bytes())
         verified = p.verify_published("https://nav-test.pages.dev", public, reader=self.reader(public), now=self.now)
         self.assertTrue(verified["verified"])
-        self.assertEqual(verified["files_verified"], 11)
+        self.assertEqual(verified["files_verified"], 16)
 
     def test_restore_digest_failure_does_not_replace_previous_local_snapshot(self):
         public = self.initial_site()
@@ -290,7 +291,7 @@ class PagesPublicationTests(unittest.TestCase):
         report = json.loads(stdout.getvalue())
         self.assertTrue(report["verified"])
         self.assertEqual(report["deployment_id"], p.bounded_json(candidate / "status.json")["deployment_id"])
-        self.assertEqual(report["files_verified"], 11)
+        self.assertEqual(report["files_verified"], 16)
         self.assertEqual(report["verified_publication_at_jst"], "2026-11-22T05:00:03+09:00")
         self.assertFalse(report["deadline_met"]["0900"])
         self.assertEqual(reader.calls[:2], [("status.json", p.MAX_STATUS_BYTES)] * 2)
@@ -316,7 +317,7 @@ class PagesPublicationTests(unittest.TestCase):
         tampered = p.bounded_json(candidate / "status.json")
         tampered["built_at_jst"] = (self.now - timedelta(seconds=1)).isoformat()
         cases = [b"{", b"x" * (p.MAX_STATUS_BYTES + 1), p.common.json_bytes(tampered),
-                 p.MissingRemote("HTTP 404"), p.RestoreError("HTTP 403")]
+                 p.RestoreError("HTTP 403")]
         for response in cases:
             reader = Mock(side_effect=response) if isinstance(response, Exception) else Mock(return_value=response)
             with self.subTest(response=type(response).__name__), patch.object(p, "sleep") as sleeper, \
@@ -345,20 +346,22 @@ class PagesPublicationTests(unittest.TestCase):
         self.assertTrue(reader.calls[-1][0].endswith(".png"))
         self.assertEqual(sum(path == "status.json" for path, _ in reader.calls), 2)
 
-    def test_wait_does_not_retry_a_change_during_full_readback(self):
+    def test_wait_retries_a_valid_change_during_full_readback(self):
         candidate = self.initial_site()
 
         def changed(path, body, calls):
-            if path == "status.json" and len(calls) > 1:
+            if path == "status.json" and sum(key == path for key, _ in calls) == 2:
                 return body + b" "
             return body
 
         reader = self.reader(candidate, changed)
-        with patch.object(p, "sleep") as sleeper, self.assertRaises(p.common.InvalidPackage):
-            p.verify_published("https://nav-test.pages.dev", candidate, reader=reader,
-                               now=self.now, wait_seconds=90)
-        sleeper.assert_not_called()
-        self.assertEqual(sum(path == "status.json" for path, _ in reader.calls), 2)
+        with self.passing_time(self.now) as sleeper, redirect_stderr(StringIO()):
+            report = p.verify_published("https://nav-test.pages.dev", candidate, reader=reader,
+                                        now=self.now, wait_seconds=90)
+        self.assertTrue(report["verified"])
+        sleeper.assert_called_once_with(5)
+        self.assertEqual(sum(path == "status.json" for path, _ in reader.calls), 4)
+        self.assertEqual(sum(path.endswith(".png") for path, _ in reader.calls), 4)
 
     def test_wait_requires_a_bounded_integer_and_an_expected_candidate(self):
         reader = Mock()
@@ -366,6 +369,202 @@ class PagesPublicationTests(unittest.TestCase):
             with self.subTest(seconds=seconds), self.assertRaises(p.common.InvalidPackage):
                 p.verify_published("https://nav-test.pages.dev", reader=reader, wait_seconds=seconds)
         reader.assert_not_called()
+
+    def test_partial_pointer_transition_restarts_a_complete_readback(self):
+        previous = self.initial_site()
+        later = self.now + timedelta(minutes=5)
+        candidate = self.root / "candidate"
+        build_pages([self.package(now=later)], candidate, previous_dir=previous, now=later)
+
+        def transitioning(path, body, calls):
+            if path == "latest/0900.json" and sum(key == path for key, _ in calls) == 1:
+                return (previous / path).read_bytes()
+            return body
+
+        reader = self.reader(candidate, transitioning)
+        with self.passing_time(later) as sleeper, redirect_stderr(StringIO()):
+            report = p.verify_published("https://nav-test.pages.dev", candidate,
+                                        reader=reader, wait_seconds=90)
+        self.assertTrue(report["verified"])
+        sleeper.assert_called_once_with(5)
+        self.assertEqual(sum(path == "status.json" for path, _ in reader.calls), 3)
+
+    def test_post_upload_missing_file_can_become_available(self):
+        candidate = self.initial_site()
+
+        def appearing(path, body, calls):
+            if path.endswith(".png") and sum(key == path for key, _ in calls) == 1:
+                raise p.MissingRemote("HTTP 404")
+            return body
+
+        reader = self.reader(candidate, appearing)
+        with self.passing_time(self.now) as sleeper, redirect_stderr(StringIO()):
+            report = p.verify_published("https://nav-test.pages.dev", candidate,
+                                        reader=reader, wait_seconds=90)
+        self.assertTrue(report["verified"])
+        self.assertEqual(sleeper.call_count, 2)
+        self.assertEqual(report["attempts"], 3)
+
+    def test_stale_frontend_cannot_pass_with_matching_weather_and_status(self):
+        candidate = self.initial_site()
+        for target in ("app.js", "config.json", "bootstrap/manifest.json"):
+            with self.subTest(target=target), self.assertRaises(p.common.InvalidPackage):
+                p.verify_published("https://nav-test.pages.dev", candidate, now=self.now,
+                    reader=self.reader(candidate, lambda path, body, calls: b"old" if path == target else body))
+
+    def test_frontend_transition_is_checked_before_weather_downloads(self):
+        candidate = self.initial_site()
+
+        def transitioning(path, body, calls):
+            if path == "app.js" and sum(key == path for key, _ in calls) == 1:
+                return b"old script"
+            return body
+
+        reader = self.reader(candidate, transitioning)
+        with self.passing_time(self.now), redirect_stderr(StringIO()):
+            report = p.verify_published("https://nav-test.pages.dev", candidate, reader=reader, wait_seconds=90)
+        self.assertEqual(report["attempts"], 2)
+        self.assertEqual(sum(path.endswith(".png") for path, _ in reader.calls), 2)
+        self.assertEqual(report["frontend_verified"], list(p.PUBLIC_FRONTEND))
+        self.assertEqual(report["root_html_transform"], "none")
+
+    def test_candidate_frontend_is_validated_without_requiring_it_in_restored_weather(self):
+        candidate = self.initial_site()
+        restored = self.root / "restored"
+        p.restore_previous("https://nav-test.pages.dev", restored, reader=self.reader(candidate), now=self.now)
+        self.assertFalse((restored / "app.js").exists())
+        p.local_snapshot(restored, now=self.now)
+        later = self.now + timedelta(minutes=5)
+        build_pages([self.package(now=later)], self.root / "next", previous_dir=restored, now=later)
+        (candidate / "app.js").write_text("changed after build")
+        reader = Mock()
+        with self.assertRaises(p.common.InvalidPackage):
+            p.verify_published("https://nav-test.pages.dev", candidate, reader=reader, now=later, wait_seconds=90)
+        reader.assert_not_called()
+
+    def test_only_one_exact_analytics_insertion_at_html_end_is_accepted(self):
+        candidate = self.initial_site()
+        original = (candidate / "index.html").read_bytes()
+        transformed = original[:-len(p.HTML_END)] + p.CLOUDFLARE_ANALYTICS + p.HTML_END
+        reader = self.reader(candidate, lambda path, body, calls: transformed if path == "index.html" else body)
+        report = p.verify_published("https://nav-test.pages.dev", candidate, reader=reader, now=self.now)
+        self.assertEqual(report["root_html_transform"], "pinned_cloudflare_analytics")
+        invalid = [
+            transformed.replace(p.CLOUDFLARE_ANALYTICS, p.CLOUDFLARE_ANALYTICS * 2),
+            p.CLOUDFLARE_ANALYTICS + original,
+            transformed.replace(b"<title>", b"<title>old "),
+            transformed.replace(b"beacon.min.js/vce7018", b"beacon.min.js/unknown"),
+        ]
+        for body in invalid:
+            with self.subTest(body_bytes=len(body)), self.assertRaises(p.common.InvalidPackage):
+                p.verify_published("https://nav-test.pages.dev", candidate, now=self.now,
+                    reader=self.reader(candidate, lambda path, content, calls: body if path == "index.html" else content))
+
+    def test_invalid_pointer_paths_and_final_status_do_not_retry(self):
+        candidate = self.initial_site()
+
+        def bad_pointer(path, body, calls):
+            if path == "latest/0900.json":
+                value = p.json_object(body)
+                value["files"]["png"]["path"] = "../escaped.png"
+                return p.common.json_bytes(value)
+            return body
+
+        def bad_final(path, body, calls):
+            return b"{" if path == "status.json" and len(calls) > 1 else body
+
+        for mutate in (bad_pointer, bad_final):
+            with self.subTest(case=mutate.__name__), patch.object(p, "sleep") as sleeper, \
+                    self.assertRaises(p.common.InvalidPackage):
+                p.verify_published("https://nav-test.pages.dev", candidate, now=self.now,
+                                   reader=self.reader(candidate, mutate), wait_seconds=90)
+            sleeper.assert_not_called()
+
+    def test_invalid_status_slots_fail_before_deployment_wait(self):
+        candidate = self.initial_site()
+        original = p.bounded_json(candidate / "status.json")
+        slot = original["slots"]["0900"]
+        invalid = [42, {}, {**slot, "model": "unknown"}, {**slot, "generated_at_jst": "bad"},
+                   {**slot, "pointer": {**slot["pointer"], "path": "../escape.json"}},
+                   {**slot, "pointer": {**slot["pointer"], "bytes": p.MAX_POINTER_BYTES + 1}},
+                   {**slot, "pointer": {**slot["pointer"], "sha256": "bad"}}]
+        for summary in invalid:
+            status = deepcopy(original)
+            status["slots"]["0900"] = summary
+            status.pop("deployment_id")
+            status["deployment_id"] = "pages-" + p.common.sha256(p.common.json_bytes(status))[:24]
+            reader = Mock(return_value=p.common.json_bytes(status))
+            with self.subTest(summary=summary), patch.object(p, "sleep") as sleeper, \
+                    self.assertRaises(p.common.InvalidPackage) as raised:
+                p.verify_published("https://nav-test.pages.dev", candidate, reader=reader,
+                                   now=self.now, wait_seconds=90)
+            self.assertNotIsInstance(raised.exception, p.PublicationChanged)
+            reader.assert_called_once_with("status.json", p.MAX_STATUS_BYTES)
+            sleeper.assert_not_called()
+
+    def test_complete_transfer_is_not_restarted_at_a_short_attempt_timeout(self):
+        candidate = self.initial_site()
+
+        def slow(path, body, calls):
+            if path.endswith(".png"):
+                p.sleep(40)  # Simulate useful streaming work, not a failed attempt.
+            return body
+
+        with self.passing_time(self.now):
+            report = p.verify_published("https://nav-test.pages.dev", candidate,
+                                        reader=self.reader(candidate, slow), wait_seconds=90)
+        self.assertEqual(report["attempts"], 1)
+        self.assertEqual(report["verified_publication_at_jst"], (self.now + timedelta(seconds=80)).isoformat())
+
+    def test_late_complete_readback_cannot_report_success(self):
+        candidate = self.initial_site()
+
+        def late(path, body, calls):
+            if path == "status.json" and len(calls) > 1:
+                p.sleep(p.MAX_VERIFICATION_SECONDS)
+            return body
+
+        with self.passing_time(self.now), self.assertRaises(p.VerificationTimeout):
+            p.verify_published("https://nav-test.pages.dev", candidate,
+                               reader=self.reader(candidate, late), wait_seconds=90)
+
+    def test_failed_requests_consume_the_shared_request_and_byte_budgets(self):
+        candidate = self.initial_site()
+        limits = [("MAX_VERIFICATION_REQUESTS", 2),
+                  ("MAX_VERIFICATION_BYTES", 2 * (p.MAX_STATUS_BYTES + 1))]
+        for name, maximum in limits:
+            reader = Mock(side_effect=p.TransientReadError("temporary outage"))
+            with self.subTest(budget=name), patch.object(p, name, maximum), self.passing_time(self.now), \
+                    redirect_stderr(StringIO()), self.assertRaises(p.common.InvalidPackage):
+                p.verify_published("https://nav-test.pages.dev", candidate, reader=reader, wait_seconds=90)
+            self.assertEqual(reader.call_count, 2)
+
+    def test_real_http_reader_recovers_a_503_then_verifies_all_files(self):
+        candidate = self.initial_site()
+        source = p.HTTPReader("https://nav-test.pages.dev")
+        requests = []
+
+        def open_response(request, timeout):
+            requests.append(request)
+            if len(requests) == 1:
+                raise p.HTTPError(request.full_url, 503, "Unavailable", {}, None)
+            path = urlsplit(request.full_url).path.lstrip("/") or "index.html"
+            body = (candidate / path).read_bytes()
+            response = BytesIO(body)
+            response.status, response.headers = 200, {"Content-Length": str(len(body))}
+            return response
+
+        source.opener = Mock()
+        source.opener.open.side_effect = open_response
+        with self.passing_time(self.now) as sleeper, redirect_stderr(StringIO()):
+            report = p.verify_published("https://nav-test.pages.dev", candidate, reader=source, wait_seconds=90)
+        self.assertTrue(report["verified"])
+        self.assertEqual(report["attempts"], 2)
+        self.assertEqual(report["requests"], 18)
+        sleeper.assert_called_once_with(5)
+        urls = [request.full_url for request in requests]
+        self.assertEqual(len(urls), len(set(urls)))
+        self.assertIn("/", [urlsplit(url).path for url in urls])
 
     def test_oversized_or_path_escaped_pointer_is_rejected_before_asset_requests(self):
         public = self.initial_site()
@@ -380,6 +579,65 @@ class PagesPublicationTests(unittest.TestCase):
         self.assertEqual(len(reader.calls), 1)
         with self.assertRaises(p.common.InvalidPackage):
             p.validate_descriptor(p.descriptor("../private.json", b"{}"), limit=100)
+
+
+class HTTPReaderTests(unittest.TestCase):
+    def source(self, body=b"ok", *, declared="2", error=None):
+        source = p.HTTPReader("https://nav-test.pages.dev")
+        source.opener = Mock()
+        if error is not None:
+            source.opener.open.side_effect = error
+        else:
+            response = BytesIO(body)
+            response.status = 200
+            response.headers = {} if declared is None else {"Content-Length": declared}
+            source.opener.open.return_value = response
+        return source
+
+    def test_transient_http_and_transport_errors_are_classified(self):
+        errors = [p.HTTPError("https://nav-test.pages.dev/status.json", code, "failure", {}, None)
+                  for code in (408, 429, 500, 503, 504)]
+        errors += [p.URLError(TimeoutError()), p.IncompleteRead(b"partial", 20), ConnectionResetError()]
+        for error in errors:
+            with self.subTest(error=type(error).__name__), self.assertRaises(p.TransientReadError):
+                self.source(error=error)("status.json", 100)
+
+    def test_auth_redirect_tls_and_oversize_are_not_transient(self):
+        errors = [p.HTTPError("https://nav-test.pages.dev/status.json", code, "failure", {}, None)
+                  for code in (301, 308, 401, 403)]
+        errors += [p.ssl.SSLCertVerificationError(), p.URLError(p.ssl.SSLCertVerificationError())]
+        sources = [self.source(error=error) for error in errors]
+        sources += [self.source(b"xxx", declared=None), self.source(b"xxx", declared="1"),
+                    self.source(b"ok", declared="101")]
+        for source in sources:
+            with self.subTest(source=source), self.assertRaises(p.RestoreError) as raised:
+                source("status.json", 2)
+            self.assertNotIsInstance(raised.exception, p.TransientReadError)
+
+    def test_short_response_and_interrupted_body_are_retryable(self):
+        with self.assertRaises(p.TransientReadError):
+            self.source(b"short", declared="20")("status.json", 100)
+        source = self.source()
+        source.opener.open.return_value.read1 = Mock(side_effect=p.IncompleteRead(b"x", 1))
+        with self.assertRaises(p.TransientReadError):
+            source("status.json", 100)
+
+    def test_slow_stream_cannot_extend_the_total_deadline(self):
+        elapsed = 0.
+
+        def trickle(size):
+            nonlocal elapsed
+            elapsed += 1
+            return b"x"
+
+        source = self.source(b"", declared=None)
+        source.deadline = 3
+        response = source.opener.open.return_value
+        response.read1 = Mock(side_effect=trickle)
+        with patch.object(p, "monotonic", side_effect=lambda: elapsed), self.assertRaises(p.VerificationTimeout):
+            source("status.json", 100)
+        self.assertEqual(response.read1.call_count, 3)
+        self.assertTrue(response.closed)
 
 
 if __name__ == "__main__":
