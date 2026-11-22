@@ -1,0 +1,81 @@
+name: Issue
+description: 九州 NAV LOG 気象資料の改善、不具合、運用変更などを起票します
+title: ""
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        [文章の規範](https://github.com/Yuto-24/kyushu-nav-weather/blob/main/docs/writing-style.md)に従い、解決したい問題・対象範囲・完了条件を中心に記載してください。
+        現在の状態を先に、詳細な経緯やログは補足に分けてください。
+
+  - type: dropdown
+    id: type
+    attributes:
+      label: 種別
+      description: このIssueに最も近い種別を選んでください。
+      options:
+        - Bug
+        - Feature
+        - Improvement
+        - Refactor
+        - Documentation
+        - CI / Repository
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: background
+    attributes:
+      label: 背景 / 問題
+      description: なぜこのIssueが必要なのか、現在困っていることや改善したい点を書いてください。
+      placeholder: 例：更新処理が成功しても、閲覧ページに前日の図が表示される。
+    validations:
+      required: true
+
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+      description: このIssueで達成したい状態を書いてください。
+      placeholder: 例：公開済みの当日版を固定URLから確認できるようにする。
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: 対象範囲
+      description: 今回扱う機能・場面を書いてください。実装方法の固定は不要です。
+      placeholder: 例：予報の公開処理と閲覧ページの更新。
+    validations:
+      required: false
+
+  - type: textarea
+    id: non_goals
+    attributes:
+      label: Non-Goals
+      description: 今回は扱わないことや、別Issueへ分けることがあれば書いてください。
+      placeholder: 例：UI全体の再設計は別Issueで扱う。
+    validations:
+      required: false
+
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: 受入条件
+      description: 完了したと判断できる、確認可能な条件を書いてください。
+      placeholder: |
+        - [ ] 更新した版の対象日と予報時刻が表示される
+        - [ ] 更新失敗時に直前の正常版が保持される
+        - [ ] 必要な検証で変更後の動作を確認できる
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional_context
+    attributes:
+      label: 補足情報
+      description: 関連Issue / PR、スクリーンショット、ログ、資料URLなどがあれば記載してください。
+      placeholder: "例：Related: #123 保存内容の復元"

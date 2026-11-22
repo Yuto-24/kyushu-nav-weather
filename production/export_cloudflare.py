@@ -10,7 +10,9 @@ import shutil
 
 ROOT = Path(__file__).resolve().parents[1]
 FIXED = [
-    ".python-version", ".gitignore", ".env.example", "requirements.txt",
+    ".python-version", ".gitignore", ".env.example", "requirements.txt", "README.md", "AGENTS.md",
+    ".github/pull_request_template.md", ".github/ISSUE_TEMPLATE/issue.yml",
+    "scripts/ui_copy_review.py",
     "kyushu_coastline.geojson", "route_reference_draft.json",
     "analysis/geographic_revision/build_geographic_sheet.py",
     "analysis/pseudo_sectors/build_pseudo_sheet.py",
@@ -52,6 +54,7 @@ def export(output: Path) -> dict:
     paths.update(path for path in (ROOT / "production/weather_assets").rglob("*")
                  if path.is_file() and "__pycache__" not in path.parts)
     paths.update((ROOT / "production/web").glob("*"))
+    paths.update(path for path in (ROOT / "docs").rglob("*") if path.is_file())
     records = []
     for source in sorted(paths):
         name = source.relative_to(ROOT).as_posix()
@@ -62,9 +65,6 @@ def export(output: Path) -> dict:
         body = source.read_bytes()
         target.write_bytes(body)
         records.append({"path": name, "bytes": len(body), "sha256": hashlib.sha256(body).hexdigest()})
-    body = (ROOT / "production/README.md").read_bytes()
-    (output / "README.md").write_bytes(body)
-    records.append({"path": "README.md", "bytes": len(body), "sha256": hashlib.sha256(body).hexdigest()})
     manifest = {"schema": "kyushu-cloudflare-source-1", "repository": "Yuto-24/kyushu-nav-weather",
                 "files": records}
     (output / "source_manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n")

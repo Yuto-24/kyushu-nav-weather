@@ -8,6 +8,9 @@
 
 GitHub repository: https://github.com/Yuto-24/kyushu-nav-weather
 
+開発ルールは [AGENTS.md](AGENTS.md)、仕様・手順・再利用知見は [docs/README.md](docs/README.md) を入口とする。
+将来NavMateへ取り込む風は、[紙面と同じ丸め後の値](docs/navmate-wind-input.md)を使う。
+
 以前検討したVercel案は採用しない。既存NavMateとは独立したrepository、Pages project、Workerで運用し、既存MSMの起動・認証・配布物を上書きしない。source repositoryは非公開、完成した気象図の閲覧ページは公開する。
 
 ## 実行時刻
