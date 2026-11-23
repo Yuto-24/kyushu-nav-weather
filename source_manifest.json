@@ -379,8 +379,8 @@
     },
     {
       "path": "services/weather-trigger/README.md",
-      "bytes": 9728,
-      "sha256": "d2103ef36788a5189e045ae1293cbda4cd5d760f1d012be488d69751dd16fc19"
+      "bytes": 10691,
+      "sha256": "c2bf4108406c38ebb944200f86c72647a5f81e922782a0ace210515ce9c72f99"
     },
     {
       "path": "services/weather-trigger/package-lock.json",
@@ -394,13 +394,13 @@
     },
     {
       "path": "services/weather-trigger/worker.mjs",
-      "bytes": 13835,
-      "sha256": "4e9dc4c587dc3b6553f569ae62b0b38d2e8470ef2bb8bdb5fe0144434f1f6dd4"
+      "bytes": 13971,
+      "sha256": "b504c9affaf04982a724982c36e155369d5adac6b2d073124485b0eb5df9f128"
     },
     {
       "path": "services/weather-trigger/worker.test.mjs",
-      "bytes": 13326,
-      "sha256": "40b6acfe70807204a80fcc596bd5914d68c6534f3b752da8b35ac9ea4505c658"
+      "bytes": 14546,
+      "sha256": "915b7a10b4337ac49b55cd8a8d296f8fa0a7c6067fa4d91370165deabb3f5e15"
     },
     {
       "path": "services/weather-trigger/wrangler.jsonc",
