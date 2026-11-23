@@ -19,8 +19,8 @@
     },
     {
       "path": ".github/workflows/deploy-worker.yml",
-      "bytes": 2765,
-      "sha256": "b216be17f23ca701bdbe12aba3bf790a86b7bec1655af951bf565101b95a6598"
+      "bytes": 2769,
+      "sha256": "d8cba89faae378a3524e56bdc3e40d5419c8e7244ab0730e151548e0c69c8963"
     },
     {
       "path": ".github/workflows/verify.yml",
@@ -164,8 +164,8 @@
     },
     {
       "path": "production/README.md",
-      "bytes": 13483,
-      "sha256": "1b4266400f0a6ed5c53759562cf1cb0863cf1968c6faed4182cca64b6ce358c1"
+      "bytes": 13729,
+      "sha256": "8453b1997ed64097fb76622ec411fe45d2c5f0b696fa0fec900cf353abfc5388"
     },
     {
       "path": "production/WEATHER_PIPELINE.md",
@@ -174,8 +174,8 @@
     },
     {
       "path": "production/actions_job.py",
-      "bytes": 19696,
-      "sha256": "5af06e003c4b68d14ab4624433068b3c7311a228a18cf0f75fe24dcaa2e2564c"
+      "bytes": 19816,
+      "sha256": "d3b7e8c24aec01aacd0143ad6eb722258771d2d50cc660e2b52a8e7c9b36f753"
     },
     {
       "path": "production/build_pages.py",
@@ -194,8 +194,8 @@
     },
     {
       "path": "production/infra_reuse_notes.md",
-      "bytes": 45335,
-      "sha256": "729549145cff14182cd3dddd6e8a6abf7c3204e2dea6c4fec86c8fd8591505a4"
+      "bytes": 46683,
+      "sha256": "1db9e987e4b133c007cf8ce788ecccc331fdefd9aff98333fc9649f63f6725db"
     },
     {
       "path": "production/pages_publication.py",
@@ -229,8 +229,8 @@
     },
     {
       "path": "production/test_actions_job.py",
-      "bytes": 10687,
-      "sha256": "675d4c7381816373315a30d2fdbe6bb17602673eb36d5764c598b47ce521676e"
+      "bytes": 13073,
+      "sha256": "de9f747ce5b94b26f7025a3079c42aec2636ff4c91ecf38bac26cc9142712d36"
     },
     {
       "path": "production/test_pages_publication.py",
@@ -384,8 +384,8 @@
     },
     {
       "path": "services/weather-trigger/README.md",
-      "bytes": 15019,
-      "sha256": "641ece1bf1be578edb0c45d54d79045f25a89e1fbff41664a56a1acd12baef08"
+      "bytes": 15446,
+      "sha256": "3e0de6a136f83ce580632c3de281368b8e05a551df632a62b1237ae9493f58c3"
     },
     {
       "path": "services/weather-trigger/package-lock.json",
@@ -399,18 +399,18 @@
     },
     {
       "path": "services/weather-trigger/worker.mjs",
-      "bytes": 14684,
-      "sha256": "55f5ce2b47877938e6aeb4d157757ba9c7a3301793b74ac97d617b33449028d2"
+      "bytes": 15180,
+      "sha256": "48b8ac571d25cae22f5abe51dfae129c72770da9da599045e1ff6d3dfbfb7f30"
     },
     {
       "path": "services/weather-trigger/worker.test.mjs",
-      "bytes": 20104,
-      "sha256": "2e9e2b952c345919309c8aea765c31adc3af0ab807a0b2a51583ed24104b0884"
+      "bytes": 22477,
+      "sha256": "e5e407a5161069904e98c6d3cc42421bf7d777f6242478b69d4c6ef113ae1d9c"
     },
     {
       "path": "services/weather-trigger/wrangler.jsonc",
-      "bytes": 442,
-      "sha256": "6615e08fd7f339b54f78a383fa2444ba970468e6ce80e659433ca3ac663b20c8"
+      "bytes": 446,
+      "sha256": "5296495f5efff2db7f99a25a8183a95f4a2d807d126dc814838d8f449881da7b"
     }
   ]
 }
