@@ -18,6 +18,11 @@
       "sha256": "f70b370479712a0f5bff8c0779a081be7b3b5a7110f7285ced400de1dec04b19"
     },
     {
+      "path": ".github/workflows/deploy-worker.yml",
+      "bytes": 2588,
+      "sha256": "84f35f883e904e0ef8f4600bc0e61fbb0e4fb5318d8a57b56c41fd57f7e7bd52"
+    },
+    {
       "path": ".github/workflows/verify.yml",
       "bytes": 1620,
       "sha256": "5d25c6ad18ed96613dffe3d8353f7a609c913e7a6c8084f26bbf4a52e117b012"
@@ -379,8 +384,8 @@
     },
     {
       "path": "services/weather-trigger/README.md",
-      "bytes": 11888,
-      "sha256": "35b8aeba055817f61efdcdadb2e374d3ce2a313ada7f07a02e05fd22181fbf74"
+      "bytes": 13773,
+      "sha256": "7525f2266f613756777b26c6f5fd2ba0171b14c4a2bc9f15000d6ee76fca3a95"
     },
     {
       "path": "services/weather-trigger/package-lock.json",
