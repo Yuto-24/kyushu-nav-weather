@@ -285,7 +285,7 @@ test("HTTP entry point is closed and checked-in configuration uses the approved 
   assert.equal(response.status, 404);
   const config = JSON.parse(await readFile(new URL("wrangler.jsonc", import.meta.url), "utf8"));
   assert.equal(config.vars.MODE, "dispatch");
-  assert.deepEqual(config.triggers.crons, ["20,40 0,19 * * *"]);
+  assert.deepEqual(config.triggers.crons, ["*/20 0-2,19-21 * * *"]);
   assert.equal(config.workers_dev, false);
   assert.equal(config.preview_urls, false);
   assert.equal(config.kv_namespaces, undefined);
@@ -301,26 +301,73 @@ test("JST calendar and readiness floors are derived from the exact occurrence", 
 });
 
 test("hours-late same-day delivery preserves every slot and occurrence", async () => {
-  for (const clock of ["04:20", "04:40", "09:20", "09:40"]) {
+  for (const clock of ["04:20","04:40","05:00","05:20","05:40","06:00","06:20","09:20","09:40","10:00","10:20","10:40","11:00"]) {
     const network = mock();
     const result = await tick(env, at(clock) + 7197, {
       fetcher: network.fetcher, now: () => at("23:59"),
     });
     assert.equal(result.status, "DISPATCH_ACCEPTED");
     assert.equal(result.request_id.slice(-4), clock.replace(":", ""));
-    assert.equal(result.slot, clock.startsWith("04") ? "0900" : "1400");
+    assert.equal(result.slot, ["04", "05", "06"].includes(clock.slice(0, 2)) ? "0900" : "1400");
   }
 });
 
-test("freshness thresholds still apply to hours-late first and second checks", async () => {
-  for (const [clock, floor, slot] of [["04:20", "04:00", "0900"], ["04:40", "04:25", "0900"],
-    ["09:20", "09:00", "1400"], ["09:40", "09:25", "1400"]]) {
+test("freshness thresholds still apply to every 20-minute recovery tick", async () => {
+  const floors = [
+    ...["04:20","04:40","05:00","05:20","05:40","06:00","06:20"].map((clock, i) => [clock, i === 0 ? "04:00" : "04:25", "0900"]),
+    ...["09:20","09:40","10:00","10:20","10:40","11:00"].map((clock, i) => [clock, i === 0 ? "09:00" : "09:25", "1400"]),
+  ];
+  for (const [clock, floor, slot] of floors) {
     for (const offset of [-1, 0]) {
       const generated = new Date(at(floor) + 9 * 3600_000 + offset).toISOString().replace("Z", "+09:00");
       const network = mock({ status: hint(sheet({ generated_at_jst: generated }), slot) });
       const result = await tick(env, at(clock), { fetcher: network.fetcher, now: () => at("22:00") });
       assert.equal(result.status, offset ? "DISPATCH_ACCEPTED" : "READY_MSM");
     }
+  }
+});
+
+test("all 13 scheduled checks have unique IDs, including the last 06:20 and 11:00", async () => {
+  const seen = new Set();
+  for (const [slot, clocks] of [["0900", ["04:20","04:40","05:00","05:20","05:40","06:00","06:20"]], ["1400", ["09:20","09:40","10:00","10:20","10:40","11:00"]]]) {
+    for (const clock of clocks) {
+      const network = mock();
+      const result = await tick(env, at(clock), { fetcher: network.fetcher, now: () => at(clock) });
+      assert.equal(result.status, "DISPATCH_ACCEPTED");
+      assert.equal(result.slot, slot);
+      assert.equal(result.request_id, `worker-20261123-${slot}-${clock.replace(":", "")}`);
+      assert.ok(!seen.has(result.request_id));
+      seen.add(result.request_id);
+      assert.equal(network.posts().length, 1);
+    }
+  }
+  assert.equal(seen.size, 13);
+});
+
+test("five extra Cron ticks are deliberate no-ops without any network request", async () => {
+  for (const clock of ["04:00", "06:40", "09:00", "11:20", "11:40"]) {
+    const result = await tick({ ...env, GITHUB_TOKEN: undefined }, at(clock) + 7197, {
+      now: () => at(clock) + 7198,
+      fetcher: () => { throw new Error("NOOP must never fetch"); },
+    });
+    assert.equal(result.status, "SKIPPED_CRON");
+    assert.equal(result.publication, "NOT_VERIFIED");
+  }
+  for (const clock of ["04:10", "06:30", "09:10", "11:10", "11:59"]) {
+    await assert.rejects(tick(env, at(clock), { now: () => at(clock),
+      fetcher: () => { throw new Error("invalid tick must never fetch"); } }), /INVALID_OCCURRENCE/);
+  }
+});
+
+test("new retry IDs are checked for duplication against completed history", async () => {
+  for (const [slot, clock] of [["0900", "06:20"], ["1400", "11:00"]]) {
+    const hhmm = clock.replace(":", "");
+    const network = mock({ recent: [historyRun(hhmm, clock, 7, {
+      display_title: `weather-worker/2026-11-23/${slot}/worker-20261123-${slot}-${hhmm}`,
+    })] });
+    const result = await tick(env, at(clock), { fetcher: network.fetcher, now: () => at(clock) });
+    assert.equal(result.status, "DUPLICATE_REQUEST");
+    assert.equal(network.posts().length, 0);
   }
 });
 

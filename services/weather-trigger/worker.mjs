@@ -8,6 +8,12 @@ export const HISTORY_BYTES = 256 * 1024;
 const SKEW_MS = 60_000;
 const JST = 9 * 3600_000;
 const ACTIVE = ["queued", "in_progress", "waiting", "pending", "requested"];
+const WORKER_TICKS = {
+  "0900": new Set(["0420","0440","0500","0520","0540","0600","0620"]),
+  "1400": new Set(["0920","0940","1000","1020","1040","1100"]),
+};
+// One UTC Cron covers the windows; these five extra ticks perform no network I/O.
+const NOOP_TICKS = new Set(["0400", "0640", "0900", "1120", "1140"]);
 const decoder = new TextDecoder("utf-8", { fatal: true });
 const noDiagnostics = () => {};
 
@@ -65,14 +71,18 @@ export function occurrence(scheduledTime, now) {
   const hour = local.getUTCHours(), minute = local.getUTCMinutes();
   // Cloudflare scheduledTime may include seconds/milliseconds (e.g. 04:20:07.197).
   // Use the scheduled minute, while retaining the original JST date.
-  requireThat((hour === 4 || hour === 9) && (minute === 20 || minute === 40), "INVALID_OCCURRENCE");
+  const hhmm = `${String(hour).padStart(2, "0")}${String(minute).padStart(2, "0")}`;
+  const slot = WORKER_TICKS["0900"].has(hhmm) ? "0900" :
+    WORKER_TICKS["1400"].has(hhmm) ? "1400" : null;
+  requireThat(slot !== null || NOOP_TICKS.has(hhmm), "INVALID_OCCURRENCE");
   const targetDate = jstDate(scheduledTime);
   requireThat(jstDate(now) === targetDate, "EXPIRED_DAY");
   requireThat(scheduledTime <= now, "FUTURE_OCCURRENCE");
-  const slot = hour === 4 ? "0900" : "1400";
-  const hhmm = `${String(hour).padStart(2, "0")}${minute}`;
+  if (slot === null) return null;
+  const firstCheck = hhmm === "0420" || hhmm === "0920";
   return { targetDate, slot, scheduledTime,
-    readyAfter: isoDay(targetDate) + hour * 3600_000 + (minute === 40 ? 25 : 0) * 60_000,
+    readyAfter: isoDay(targetDate) + (slot === "0900" ? 4 : 9) * 3600_000 +
+      (firstCheck ? 0 : 25) * 60_000,
     requestId: `worker-${targetDate.replaceAll("-", "")}-${slot}-${hhmm}` };
 }
 
@@ -186,14 +196,13 @@ async function recentHistory(config, target, fetcher, diagnose, headers, sleep) 
 
 function workerIdentity(title) {
   if (!title.startsWith("weather-worker/")) return null;
-  const match = /^weather-worker\/(\d{4}-\d{2}-\d{2})\/(0900|1400)\/(worker-\d{8}-(?:0900|1400)-(?:0420|0440|0920|0940))$/.exec(title);
+  const match = /^weather-worker\/(\d{4}-\d{2}-\d{2})\/(0900|1400)\/(worker-\d{8}-(?:0900|1400)-\d{4})$/.exec(title);
   requireThat(match, "UNKNOWN_WORKER_HISTORY");
   const [, day, slot, requestId] = match;
   isoDay(day);
   const hhmm = requestId.slice(-4);
   requireThat(requestId === `worker-${day.replaceAll("-", "")}-${slot}-${hhmm}` &&
-    ((slot === "0900" && hhmm.startsWith("04")) || (slot === "1400" && hhmm.startsWith("09"))),
-    "UNKNOWN_WORKER_HISTORY");
+    WORKER_TICKS[slot].has(hhmm), "UNKNOWN_WORKER_HISTORY");
   return { day, slot, requestId };
 }
 
@@ -228,6 +237,7 @@ export async function tick(env, scheduledTime, { fetcher = fetch, now = Date.now
   sleep = ms => new Promise(resolve => setTimeout(resolve, ms)) } = {}) {
   const config = configuration(env);
   const target = occurrence(scheduledTime, now());
+  if (target === null) return { status: "SKIPPED_CRON", publication: "NOT_VERIFIED" };
   const result = (status) => ({ status, publication: "NOT_VERIFIED", target_date: target.targetDate,
     slot: target.slot, request_id: target.requestId });
   const status = await request("status", config.statusURL, fetcher, diagnose, { cache: "no-store" });

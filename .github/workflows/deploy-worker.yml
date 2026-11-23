@@ -51,7 +51,7 @@ jobs:
               config.vars?.MODE !== 'dispatch' ||
               config.vars?.GITHUB_REPOSITORY !== 'Yuto-24/kyushu-nav-weather' ||
               config.vars?.STATUS_URL !== 'https://kyushu-wx.yuto24.com/status.json' ||
-              JSON.stringify(config.triggers?.crons) !== JSON.stringify(['20,40 0,19 * * *']) ||
+              JSON.stringify(config.triggers?.crons) !== JSON.stringify(['*/20 0-2,19-21 * * *']) ||
               config.routes !== undefined || config.route !== undefined) {
             throw new Error('Deployment target or Worker operating contract changed');
           }

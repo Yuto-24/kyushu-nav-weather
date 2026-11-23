@@ -1,5 +1,5 @@
 import unittest
-from datetime import datetime
+from datetime import datetime, timedelta
 import json
 from pathlib import Path
 import tempfile
@@ -101,6 +101,43 @@ class ActionsJobTests(unittest.TestCase):
         self.assertTrue(worker_ready(status, self.worker("0440"), now))
         status["slots"]["0900"]["model"] = "GSM"
         self.assertFalse(worker_ready(status, self.worker("0440"), now))
+
+    def test_extended_worker_occurrences_and_freshness_thresholds(self):
+        ticks = {
+            "0900": ("0420", "0440", "0500", "0520", "0540", "0600", "0620"),
+            "1400": ("0920", "0940", "1000", "1020", "1040", "1100"),
+        }
+        for slot, clocks in ticks.items():
+            for tick in clocks:
+                with self.subTest(slot=slot, tick=tick):
+                    created = f"2026-11-22T{tick[:2]}:{tick[2:]}:08+09:00"
+                    plan = resolve_plan("workflow_dispatch", {"inputs": {
+                        "trigger": "worker", "target_date": "2026-11-22", "slot": slot,
+                        "request_id": f"worker-20261122-{slot}-{tick}", "publish": True,
+                    }}, created_at=created, now=created, run_id=101, ref="refs/heads/main")
+                    self.assertEqual(plan.slots, [slot])
+                    threshold = ("04:00" if tick == "0420" else "04:25") if slot == "0900" else (
+                        "09:00" if tick == "0920" else "09:25")
+                    status = {"schema": "kyushu-pages-status-1", "slots": {slot: {
+                        "valid_date": "2026-11-22", "model": "MSM", "quality": "complete",
+                        "generated_at_jst": f"2026-11-22T{threshold}:00+09:00",
+                    }}}
+                    self.assertTrue(worker_ready(status, plan, instant(created)))
+                    status["slots"][slot]["generated_at_jst"] = (
+                        instant(f"2026-11-22T{threshold}:00+09:00")
+                        .replace(microsecond=0) - timedelta(seconds=1)
+                    ).isoformat()
+                    self.assertFalse(worker_ready(status, plan, instant(created)))
+
+    def test_outside_recovery_windows_cannot_be_dispatched(self):
+        for slot, tick in (("0900", "0400"), ("0900", "0640"), ("1400", "0900"),
+                           ("1400", "1120"), ("1400", "1140")):
+            with self.subTest(slot=slot, tick=tick), self.assertRaises(JobError):
+                resolve_plan("workflow_dispatch", {"inputs": {
+                    "trigger": "worker", "target_date": "2026-11-22", "slot": slot,
+                    "request_id": f"worker-20261122-{slot}-{tick}", "publish": True,
+                }}, created_at="2026-11-22T12:00:00+09:00",
+                    now="2026-11-22T12:00:00+09:00", run_id=101, ref="refs/heads/main")
 
     def test_schedule_never_skips_latest_source_selection(self):
         plan = self.schedule("3,33 19 * * *", "2026-11-22T04:33:00+09:00")

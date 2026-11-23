@@ -23,7 +23,11 @@ ROOT = Path(__file__).resolve().parents[1]
 JST = timezone(timedelta(hours=9))
 SLOTS = {"0900": 9, "1400": 14}
 SCHEDULES = {"3,33 19 * * *": "0900", "3,33 0 * * *": "1400"}
-WORKER_ID = re.compile(r"worker-(\d{8})-(0900|1400)-(0420|0440|0920|0940)\Z")
+WORKER_ID = re.compile(r"worker-(\d{8})-(0900|1400)-(\d{4})\Z")
+WORKER_TICKS = {
+    "0900": frozenset(['0420','0440','0500','0520','0540','0600','0620']),
+    "1400": frozenset(['0920','0940','1000','1020','1040','1100']),
+}
 REPOSITORY = re.compile(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+\Z")
 
 
@@ -122,7 +126,7 @@ def resolve_plan(event_name: str, event: dict, *, created_at: str | datetime,
             compact_date, id_slot, tick = match.groups()
             if compact_date != target_date.replace("-", "") or id_slot != slot:
                 raise JobError("Worker occurrence and forecast identity differ")
-            if tick not in ({"0420", "0440"} if slot == "0900" else {"0920", "0940"}):
+            if tick not in WORKER_TICKS[slot]:
                 raise JobError("Worker occurrence is outside the approved schedule")
             occurrence = instant(f"{target_date}T{tick[:2]}:{tick[2:]}:00+09:00")
             if occurrence > created:
@@ -213,7 +217,7 @@ def worker_ready(status: dict, plan: JobPlan, now: datetime) -> bool:
     if entry.get("model") != "MSM" or entry.get("quality") != "complete":
         return False
     hour = 4 if plan.slots[0] == "0900" else 9
-    minute = 25 if (plan.request_id or "").endswith("40") else 0
+    minute = 0 if (plan.request_id or "").endswith(("0420", "0920")) else 25
     threshold = instant(f"{plan.target_date}T{hour:02d}:{minute:02d}:00+09:00")
     try:
         generated = instant(entry["generated_at_jst"])
