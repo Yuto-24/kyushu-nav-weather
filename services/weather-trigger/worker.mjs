@@ -65,8 +65,9 @@ export function occurrence(scheduledTime, now) {
     Number.isFinite(now), "INVALID_OCCURRENCE");
   const local = new Date(scheduledTime + JST);
   const hour = local.getUTCHours(), minute = local.getUTCMinutes();
-  requireThat((hour === 4 || hour === 9) && (minute === 20 || minute === 40) &&
-    local.getUTCSeconds() === 0 && local.getUTCMilliseconds() === 0, "INVALID_OCCURRENCE");
+  // Cloudflare scheduledTime may include seconds/milliseconds (e.g. 04:20:07.197).
+  // Use the scheduled minute; date, maximum delay and deadline remain strict.
+  requireThat((hour === 4 || hour === 9) && (minute === 20 || minute === 40), "INVALID_OCCURRENCE");
   const targetDate = jstDate(scheduledTime);
   requireThat(jstDate(now) === targetDate, "EXPIRED_DAY");
   requireThat(scheduledTime <= now + SKEW_MS, "FUTURE_OCCURRENCE");
@@ -233,7 +234,7 @@ export async function tick(env, scheduledTime, { fetcher = fetch, now = Date.now
   if (env.MODE === "observe") return result("WOULD_DISPATCH");
   const receipt = await request("dispatch", `${config.api}/dispatches`, fetcher, diagnose, {
     method: "POST", headers: { ...headers, "Content-Type": "application/json" },
-    body: JSON.stringify({ ref: env.GITHUB_BRANCH, inputs: {
+    body: JSON.stringify({ ref: env.GITHUB_BRANCH, return_run_details: true, inputs: {
       target_date: target.targetDate, slot: target.slot, request_id: target.requestId, trigger: "worker",
       publish: "true", operation: "refresh",
     } }),
@@ -253,7 +254,7 @@ export default {
     } catch (error) {
       result = { status: "UNKNOWN", publication: "NOT_VERIFIED",
         reason: error instanceof Fault ? error.message : "IO_OR_VALIDATION_FAILED" };
-      throw new Error("Weather trigger check failed");
+      throw new Error(`Weather trigger check failed: ${result.reason}`);
     } finally {
       console.log(JSON.stringify({ ...result, diagnostics }));
     }
