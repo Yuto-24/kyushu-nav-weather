@@ -1,5 +1,11 @@
 # Daily weather production: existing infrastructure findings
 
+## Extended bounded recovery windows — 2026-11-23 JST
+
+Observation/decision: the user requested 20-minute recovery opportunities for the 09:00 edition through JST06:30 (last check 06:20), and the 14:00 edition through JST11:00 inclusive (last check 11:00). The previous two opportunities per edition were insufficient when GitHub or weather sources were transiently delayed. The existing complete MSM and generation-time floors remain unchanged: first checks at 04:20/09:20 use 04:00/09:00; later checks use 04:25/09:25. Source cutoffs remain 05:00/10:00 and are not recovery deadlines. Same-day late delivery remains valid; no past-day publication is enabled.
+
+Cloudflare Free permits only five Cron Trigger expressions across the account ([limits](https://developers.cloudflare.com/workers/platform/limits/)). Six exact time-group expressions would exceed that quota, potentially affecting unrelated Workers. One `*/20 0-2,19-21 * * *` UTC expression covers 18 nominal ticks; five extra ticks (JST04:00, 06:40, 09:00, 11:20, 11:40) must be explicit no-I/O no-ops, leaving 13 decision opportunities. The Worker and Actions allowlists must match each other and the deploy-workflow config guard. Requests remain idempotent by nominal HHMM, not arrival time. This is a schedule design decision, not proof that every tick will execute or dispatch.
+
 ## Same-day recovery after scheduler delays — 2026-11-23 JST
 
 Status: verified locally for [PR #5: automatic update and recovery](https://github.com/Yuto-24/kyushu-nav-weather/pull/5); production rollout and provider CPU acceptance are pending. Applies to Worker admission, Actions day/edition identity, and publication ordering. The current operation contract is in [the Worker guide](../services/weather-trigger/README.md) and [production operations](README.md); older timing restrictions below describe earlier deployments.
