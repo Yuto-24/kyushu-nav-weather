@@ -111,6 +111,12 @@ GitHub API は既存 MSM 経路と同じ `X-GitHub-Api-Version: 2026-03-10`。HT
 
 デプロイ成功とCron復旧は別の確認。CloudflareでWorkerのVersion ID、Secret名、Cron設定を確認し、次回の自然Cron・GitHub dispatch・公開ページの読戻しを別々に検証する。Secrets未登録時は`mode=deploy`が失敗し、本番Workerを変更しない。PRのマージ自体ではWorkerはデプロイされない。
 
+### デプロイ用Wranglerの固定版（2026-11-23の観測）
+
+GitHub Actions run [45098209634](https://github.com/Yuto-24/kyushu-nav-weather/actions/runs/45098209634)では、Workerテスト・bundle・配備対象確認が成功した後、Wrangler `4.152.0` のdashboard-originメタデータ取得が失敗した。Cloudflare [workers-sdk #16390](https://github.com/cloudflare/workers-sdk/issues/16390)に同一エラーとWorker単位Editorトークンでの再現報告があり、[修正PR #16531](https://github.com/cloudflare/workers-sdk/pull/16531)は`wrangler@4.156.2`のリリースノートに含まれる。
+
+`deploy-worker.yml`はbundle検証と本番deployの両方を、`npm exec --yes --package=wrangler@4.156.2 -- wrangler ...`で実行する。既存のPages更新用Wranglerとlockfileを変更しないための限定的な対応。GitHub runnerの一時環境だけで取得し、WSLへは何も導入しない。**既存WorkerのEditorトークンの権限を広げずに再実行すること。** 別のAPIエラーが出た場合に権限を闇雲に追加せず、そのHTTPステータスとWranglerログで切り分ける。実際の再デプロイ成功・Cron動作はこの修正のPRだけでは未確認。
+
 ## ローカル確認
 
 Node.js 22 以降を使う。
