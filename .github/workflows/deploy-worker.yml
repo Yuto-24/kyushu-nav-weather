@@ -1,0 +1,67 @@
+name: deploy-worker
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'Validate only or deploy the existing kyushu-weather-trigger Worker'
+        type: choice
+        options: [validate, deploy]
+        default: validate
+
+permissions:
+  contents: read
+
+concurrency:
+  group: kyushu-weather-trigger-deploy
+  cancel-in-progress: false
+
+jobs:
+  worker:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: services/weather-trigger/package-lock.json
+      - name: Install pinned Wrangler
+        run: npm ci --prefix services/weather-trigger --ignore-scripts
+      - name: Check Worker logic and syntax
+        run: |
+          npm test --prefix services/weather-trigger
+          npm run check --prefix services/weather-trigger
+      - name: Check bundle without deploying
+        run: npm run bundle --prefix services/weather-trigger
+      - name: Verify deployment target
+        if: inputs.mode == 'deploy'
+        run: |
+          node --input-type=module <<'NODE'
+          import { readFileSync } from 'node:fs';
+          const config = JSON.parse(readFileSync('services/weather-trigger/wrangler.jsonc', 'utf8'));
+          if (config.name !== 'kyushu-weather-trigger' ||
+              config.main !== 'worker.mjs' ||
+              config.workers_dev !== false || config.preview_urls !== false ||
+              config.vars?.MODE !== 'dispatch' ||
+              config.vars?.GITHUB_REPOSITORY !== 'Yuto-24/kyushu-nav-weather' ||
+              config.vars?.STATUS_URL !== 'https://kyushu-wx.yuto24.com/status.json' ||
+              JSON.stringify(config.triggers?.crons) !== JSON.stringify(['20,40 0,19 * * *']) ||
+              config.routes !== undefined || config.route !== undefined) {
+            throw new Error('Deployment target or Worker operating contract changed');
+          }
+          NODE
+      - name: Deploy existing Worker
+        if: inputs.mode == 'deploy'
+        working-directory: services/weather-trigger
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_WORKER_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          test -n "$CLOUDFLARE_API_TOKEN"
+          test -n "$CLOUDFLARE_ACCOUNT_ID"
+          ./node_modules/.bin/wrangler deploy --config wrangler.jsonc
