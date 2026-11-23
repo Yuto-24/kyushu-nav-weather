@@ -25,8 +25,8 @@ SLOTS = {"0900": 9, "1400": 14}
 SCHEDULES = {"3,33 19 * * *": "0900", "3,33 0 * * *": "1400"}
 WORKER_ID = re.compile(r"worker-(\d{8})-(0900|1400)-(\d{4})\Z")
 WORKER_TICKS = {
-    "0900": frozenset(['0420','0440','0500','0520','0540','0600','0620']),
-    "1400": frozenset(['0920','0940','1000','1020','1040','1100']),
+    "0900": frozenset(f"{minute // 60:02d}{minute % 60:02d}" for minute in range(15, 376, 20)),
+    "1400": frozenset(f"{minute // 60:02d}{minute % 60:02d}" for minute in range(375, 656, 20)),
 }
 REPOSITORY = re.compile(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+\Z")
 
@@ -216,14 +216,20 @@ def worker_ready(status: dict, plan: JobPlan, now: datetime) -> bool:
         return False
     if entry.get("model") != "MSM" or entry.get("quality") != "complete":
         return False
-    hour = 4 if plan.slots[0] == "0900" else 9
-    minute = 0 if (plan.request_id or "").endswith(("0420", "0920")) else 25
-    threshold = instant(f"{plan.target_date}T{hour:02d}:{minute:02d}:00+09:00")
+    now = instant(now)
+    if now.date().isoformat() != plan.target_date:
+        return False
+    first_hour = 0 if plan.slots[0] == "0900" else 6
+    second_stage = instant(f"{plan.target_date}T{first_hour + 3:02d}:15:00+09:00")
+    hour = first_hour + (3 if now >= second_stage else 0)
+    threshold = instant(f"{plan.target_date}T{hour:02d}:00:00+09:00")
     try:
+        initial = instant(entry["initial_time_jst"])
         generated = instant(entry["generated_at_jst"])
     except (KeyError, JobError):
         return False
-    return threshold <= generated <= instant(now) + timedelta(seconds=60)
+    return (generated.date().isoformat() == plan.target_date
+            and threshold <= initial <= generated <= now + timedelta(seconds=60))
 
 
 def read_plan(path: Path) -> JobPlan:

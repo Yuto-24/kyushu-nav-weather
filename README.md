@@ -19,12 +19,12 @@ GitHub repository: https://github.com/Yuto-24/kyushu-nav-weather
 
 | 予報 | Actions定時実行（JST） | Worker補完確認（JST） | 出力締切 |
 | --- | --- | --- | --- |
-| 09:00版 | 04:03 / 04:33 | 04:20 / 04:40 | 05:00 |
-| 14:00版 | 09:03 / 09:33 | 09:20 / 09:40 | 10:00 |
+| 09:00版 | 04:03 / 04:33 | 00:15〜06:15（20分ごと） | 05:00 |
+| 14:00版 | 09:03 / 09:33 | 06:15〜10:55（20分ごと） | 10:00 |
 
-ActionsのcronはUTCの `3,33 19 * * *` と `3,33 0 * * *`。Workerの設定はUTCの `20,40 0,19 * * *`。
+ActionsのcronはUTCの `3,33 19 * * *` と `3,33 0 * * *`。Workerの設定はUTCの `15,35,55 0,1,15-23 * * *`。06:15には両版を判定する。設定の本番反映には別途承認とWorkerのデプロイが必要。
 
-定時実行では、前のMSM版が完成済みでも最新の取得可能Runを選び直す。20分のWorkerは00分以降、40分のWorkerは25分以降に取得・計算された当日complete MSMが公開されていれば終了する。GSM、地形由来partial、未更新は補完候補とし、GitHubの実行中状態・同じ要求ID・再試行間隔・回数を確認して起動する。画像の再描画時刻で鮮度を更新しない。
+Actions定時実行では、前のMSM版が完成済みでも最新の取得可能Runを選び直す。Worker補完では当日complete MSMの初期時刻を基準とし、09:00版は0000Iから0300I、14:00版は0600Iから0900Iへ更新目標を進める。旧Runの再生成では新Run取得済みと扱わない。段階の時刻、配信確認、重複抑制、05:00/10:00の取得期限は [運用手順](production/README.md#実行時刻) を参照する。
 
 Workerは最大4KiBの `status.json` とGitHubの実行metadataだけを読む。GRIBのダウンロード・Run探索・デコード・全PNG/PDF照合をWorkerへ持ち込まない。通常のHTTPアクセスからは起動できない。
 
@@ -85,6 +85,6 @@ node --test services/weather-trigger/worker.test.mjs
 node --check production/web/app.js
 ```
 
-実MSM/GSM取得・採用済み180行の同値確認は実施済み。新経路ではJST対象日、Workerの起動契約、二重処理、40分での再確認、地形/欠損、公開の途中失敗、2枠保持、全読戻しを重点検証する。外部サービスの実行・公開・自然Cronはローカル検証とは別に確認する。
+実MSM/GSM取得・採用済み180行の同値確認は実施済み。新経路ではJST対象日、Workerの起動契約、二重処理、目標初期時刻と06:15の両版判定、地形/欠損、公開の途中失敗、2枠保持、全読戻しを重点検証する。外部サービスの実行・公開・自然Cronはローカル検証とは別に確認する。
 
 既知の失敗と設計判断は `production/infra_reuse_notes.md`、Worker固有の判断は `services/weather-trigger/README.md` に保持する。
