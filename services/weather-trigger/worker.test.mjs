@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
-import worker, { tick, occurrence, STATUS_LIMIT, WORKFLOW } from "./worker.mjs";
+import worker, { tick, occurrence, STATUS_LIMIT, WORKFLOW, HISTORY_LIMIT, HISTORY_PAGES } from "./worker.mjs";
 
 const env = {
   MODE: "dispatch", STATUS_URL: "https://weather.example.test/status.json",
@@ -56,8 +56,14 @@ function mock({ status = pending(), active, recent = [], historyTotal, dispatch,
     assert.equal(parsed.searchParams.get("event"), "workflow_dispatch");
     assert.equal(parsed.searchParams.get("created"), ">=2026-11-22T15:00:00.000Z");
     afterHistory?.();
-    return json({ total_count: historyTotal ?? recent.length, workflow_runs: recent }, historyHeaders ?
-      { headers: { "content-type": "application/json", ...historyHeaders } } : {});
+    const page = Number(parsed.searchParams.get("page"));
+    assert.ok(page >= 1);
+    assert.equal(parsed.searchParams.get("per_page"), String(HISTORY_LIMIT));
+    const batch = recent.slice((page - 1) * HISTORY_LIMIT, page * HISTORY_LIMIT);
+    const headers = { "content-type": "application/json" };
+    if (page * HISTORY_LIMIT < recent.length) headers.link = `<${url}>; rel="next"`;
+    return json({ total_count: historyTotal ?? recent.length, workflow_runs: batch },
+      { headers: { ...headers, ...historyHeaders } });
   };
   const posts = () => calls.filter(call => call.options.method === "POST");
   return { calls, posts, fetcher };
@@ -187,18 +193,18 @@ test("same occurrence is not dispatched again after either success or failure", 
   }
 });
 
-test("15-minute cooldown uses actual GitHub creation time", async () => {
+test("recent failed runs do not impose a cooldown", async () => {
   const network = mock({ recent: [historyRun("0420", "04:30")] });
   const result = await tick(env, at("04:40"), { fetcher: network.fetcher, now: () => at("04:40") });
-  assert.equal(result.status, "COOLDOWN");
-  assert.equal(network.posts().length, 0);
+  assert.equal(result.status, "DISPATCH_ACCEPTED");
+  assert.equal(network.posts().length, 1);
 });
 
-test("two observed worker runs for a slot consume the cap even if both failed", async () => {
+test("past failures and run count do not consume a slot cap", async () => {
   const network = mock({ recent: [historyRun("0420", "04:20", 1), historyRun("0420", "04:21", 2)] });
   const result = await tick(env, at("04:40"), { fetcher: network.fetcher, now: () => at("04:40") });
-  assert.equal(result.status, "SLOT_REQUEST_LIMIT");
-  assert.equal(network.posts().length, 0);
+  assert.equal(result.status, "DISPATCH_ACCEPTED");
+  assert.equal(network.posts().length, 1);
 });
 
 test("unknown/truncated history never proves no work exists", async () => {
@@ -210,7 +216,7 @@ test("unknown/truncated history never proves no work exists", async () => {
   }
 });
 
-test("malformed worker names cannot evade duplicate/count gates", async () => {
+test("malformed worker names cannot evade duplicate gates", async () => {
   const network = mock({ recent: [historyRun("0420", "04:20", 1, {
     display_title: "weather-worker/2026-11-23/0900/worker-20261123-1400-0920",
   })] });
@@ -237,10 +243,11 @@ test("future generation or an invalid date cannot be treated as ready", async ()
   }
 });
 
-test("prior-day, over-15-minute and non-schedule events make no network request", async () => {
+test("prior-day, future and non-schedule events make no network request", async () => {
   const network = mock();
   for (const [eventTime, now] of [[at("04:20", "2026-11-22"), at("04:20")],
-    [at("04:20"), at("04:36")], [at("04:30"), at("04:30")], [at("09:40"), at("10:00")]]) {
+    [at("04:20") + 1, at("04:20")], [at("04:30"), at("04:30")], [NaN, at("04:20")],
+    [at("09:40"), at("09:39")], [at("03:20"), at("04:20")]]) {
     await assert.rejects(tick(env, eventTime, { fetcher: network.fetcher, now: () => now }));
   }
   assert.equal(network.calls.length, 0);
@@ -248,8 +255,8 @@ test("prior-day, over-15-minute and non-schedule events make no network request"
 
 test("slow preflight is rechecked before POST", async () => {
   let now = at("04:40");
-  const network = mock({ afterHistory: () => { now = at("04:56"); } });
-  await assert.rejects(tick(env, at("04:40"), { fetcher: network.fetcher, now: () => now }), /EXPIRED_OCCURRENCE/);
+  const network = mock({ afterHistory: () => { now = at("00:00", "2026-11-24"); } });
+  await assert.rejects(tick(env, at("04:40"), { fetcher: network.fetcher, now: () => now }), /EXPIRED_DAY/);
   assert.equal(network.posts().length, 0);
 });
 
@@ -264,6 +271,7 @@ test("observe mode exercises the gates and never sends a POST", async () => {
 test("dispatch network failure, 403 and ambiguous receipts are never retried", async () => {
   for (const dispatch of [() => { throw new Error("network failed after send"); },
     () => new Response("forbidden", { status: 403 }),
+    () => new Response("unavailable", { status: 503 }),
     () => new Response(null, { status: 204 }), () => json({ workflow_run_id: 987 }),
     () => json({ ...receipt(), html_url: "https://github.com/Other/repo/actions/runs/987" })]) {
     const network = mock({ dispatch });
@@ -290,4 +298,109 @@ test("JST calendar and readiness floors are derived from the exact occurrence", 
   assert.equal(first.readyAfter, at("04:00"));
   const second = occurrence(at("09:40"), at("09:40"));
   assert.equal(second.readyAfter, at("09:25"));
+});
+
+test("hours-late same-day delivery preserves every slot and occurrence", async () => {
+  for (const clock of ["04:20", "04:40", "09:20", "09:40"]) {
+    const network = mock();
+    const result = await tick(env, at(clock) + 7197, {
+      fetcher: network.fetcher, now: () => at("23:59"),
+    });
+    assert.equal(result.status, "DISPATCH_ACCEPTED");
+    assert.equal(result.request_id.slice(-4), clock.replace(":", ""));
+    assert.equal(result.slot, clock.startsWith("04") ? "0900" : "1400");
+  }
+});
+
+test("freshness thresholds still apply to hours-late first and second checks", async () => {
+  for (const [clock, floor, slot] of [["04:20", "04:00", "0900"], ["04:40", "04:25", "0900"],
+    ["09:20", "09:00", "1400"], ["09:40", "09:25", "1400"]]) {
+    for (const offset of [-1, 0]) {
+      const generated = new Date(at(floor) + 9 * 3600_000 + offset).toISOString().replace("Z", "+09:00");
+      const network = mock({ status: hint(sheet({ generated_at_jst: generated }), slot) });
+      const result = await tick(env, at(clock), { fetcher: network.fetcher, now: () => at("22:00") });
+      assert.equal(result.status, offset ? "DISPATCH_ACCEPTED" : "READY_MSM");
+    }
+  }
+});
+
+test("history paginates through 300 failures and finds a duplicate on the last page", async () => {
+  const runs = Array.from({ length: HISTORY_LIMIT * HISTORY_PAGES }, (_, i) => historyRun("0420", "04:20", i + 1));
+  for (const duplicate of [false, true]) {
+    const recent = structuredClone(runs);
+    if (duplicate) recent.at(-1).display_title = historyRun("0440").display_title;
+    const network = mock({ recent });
+    const result = await tick(env, at("04:40"), { fetcher: network.fetcher, now: () => at("22:00") });
+    assert.equal(result.status, duplicate ? "DUPLICATE_REQUEST" : "DISPATCH_ACCEPTED");
+    assert.equal(network.calls.filter(call => new URL(call.url).searchParams.has("page")).length, HISTORY_PAGES);
+  }
+});
+
+test("missing, shifting, repeated or over-budget pages fail closed", async () => {
+  const runs = Array.from({ length: 31 }, (_, i) => historyRun("0420", "04:20", i + 1));
+  for (const mode of ["missing", "shifted", "repeated", "over-budget", "unavailable"]) {
+    const recent = structuredClone(runs);
+    if (mode === "repeated") recent.at(-1).id = recent[0].id;
+    const network = mock({ recent, ...(mode === "over-budget" ? { historyTotal: 301 } : {}) });
+    let attempts = 0;
+    const fetcher = async (url, options) => {
+      if (new URL(url).searchParams.get("page") === "2") {
+        attempts++;
+        if (mode === "missing") return json({ total_count: 31, workflow_runs: [] });
+        if (mode === "shifted") return json({ total_count: 32, workflow_runs: [runs.at(-1)] });
+        if (mode === "unavailable") return new Response(null, { status: 503 });
+      }
+      return network.fetcher(url, options);
+    };
+    await assert.rejects(tick(env, at("04:40"), { fetcher, now: () => at("22:00"), sleep: async () => {} }));
+    assert.equal(network.posts().length, 0);
+    if (mode === "unavailable") assert.equal(attempts, 3);
+  }
+});
+
+test("transient history reads retry twice with 1s and 3s delays, including active and later pages", async () => {
+  for (const stage of ["active", "recent", "page2"]) {
+    for (const failure of ["io", 408, 429, 500, 503]) {
+      const runs = Array.from({ length: 31 }, (_, i) => historyRun("0420", "04:20", i + 1));
+      const network = mock({ recent: runs });
+      let attempts = 0;
+      const delays = [];
+      const fetcher = async (url, options) => {
+        const query = new URL(url).searchParams;
+        const selected = stage === "active" ? query.get("status") === "queued" :
+          query.get("page") === (stage === "page2" ? "2" : "1");
+        if (selected && ++attempts < 3) {
+          if (failure === "io") throw new TypeError("controlled connection failure");
+          return new Response(null, { status: failure });
+        }
+        return network.fetcher(url, options);
+      };
+      const result = await tick(env, at("04:40"), { fetcher, now: () => at("22:00"),
+        sleep: async ms => delays.push(ms) });
+      assert.equal(result.status, "DISPATCH_ACCEPTED");
+      assert.equal(attempts, 3);
+      assert.deepEqual(delays, [1000, 3000]);
+      assert.equal(network.posts().length, 1);
+    }
+  }
+});
+
+test("permanent history errors stop immediately; transient exhaustion stops after three reads", async () => {
+  for (const status of [401, 403, 404, 429, 503]) {
+    const network = mock();
+    let attempts = 0;
+    const delays = [];
+    const fetcher = (url, options) => {
+      if (new URL(url).searchParams.get("status") === "queued") {
+        attempts++;
+        return new Response(null, { status });
+      }
+      return network.fetcher(url, options);
+    };
+    await assert.rejects(tick(env, at("04:20"), { fetcher, now: () => at("04:20"),
+      sleep: async ms => delays.push(ms) }), new RegExp(`HTTP_${status}`));
+    assert.equal(attempts, [429, 503].includes(status) ? 3 : 1);
+    assert.equal(delays.length, attempts - 1);
+    assert.equal(network.posts().length, 0);
+  }
 });

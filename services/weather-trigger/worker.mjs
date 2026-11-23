@@ -3,10 +3,8 @@ export const WORKFLOW = "weather-daily.yml";
 export const API_VERSION = "2026-03-10";
 export const STATUS_LIMIT = 4096;
 export const HISTORY_LIMIT = 30;
+export const HISTORY_PAGES = 10;
 export const HISTORY_BYTES = 256 * 1024;
-export const COOLDOWN_MS = 15 * 60_000;
-export const MAX_DELAY_MS = 15 * 60_000;
-export const SLOT_REQUEST_LIMIT = 2;
 const SKEW_MS = 60_000;
 const JST = 9 * 3600_000;
 const ACTIVE = ["queued", "in_progress", "waiting", "pending", "requested"];
@@ -66,17 +64,14 @@ export function occurrence(scheduledTime, now) {
   const local = new Date(scheduledTime + JST);
   const hour = local.getUTCHours(), minute = local.getUTCMinutes();
   // Cloudflare scheduledTime may include seconds/milliseconds (e.g. 04:20:07.197).
-  // Use the scheduled minute; date, maximum delay and deadline remain strict.
+  // Use the scheduled minute, while retaining the original JST date.
   requireThat((hour === 4 || hour === 9) && (minute === 20 || minute === 40), "INVALID_OCCURRENCE");
   const targetDate = jstDate(scheduledTime);
   requireThat(jstDate(now) === targetDate, "EXPIRED_DAY");
-  requireThat(scheduledTime <= now + SKEW_MS, "FUTURE_OCCURRENCE");
-  requireThat(now - scheduledTime <= MAX_DELAY_MS, "EXPIRED_OCCURRENCE");
+  requireThat(scheduledTime <= now, "FUTURE_OCCURRENCE");
   const slot = hour === 4 ? "0900" : "1400";
-  const deadline = isoDay(targetDate) + (hour + 1) * 3600_000;
-  requireThat(now < deadline, "DEADLINE_PASSED");
   const hhmm = `${String(hour).padStart(2, "0")}${minute}`;
-  return { targetDate, slot, scheduledTime, deadline,
+  return { targetDate, slot, scheduledTime,
     readyAfter: isoDay(targetDate) + hour * 3600_000 + (minute === 40 ? 25 : 0) * 60_000,
     requestId: `worker-${targetDate.replaceAll("-", "")}-${slot}-${hhmm}` };
 }
@@ -89,7 +84,10 @@ async function request(stage, url, fetcher, diagnose, options = {}, limit = STAT
   try {
     const response = await fetcher(url, { ...options, redirect: "manual", signal: controller.signal });
     status = response.status;
-    requireThat(response.status === 200, `${stage.toUpperCase()}_HTTP_${response.status}`);
+    if (response.status !== 200) {
+      await response.body?.cancel();
+      throw new Fault(`${stage.toUpperCase()}_HTTP_${response.status}`);
+    }
     const contentType = response.headers.get("content-type") || "";
     requireThat(/^application\/(?:[a-z0-9.+-]+\+)?json(?:\s*;|$)/i.test(contentType), "NON_JSON_RESPONSE");
     const declared = Number(response.headers.get("content-length"));
@@ -148,12 +146,42 @@ function isReady(item, target, now) {
     jstTimestamp(item.generated_at_jst) <= now + SKEW_MS);
 }
 
-function listShape(value, response, limit) {
+function listShape(value) {
   requireThat(plain(value) && Number.isSafeInteger(value.total_count) && value.total_count >= 0 &&
     Array.isArray(value.workflow_runs), "UNKNOWN_ACTIONS");
-  requireThat(value.total_count <= limit && value.workflow_runs.length === value.total_count &&
-    !/rel="next"/.test(response.headers.get("link") || ""), "TRUNCATED_ACTIONS");
-  return value.workflow_runs;
+}
+
+// Only read failures are retryable. Validation failures and POSTs never enter here.
+async function historyRequest(stage, url, fetcher, diagnose, headers, limit, sleep) {
+  for (let attempt = 0; ; attempt++) {
+    try {
+      return await request(stage, url, fetcher, diagnose, { headers }, limit);
+    } catch (error) {
+      const transient = !(error instanceof Fault) || /_HTTP_(408|429|5\d\d)$/.test(error.message);
+      if (!transient || attempt === 2) throw error;
+      await sleep(attempt === 0 ? 1_000 : 3_000);
+    }
+  }
+}
+
+async function recentHistory(config, target, fetcher, diagnose, headers, sleep) {
+  const runs = [];
+  let total;
+  for (let page = 1; page <= HISTORY_PAGES; page++) {
+    const query = new URLSearchParams({ event: "workflow_dispatch", per_page: String(HISTORY_LIMIT),
+      created: ">=" + new Date(isoDay(target.targetDate)).toISOString(), page: String(page) });
+    const { value, response } = await historyRequest("github_recent", `${config.api}/runs?${query}`,
+      fetcher, diagnose, headers, HISTORY_BYTES, sleep);
+    listShape(value);
+    total ??= value.total_count;
+    requireThat(total === value.total_count && total <= HISTORY_LIMIT * HISTORY_PAGES &&
+      value.workflow_runs.length === Math.min(HISTORY_LIMIT, total - runs.length), "TRUNCATED_ACTIONS");
+    runs.push(...value.workflow_runs);
+    const more = runs.length < total;
+    requireThat(/rel="next"/.test(response.headers.get("link") || "") === more, "TRUNCATED_ACTIONS");
+    if (!more) return runs;
+  }
+  throw new Fault("TRUNCATED_ACTIONS");
 }
 
 function workerIdentity(title) {
@@ -182,8 +210,6 @@ function checkRecent(runs, target, now) {
     if (identity?.day === target.targetDate && identity.slot === target.slot) workers.push({ ...identity, created });
   }
   if (workers.some(run => run.requestId === target.requestId)) return "DUPLICATE_REQUEST";
-  if (workers.length >= SLOT_REQUEST_LIMIT) return "SLOT_REQUEST_LIMIT";
-  if (workers.some(run => now - run.created < COOLDOWN_MS)) return "COOLDOWN";
   return null;
 }
 
@@ -198,7 +224,8 @@ function dispatchReceipt(value, repository) {
 }
 
 /** Scheduled-only decision. History is an admission hint; Actions owns final dedup/publication. */
-export async function tick(env, scheduledTime, { fetcher = fetch, now = Date.now, diagnose = noDiagnostics } = {}) {
+export async function tick(env, scheduledTime, { fetcher = fetch, now = Date.now, diagnose = noDiagnostics,
+  sleep = ms => new Promise(resolve => setTimeout(resolve, ms)) } = {}) {
   const config = configuration(env);
   const target = occurrence(scheduledTime, now());
   const result = (status) => ({ status, publication: "NOT_VERIFIED", target_date: target.targetDate,
@@ -213,8 +240,8 @@ export async function tick(env, scheduledTime, { fetcher = fetch, now = Date.now
   // do not download all historical active runs merely to decide not to dispatch.
   for (const active of ACTIVE) {
     const query = new URLSearchParams({ status: active, per_page: "1" });
-    const response = await request(`github_${active}`, `${config.api}/runs?${query}`, fetcher, diagnose,
-      { headers }, 64 * 1024);
+    const response = await historyRequest(`github_${active}`, `${config.api}/runs?${query}`, fetcher, diagnose,
+      headers, 64 * 1024, sleep);
     const value = response.value;
     requireThat(plain(value) && Number.isSafeInteger(value.total_count) && value.total_count >= 0 &&
       Array.isArray(value.workflow_runs), "UNKNOWN_ACTIONS");
@@ -222,14 +249,11 @@ export async function tick(env, scheduledTime, { fetcher = fetch, now = Date.now
     requireThat(value.workflow_runs.length === 0 && !/rel="next"/.test(response.response.headers.get("link") || ""),
       "UNKNOWN_ACTIONS");
   }
-  const query = new URLSearchParams({ event: "workflow_dispatch", per_page: String(HISTORY_LIMIT),
-    created: ">=" + new Date(isoDay(target.targetDate)).toISOString() });
-  const history = await request("github_recent", `${config.api}/runs?${query}`, fetcher, diagnose,
-    { headers }, HISTORY_BYTES);
-  const reason = checkRecent(listShape(history.value, history.response, HISTORY_LIMIT), target, now());
+  const runs = await recentHistory(config, target, fetcher, diagnose, headers, sleep);
+  const reason = checkRecent(runs, target, now());
   if (reason) return result(reason);
-  // Slow network calls must not turn a previously valid occurrence into a late
-  // prior-day or post-deadline request. Observe mode uses the same decision gates.
+  // Slow reads/retries must not turn a valid occurrence into a prior-day request.
+  // Observe mode uses the same decision gates.
   occurrence(scheduledTime, now());
   if (env.MODE === "observe") return result("WOULD_DISPATCH");
   const receipt = await request("dispatch", `${config.api}/dispatches`, fetcher, diagnose, {

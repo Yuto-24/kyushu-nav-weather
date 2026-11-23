@@ -109,8 +109,8 @@
     },
     {
       "path": "docs/knowledge/INDEX.md",
-      "bytes": 1135,
-      "sha256": "1257a8e6e8110f33a03e51f6a6156882d13bf9c2583cde74c10602990fd0a5a4"
+      "bytes": 1191,
+      "sha256": "52dd7f6f9c61d67d4249204432d773d088fdec23498e3a1768896c72e2e48874"
     },
     {
       "path": "docs/knowledge/README.md",
@@ -159,8 +159,8 @@
     },
     {
       "path": "production/README.md",
-      "bytes": 10841,
-      "sha256": "036b08a2cc88184309ae03ac41fdad1e3a524b5fc44a2b847b7b8f9f4427eb9e"
+      "bytes": 13483,
+      "sha256": "1b4266400f0a6ed5c53759562cf1cb0863cf1968c6faed4182cca64b6ce358c1"
     },
     {
       "path": "production/WEATHER_PIPELINE.md",
@@ -169,8 +169,8 @@
     },
     {
       "path": "production/actions_job.py",
-      "bytes": 18246,
-      "sha256": "7ee297052dd04e62354d4d814eda281e2a439f4e09cdebfa0d6db0f293fcf6ef"
+      "bytes": 19696,
+      "sha256": "5af06e003c4b68d14ab4624433068b3c7311a228a18cf0f75fe24dcaa2e2564c"
     },
     {
       "path": "production/build_pages.py",
@@ -189,13 +189,13 @@
     },
     {
       "path": "production/infra_reuse_notes.md",
-      "bytes": 41882,
-      "sha256": "e75bbf80608baaa60c663f8518c8cede97fe4b5041e3dc3108215773c8565f3f"
+      "bytes": 45335,
+      "sha256": "729549145cff14182cd3dddd6e8a6abf7c3204e2dea6c4fec86c8fd8591505a4"
     },
     {
       "path": "production/pages_publication.py",
-      "bytes": 39273,
-      "sha256": "21382abe77bdd9703b39059007b87ada0a6362cf8179e8995775f541269954a4"
+      "bytes": 39641,
+      "sha256": "1c3c0f72acbe7cf03c75647e9ce3301352582e8cde15b9835cb2db8b9d46b1ac"
     },
     {
       "path": "production/publication.py",
@@ -224,18 +224,18 @@
     },
     {
       "path": "production/test_actions_job.py",
-      "bytes": 5193,
-      "sha256": "4b4a1181393b434ca22bbe830a4e50a880d9b8b51bb20e8f18cd852566ebc95b"
+      "bytes": 10687,
+      "sha256": "675d4c7381816373315a30d2fdbe6bb17602673eb36d5764c598b47ce521676e"
     },
     {
       "path": "production/test_pages_publication.py",
-      "bytes": 35474,
-      "sha256": "1fcde751352c8be0e4c23436d2257a8555eb47a4509dec8c6fb937c2a4b4940d"
+      "bytes": 36905,
+      "sha256": "1f1915dc0a3ba858216fcd375f5324b91fd4999f2970d366cc96f637f1c1ec3e"
     },
     {
       "path": "production/test_weather_pipeline.py",
-      "bytes": 5527,
-      "sha256": "6fc0503404cd05a2ac3a68c65c50770d2024b90548f64c69290cd4d8b50bc79e"
+      "bytes": 6448,
+      "sha256": "f9272e0a80a4fece632c20fb8d5c904898b58a0e58926e73fb89a6633efa8ed1"
     },
     {
       "path": "production/vendor/jma_gpv_weather-0.6.0-py3-none-any.whl",
@@ -379,8 +379,8 @@
     },
     {
       "path": "services/weather-trigger/README.md",
-      "bytes": 10691,
-      "sha256": "c2bf4108406c38ebb944200f86c72647a5f81e922782a0ace210515ce9c72f99"
+      "bytes": 11888,
+      "sha256": "35b8aeba055817f61efdcdadb2e374d3ce2a313ada7f07a02e05fd22181fbf74"
     },
     {
       "path": "services/weather-trigger/package-lock.json",
@@ -394,13 +394,13 @@
     },
     {
       "path": "services/weather-trigger/worker.mjs",
-      "bytes": 13971,
-      "sha256": "b504c9affaf04982a724982c36e155369d5adac6b2d073124485b0eb5df9f128"
+      "bytes": 14684,
+      "sha256": "55f5ce2b47877938e6aeb4d157757ba9c7a3301793b74ac97d617b33449028d2"
     },
     {
       "path": "services/weather-trigger/worker.test.mjs",
-      "bytes": 14546,
-      "sha256": "915b7a10b4337ac49b55cd8a8d296f8fa0a7c6067fa4d91370165deabb3f5e15"
+      "bytes": 20104,
+      "sha256": "2e9e2b952c345919309c8aea765c31adc3af0ab807a0b2a51583ed24104b0884"
     },
     {
       "path": "services/weather-trigger/wrangler.jsonc",
