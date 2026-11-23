@@ -71,10 +71,43 @@ test("pending 09 slot dispatches one exact scheduled request, never downloads GP
   assert.equal(result.workflow_run_id, 987);
   assert.equal(network.calls.length, 8);
   assert.equal(network.posts().length, 1);
-  assert.deepEqual(JSON.parse(network.posts()[0].options.body), { ref: "main", inputs: {
+  assert.deepEqual(JSON.parse(network.posts()[0].options.body), { ref: "main", return_run_details: true, inputs: {
     target_date: "2026-11-23", slot: "0900", request_id: "worker-20261123-0900-0420", trigger: "worker",
     publish: "true", operation: "refresh",
   } });
+});
+
+test("real Cloudflare scheduledTime seconds are accepted for the nominated minute", async () => {
+  // Actual 2026-11-23 04:20/04:40/09:20 JST invocations contained .197 seconds.
+  for (const [scheduledTime, slot, hhmm] of [
+    [1795375207197, "0900", "0420"],
+    [1795376407197, "0900", "0440"],
+    [1795393207197, "1400", "0920"],
+  ]) {
+    const network = mock();
+    const result = await tick(env, scheduledTime, {
+      fetcher: network.fetcher, now: () => scheduledTime + 500,
+    });
+    assert.equal(result.status, "DISPATCH_ACCEPTED");
+    assert.equal(result.slot, slot);
+    assert.equal(result.request_id, `worker-20261123-${slot}-${hhmm}`);
+    assert.equal(network.posts().length, 1);
+  }
+});
+
+test("failed scheduled invocation exposes safe reason code in exception", async () => {
+  const originalLog = console.log;
+  const log = [];
+  console.log = (message) => log.push(message);
+  try {
+    await assert.rejects(
+      worker.scheduled({ scheduledTime: 1795375207197 }, { ...env, MODE: "invalid" }),
+      /Weather trigger check failed: INVALID_MODE/,
+    );
+  } finally {
+    console.log = originalLog;
+  }
+  assert.equal(JSON.parse(log[0]).reason, "INVALID_MODE");
 });
 
 test("complete recent MSM needs only the small public hint", async () => {
