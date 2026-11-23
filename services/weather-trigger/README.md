@@ -2,7 +2,7 @@
 
 GitHub Actions の日次更新を補う、紙面専用の独立 Worker。公開された小さな `/status.json` と GitHub の実行履歴だけを読み、必要なときだけ `weather-daily.yml` を起動する。MSM/GSM の取得・GRIB デコード・計算・描画・Pages 公開は Actions 側で行う。
 
-このディレクトリは **`MODE=dispatch`、Cron `20,40 0,19 * * *`（UTC）、HTTP入口なし** の本番設定を保持する。既存NavMateのWorker、KV、GitHub workflow、公開サイトは変更しない。新しい環境の初回確認では、下記手順に従ってobserve・Cronなしから始める。
+このディレクトリは **`MODE=dispatch`、Cron `*/20 0-2,19-21 * * *`（UTC）、HTTP入口なし** の本番設定を保持する。既存NavMateのWorker、KV、GitHub workflow、公開サイトは変更しない。新しい環境の初回確認では、下記手順に従ってobserve・Cronなしから始める。
 
 2026-11-22に専用GitHub認証を接続し、`STATUS_URL=https://kyushu-wx.yuto24.com/status.json`、対象repository `Yuto-24/kyushu-nav-weather` で上記設定を有効化した。provider上の未公開previewでstatusとGitHub履歴の読み取りは成功した。previewのGET検証では本番の時刻判定・dispatchを実行していない。CPU時間、Workerからのdispatch、自然Cronは未確認であり、本番受入完了とは扱わない。運用状態の正本は `production/deployment.json`。
 
@@ -10,14 +10,14 @@ GitHub Actions の日次更新を補う、紙面専用の独立 Worker。公開�
 
 | 紙面 | Actions の基本起動（JST） | Worker の補完確認（JST） | 公開締切 |
 | --- | --- | --- | --- |
-| 09:00 | 04:03 / 04:33 | 04:20 / 04:40 | 05:00 |
-| 14:00 | 09:03 / 09:33 | 09:20 / 09:40 | 10:00 |
+| 09:00 | 04:03 / 04:33 | 04:20〜06:20（20分間隔・計7回） | 05:00 |
+| 14:00 | 09:03 / 09:33 | 09:20〜11:00（20分間隔・計6回） | 10:00 |
 
-Worker Cronは `20,40 0,19 * * *`（UTC）。これは同じJST日の04:20・04:40・09:20・09:40に相当する。本番と設定ファイルの両方に適用済み。
+設定ファイルのWorker Cronは `*/20 0-2,19-21 * * *`（UTC）。Cloudflare Freeのアカウント全体でCron Triggerは5件までのため、6つの時刻別式ではなく1つの式を使う。1日18回発火し、JST 04:00・06:40・09:00・11:20・11:40の5回は `SKIPPED_CRON` として外部通信なしで正常終了する。補完判定するのは残り13回だけ。マージ後もWorkerの再デプロイが必要で、現在の本番設定を変えた証拠とは区別する。
 
-20 分の確認は、当日の `complete` な MSM が **04:00 / 09:00 以降**に生成済みなら終了する。40 分の確認では **04:25 / 09:25 以降**を必要とする。03 時台の初期表示や、前半の古い予報だけで後半の取得確認が省略されることを防ぐ。GSM と `partial` は追加取得の候補に残す。
+04:20/09:20の初回は、当日の `complete` な MSM が **04:00/09:00以降**に生成済みなら終了する。04:40〜06:20/09:40〜11:00の各回は **04:25/09:25以降**を必要とする。03時台の初期表示や古い前半版で、2回目以降の更新確認が省略されないようにする。GSM と `partial` は追加取得の候補に残す。
 
-対象日・版・1回目/2回目は `event.scheduledTime` のJST日付と時・分から決める。秒・ミリ秒のずれは許容する。実行時点も同じJST日付なら、15分を超える遅延や05:00/10:00以降でも補完できる。前日分、未来の予定時刻、予定外の時・分は拒否し、POST直前にも日付を確認する。
+対象日・版・要求IDは `event.scheduledTime` のJST日付と時・分から決める。秒・ミリ秒のずれは許容する。予定した補完時刻が06:20/11:00以前なら、同じJST日付の遅延実行も受け付ける。前日分、未来の予定時刻、予定外の時・分は拒否し、POST直前にも日付を確認する。
 
 05:00/10:00は公開目標と採用する気象データのsource cutoffであり、補完起動の締切ではない。Actionsは実生成開始時刻とsource cutoffの早い方で気象データを選ぶ。遅れて復旧しても、締切内の公開実績にはしない。
 
@@ -77,7 +77,7 @@ Worker Secret `GITHUB_TOKEN` に、対象 repository の Actions read/write が�
 }
 ```
 
-`request_id` は `worker-YYYYMMDD-SLOT-HHMM`。`HHMM` は予定された JST 時刻の `0420` / `0440` / `0920` / `0940` であり、実際の到着時刻や予報 Run ではない。同じ occurrence には同じ ID を使う。
+`request_id` は `worker-YYYYMMDD-SLOT-HHMM`。`HHMM` は予定された JST 時刻の09:00版 `0420/0440/0500/0520/0540/0600/0620` または14:00版 `0920/0940/1000/1020/1040/1100` であり、実際の到着時刻や予報 Run ではない。同じ occurrence には同じ ID を使う。
 
 Worker 起動の workflow `run-name` は、必ず次の文字列とする。
 
@@ -138,7 +138,7 @@ npm run bundle
 
 既存 NavMate の `services/msm-trigger/worker.ts`、`docs/msm_external_trigger.md`、`docs/evidence/issue-123/msm-worker-readback-2026-10-26.md` を確認し、metadata だけを読むこと、不明状態を未生成扱いしないこと、全 active 状態を見ること、POST 受付と公開成功を分けること、曖昧な POST を再送しないことを採用した。
 
-対象は固定の1日4予定時刻・2 slotに限定できるため、履歴を用いた抑制にとどめて新規 KV/DO を作らない。厳密な配送制御を実現したと一般化しない。Cron回数は増やさず、失われたイベントを再作成する基盤も追加しない。両確認が消失・失敗した場合や、同一IDで既に実行済みの場合は、公開先を確認してActionsの当日manual refreshで復旧する。
+対象は固定の1日13補完時刻・2 slotに限定できるため、履歴を用いた抑制にとどめて新規 KV/DO を作らない。厳密な配送制御を実現したと一般化しない。Cron式は1つのまま、20分ごとの補完判定を延長する。全補完が消失・失敗した場合や、同一IDで既に実行済みの場合は、公開先を確認してActionsの当日manual refreshで復旧する。
 
 一次資料:
 
