@@ -265,6 +265,28 @@ class PagesPublicationTests(unittest.TestCase):
         self.assertFalse(report["deadline_met"]["0900"])
         self.assertEqual(report["verified_publication_at_jst"], "2026-11-22T05:03:00+09:00")
 
+    def test_late_same_day_recovery_preserves_cutoff_and_both_editions(self):
+        previous = self.initial_site()
+        late = self.now.replace(hour=23)
+        result = build_pages([self.package(now=late), self.package(now=late, slot="1400")],
+                             self.root / "late", previous_dir=previous, now=late)
+        for slot, cutoff in (("0900", 5), ("1400", 10)):
+            self.assertEqual(result["slots"][slot]["valid_date"], late.date().isoformat())
+            pointer = p.bounded_json(self.root / "late" / f"latest/{slot}.json")
+            weather = p.bounded_json(self.root / "late" / pointer["files"]["weather_json"]["path"])
+            self.assertEqual(p.common.timestamp(weather["forecasts"][0]["metadata"]["as_of_cutoff_utc"]),
+                             late.replace(hour=cutoff, minute=0, second=0))
+        p.local_snapshot(self.root / "late", now=late, include_frontend=True)
+
+    def test_redrawing_older_weather_cannot_overwrite_newer_weather(self):
+        previous = self.initial_site()
+        before = self.state(previous)
+        late = self.now.replace(hour=23)
+        with self.assertRaisesRegex(p.common.StalePublication, "Older weather generation"):
+            build_pages([self.package(now=late, weather_generated=self.now - timedelta(minutes=5))],
+                        previous, previous_dir=previous, now=late)
+        self.assertEqual(self.state(previous), before)
+
     def test_readback_rejects_an_old_deployment_before_downloading_its_assets(self):
         public = self.initial_site()
         later = self.now + timedelta(minutes=5)

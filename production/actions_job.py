@@ -89,8 +89,10 @@ def resolve_plan(event_name: str, event: dict, *, created_at: str | datetime,
         target_date = created.date().isoformat()
         trigger, publish = "schedule", True
         start_hour = 4 if slots[0] == "0900" else 9
-        if not start_hour <= created.hour < SLOTS[slots[0]]:
-            raise JobError("Scheduled event was created outside its forecast window")
+        # GitHub may create the run hours after the cron's nominal window.
+        # The cron selects the edition; creation still binds it to this JST day.
+        if created < created.replace(hour=start_hour, minute=3, second=0, microsecond=0):
+            raise JobError("Scheduled event was created before its forecast occurrence")
     elif event_name == "workflow_dispatch":
         inputs = event.get("inputs") or {}
         if not isinstance(inputs, dict):
@@ -123,8 +125,8 @@ def resolve_plan(event_name: str, event: dict, *, created_at: str | datetime,
             if tick not in ({"0420", "0440"} if slot == "0900" else {"0920", "0940"}):
                 raise JobError("Worker occurrence is outside the approved schedule")
             occurrence = instant(f"{target_date}T{tick[:2]}:{tick[2:]}:00+09:00")
-            if occurrence > created + timedelta(seconds=60) or now - occurrence > timedelta(minutes=90):
-                raise JobError("Worker occurrence is future-dated or expired")
+            if occurrence > created:
+                raise JobError("Worker occurrence is future-dated")
         elif request_id:
             raise JobError("Manual runs do not accept a Worker occurrence ID")
     else:
@@ -172,6 +174,34 @@ def duplicate_worker(plan: JobPlan, runs: list[dict]) -> bool:
     return any(isinstance(run.get("id"), int) and run["id"] < plan.run_id
                and run.get("event") == "workflow_dispatch"
                and run.get("display_title") == expected for run in runs)
+
+
+def worker_history(repository: str, target_date: str, *, token: str) -> list[dict]:
+    """Read a complete bounded day; partial or shifting pages cannot admit work."""
+    start = instant(target_date + "T00:00:00+09:00").astimezone(timezone.utc)
+    runs, ids = [], set()
+    total = None
+    for page in range(1, 11):
+        query = urlencode({"event": "workflow_dispatch", "branch": "main",
+                           "created": ">=" + start.isoformat().replace("+00:00", "Z"),
+                           "per_page": 30, "page": page})
+        history = github_get(repository, "actions/workflows/weather-daily.yml/runs?" + query, token=token)
+        count, batch = history.get("total_count"), history.get("workflow_runs")
+        if total is None:
+            total = count
+        if (type(count) is not int or not 0 <= count <= 300 or count != total
+                or not isinstance(batch, list) or len(batch) != min(30, total - len(runs))):
+            raise JobError("Worker request history was incomplete")
+        for run in batch:
+            if (not isinstance(run, dict) or type(run.get("id")) is not int or run["id"] <= 0
+                    or run["id"] in ids or not isinstance(run.get("display_title"), str)
+                    or run.get("event") != "workflow_dispatch" or run.get("head_branch") != "main"):
+                raise JobError("Worker request history was inconsistent")
+            ids.add(run["id"])
+        runs.extend(batch)
+        if len(runs) == total:
+            return runs
+    raise JobError("Worker request history was incomplete")
 
 
 def worker_ready(status: dict, plan: JobPlan, now: datetime) -> bool:
@@ -227,15 +257,13 @@ def prepare(args) -> dict:
     plan = resolve_plan(event_name, event, created_at=current["created_at"],
                         now=datetime.now(JST), run_id=run_id, ref=os.environ.get("GITHUB_REF", ""))
     if plan.trigger == "worker":
-        start = instant(plan.target_date + "T00:00:00+09:00").astimezone(timezone.utc)
-        query = urlencode({"event": "workflow_dispatch", "branch": "main",
-                           "created": ">=" + start.isoformat().replace("+00:00", "Z"), "per_page": 100})
-        history = github_get(repository, "actions/workflows/weather-daily.yml/runs?" + query, token=token)
-        runs = history.get("workflow_runs")
-        if (not isinstance(runs, list) or not isinstance(history.get("total_count"), int)
-                or history["total_count"] != len(runs)):
-            raise JobError("Worker request history was incomplete")
-        if duplicate_worker(plan, runs):
+        attempt = current.get("run_attempt")
+        if type(attempt) is not int or attempt < 1:
+            raise JobError("GitHub run attempt could not be verified")
+        runs = worker_history(repository, plan.target_date, token=token)
+        if not any(run["id"] == plan.run_id for run in runs):
+            raise JobError("Current Worker run is absent from request history")
+        if attempt > 1 or duplicate_worker(plan, runs):
             plan = JobPlan(**{**asdict(plan), "skip_reason": "duplicate_worker_occurrence"})
     write_json(args.output, asdict(plan))
     output_values(args.github_output, {"skip": str(bool(plan.skip_reason)).lower(),

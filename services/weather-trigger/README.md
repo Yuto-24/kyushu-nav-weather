@@ -17,7 +17,15 @@ Worker Cronは `20,40 0,19 * * *`（UTC）。これは同じJST日の04:20・04:
 
 20 分の確認は、当日の `complete` な MSM が **04:00 / 09:00 以降**に生成済みなら終了する。40 分の確認では **04:25 / 09:25 以降**を必要とする。03 時台の初期表示や、前半の古い予報だけで後半の取得確認が省略されることを防ぐ。GSM と `partial` は追加取得の候補に残す。
 
-対象日は `event.scheduledTime` を JST に変換して決める。前日の遅着、予定から 15 分を超える遅延、締切後、予定外の分・時刻は起動しない。POST 直前にも時間を確認する。これらは締切を守るための制約で、GitHub の待ち時間や気象配信障害まで解消する保証ではない。
+対象日・版・1回目/2回目は `event.scheduledTime` のJST日付と時・分から決める。秒・ミリ秒のずれは許容する。実行時点も同じJST日付なら、15分を超える遅延や05:00/10:00以降でも補完できる。前日分、未来の予定時刻、予定外の時・分は拒否し、POST直前にも日付を確認する。
+
+05:00/10:00は公開目標と採用する気象データのsource cutoffであり、補完起動の締切ではない。Actionsは実生成開始時刻とsource cutoffの早い方で気象データを選ぶ。遅れて復旧しても、締切内の公開実績にはしない。
+
+### 2026-11-23 の時刻判定失敗（案件固有のObservation）
+
+Cloudflareの本番Cronで04:20:07.197、04:40:07.197、09:20:07.197 JSTの`scheduledTime`を観測。旧実装は「秒・ミリ秒が0」を要求しており、GitHub照会前に`INVALID_OCCURRENCE`となる条件だった。PR #5の最初の修正は時・分での識別に変更したが、15分遅延上限と補完起動の締切は残していた。同PRの再設計でこれらを撤廃し、上記の当日内復旧に統一した。Cloudflare側で秒単位の揺れが常に発生するとの一般化はしない。
+
+補完起動のGitHub workflow dispatchでは`return_run_details: true`を明示する。GitHubのAPIは未指定時に204（本文なし）を返し得るが、現行の受領検証には200と実行IDが必要。例外ログにも安全な失敗理由コードを含め、イベント失敗の根拠をCloudflare側から確認可能にする。これは本番POST成功の証明ではない。
 
 ## 公開 status の契約
 
@@ -57,6 +65,7 @@ Worker Secret `GITHUB_TOKEN` に、対象 repository の Actions read/write が�
 ```json
 {
   "ref": "main",
+  "return_run_details": true,
   "inputs": {
     "target_date": "2026-11-23",
     "slot": "0900",
@@ -76,20 +85,21 @@ Worker 起動の workflow `run-name` は、必ず次の文字列とする。
 weather-worker/2026-11-23/0900/worker-20261123-0900-0420
 ```
 
-Actions 側は入力日付・slot・request ID・起動時刻・branch を検証し、同じ publication concurrency group（`cancel-in-progress: false`）で公開を直列化する。request ID の重複、rerun、古い日付、公開後の古い生成による上書きをそこで再検査する。Worker の確認だけを公開許可として扱わない。
+Actions 側は入力日付・slot・request ID・起動時刻・branch を検証し、同じ publication concurrency group（`cancel-in-progress: false`）で公開を直列化する。request IDの重複、Workerのrerun、古い日付、公開後の古い生成による上書きをそこで再検査する。Worker要求の90分制限は設けない。Worker の確認だけを公開許可として扱わない。
 
 GitHub API は既存 MSM 経路と同じ `X-GitHub-Api-Version: 2026-03-10`。HTTP 200 と `workflow_run_id`、同じ repository/run を指す `run_url`・`html_url` を確認して初めて `DISPATCH_ACCEPTED` と記録する。これは受付であり、実行完了や公開成功ではない。204、本文不正、送信後の通信断は受付未確認として扱い、POST をその invocation 内で再試行しない。
 
 ## 起動の抑制と保証範囲
 
 1. 対象 workflow の active 状態を `queued` / `in_progress` / `waiting` / `pending` / `requested` ごとに確認する。日付で絞らず、古い承認待ちも対象にする。各問い合わせは `per_page=1` で、1 件でも存在すれば終了する。
-2. 当日 JST 00:00 以降の `workflow_dispatch` 履歴を取得する。30 件・256 KiB が上限。件数不一致、次ページ、未知状態、worker 名の不正は不明として止める。
-3. 同じ request ID は再送しない。当日・同 slot の worker Run が 2 件あれば追加しない。失敗・キャンセルも件数に含める。最後の当該 slot の worker 作成から 15 分以内は待つ。
-4. `observe` なら `WOULD_DISPATCH` を返して終了。`dispatch` でも POST は 1 回だけ。
+2. 当日JST 00:00以降の `workflow_dispatch` 履歴を30件ずつ最大10ページ（300件）取得する。1ページ256 KiB以内。URLは固定のAPIとページ番号から組み立て、Link先へ認証を転送しない。総件数の変化、欠落、重複ID、nextとの不一致、上限超過、未知状態、不正なWorker名は不明として止める
+3. 各履歴GETの一時的な通信失敗とHTTP 408/429/5xxは、初回を含め最大3回確認する。待機は1秒、3秒。認証エラー、不正JSON・schemaなどは即失敗し、履歴の完全性を確認できなければPOSTしない
+4. 同じrequest IDは成功・失敗・キャンセルを問わず再送しない。別IDの過去の失敗や起動回数、15分以内の作成履歴は次の補完を妨げない
+5. `observe` なら `WOULD_DISPATCH` を返して終了。`dispatch` でもPOSTは1回だけ
 
-追加 KV / Durable Object は使用しない。GitHub 履歴がまだ見えない瞬間の同時 invocation、POST 受付不明と履歴反映の間について、厳密な一回配送や全送信試行の永続的な会計は保証しない。履歴上の「最大 2 件」は、観測済み Run の抑制である。Actions の共通 concurrency・重複 ID gate・公開前再確認が必要になる。
+追加 KV / Durable Object は使用しない。GitHub 履歴がまだ見えない瞬間の同時 invocation、POST 受付不明と履歴反映の間について、厳密な一回配送や全送信試行の永続的な会計は保証しない。この照会は原子的な履歴snapshotではない。Actions の共通 concurrency・重複 ID gate・公開前再確認が必要になる。
 
-通常の完成判定は公開 status の 1 要求だけ。補完が必要な場合も最大 8 要求（status、active 5 状態、recent、dispatch）にとどめる。GPV、catalog、PNG、PDF の取得や hash 計算を Worker に持ち込まない。
+通常の完成判定は公開statusの1要求だけ。補完時は履歴1ページ・再試行なしなら8要求。10ページすべてとactive 5状態を各3回確認しても、statusとPOSTを含め最大47要求となる。これはCloudflare Freeの50 subrequests枠内に収めるための上限で、300件は日次起動回数の割当ではない。GPV、catalog、PNG、PDF の取得や hash 計算を Worker に持ち込まない。
 
 ## ローカル確認
 
@@ -112,7 +122,7 @@ npm run bundle
 
 既存 NavMate の `services/msm-trigger/worker.ts`、`docs/msm_external_trigger.md`、`docs/evidence/issue-123/msm-worker-readback-2026-10-26.md` を確認し、metadata だけを読むこと、不明状態を未生成扱いしないこと、全 active 状態を見ること、POST 受付と公開成功を分けること、曖昧な POST を再送しないことを採用した。
 
-今回の差分は固定の 1 日 2 窓・2 slot に限定できるため、履歴を用いた抑制にとどめて新規 KV/DO を作らない。厳密な配送制御を実現したと一般化しない。
+対象は固定の1日4予定時刻・2 slotに限定できるため、履歴を用いた抑制にとどめて新規 KV/DO を作らない。厳密な配送制御を実現したと一般化しない。Cron回数は増やさず、失われたイベントを再作成する基盤も追加しない。両確認が消失・失敗した場合や、同一IDで既に実行済みの場合は、公開先を確認してActionsの当日manual refreshで復旧する。
 
 一次資料:
 

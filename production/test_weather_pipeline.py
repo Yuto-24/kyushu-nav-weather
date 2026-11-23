@@ -15,6 +15,19 @@ import weather_pipeline as pipeline
 
 
 class ForecastTimeTests(unittest.TestCase):
+    def test_late_recovery_keeps_05_and_10_source_cutoffs(self):
+        now = fetch.aware("2026-11-22T23:00:00+09:00")
+        for hour, cutoff_hour in ((9, 5), (14, 10)):
+            with self.subTest(hour=hour), patch.object(pipeline, "datetime", wraps=datetime) as clock, \
+                    patch.object(pipeline, "acquire", return_value=({}, {})) as acquire, \
+                    patch.object(pipeline, "build_forecast", return_value={}) as build:
+                clock.now.return_value = now
+                pipeline.generate_forecast("2026-11-22", hour, as_of=now, assets={})
+                expected = fetch.aware(f"2026-11-22T{cutoff_hour:02d}:00:00+09:00")
+                self.assertEqual(acquire.call_args.args[1], expected)
+                self.assertEqual(build.call_args.args[3], expected)
+                self.assertEqual(acquire.call_args.args[0], fetch.aware(f"2026-11-22T{hour:02d}:00:00+09:00"))
+
     def test_latest_candidates_are_never_future_and_msm_precedes_gsm(self):
         cutoff = fetch.aware("2026-11-21T19:59:00Z")
         target = fetch.aware("2026-11-22T09:00:00+09:00")

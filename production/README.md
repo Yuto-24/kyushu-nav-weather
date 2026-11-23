@@ -21,7 +21,11 @@ GitHub repository: https://github.com/Yuto-24/kyushu-nav-weather
 
 ActionsのcronはUTCの `3,33 19 * * *` と `3,33 0 * * *`。Workerの設定はUTCの `20,40 0,19 * * *`。
 
-定時実行では、前のMSM版が完成済みでも最新の取得可能Runを選び直す。20分のWorkerは00分以降、40分のWorkerは25分以降に取得・計算された当日complete MSMが公開されていれば終了する。GSM、地形由来partial、未更新は補完候補とし、GitHubの実行中状態・同じ要求ID・再試行間隔・回数を確認して起動する。画像の再描画時刻で鮮度を更新しない。
+定時実行では、前のMSM版が完成済みでも最新の取得可能Runを選び直す。20分のWorkerは00分以降、40分のWorkerは25分以降に取得・計算された当日complete MSMが公開されていれば終了する。GSM、地形由来partial、未更新は補完候補とし、GitHubの実行中・待機中状態と同じ要求IDを確認して起動する。別IDの失敗履歴、日次起動回数、15分のクールダウンでは止めない。画像の再描画時刻で鮮度を更新しない。
+
+予定から遅れても同じJST日付内なら対象版を処理する。Actions定時実行はCron文字列で版を選び、GitHubのRun作成日をJST対象日とする。Run作成日と実行日が違う要求や、当日の予定より早い作成は拒否する。GitHubのschedule payloadには本来の配達予定日がないため、作成自体が翌日に遅れたイベントの元の日付は復元できない。Worker要求は予定日・版・要求IDを明示し、90分を超えて待っても当日中なら有効とする。
+
+05:00/10:00のsource cutoffは変更しない。遅延復旧はその時刻までに入手可能だった気象データを対象に行う。補完の詳細と履歴取得不能時の扱いは [Worker運用手順](../services/weather-trigger/README.md) を参照する。
 
 Workerは最大4KiBの `status.json` とGitHubの実行metadataだけを読む。GRIBのダウンロード・Run探索・デコード・全PNG/PDF照合をWorkerへ持ち込まない。通常のHTTPアクセスからは起動できない。
 
@@ -39,7 +43,9 @@ GitHubの待ち時間、取得元障害、Cron配達遅延まで含めた締切�
 
 Actionsは最初に現在公開中のstatus・2枠のpointer・版manifest・PNG/PDF/原値JSONを、サイズ・SHA-256・日付を検証して復元する。対象枠を更新して他方を保持し、全体で整合する静的ディレクトリを作ってからPagesへ一括アップロードする。
 
-取得失敗、復元不一致、描画不備のときは配備しない。古い図の日付を書き換えない。全公開処理は同じconcurrency groupで直列化し、同じWorker要求IDの重複をActions側でも止める。アップロード直前にJST日付、候補identity、公開元deploymentの不変を再検査する。
+取得失敗、復元不一致、描画不備のときは配備しない。古い図の日付を書き換えない。全公開処理は同じconcurrency groupで直列化し、同じWorker要求IDの重複とWorkerのrerunをActions側でも止める。履歴は30件ずつ最大10ページを照合し、欠落・件数変化・重複・上限超過があれば公開へ進まない。アップロード直前にJST日付、候補identity、公開元deploymentの不変を再検査する。
+
+同日の同じモデルでは、古いRun、古い気象生成時刻、古い画像生成時刻への差替えを拒否する。再描画だけで古い気象データを新しく見せない。
 
 候補の生成は公開成功ではない。静的pointerの `deadline_met` は未確定nullで、下記の対象ファイルすべての公開読戻しに成功した結果だけをworkflowの公開確認として扱う。GSMからMSMへの回復、新Runへの更新では、正常な地形除外だけを理由に古い完全値へ固定しない。
 
@@ -52,6 +58,18 @@ Actionsは最初に現在公開中のstatus・2枠のpointer・版manifest・PNG
 CLIで同じ待機を使う場合は `verify --origin <固定URL> --expected-dir <配備したディレクトリ> --wait-seconds 90` を指定する。既定値0は一度だけの照合で、復元・アップロード直前の競合検査には待機を加えない。待機後も不一致なら、期待・観測deployment IDと、独自ドメイン／Pages標準ドメイン／その配備固有URLのstatusを比較する。アップロードが成功している場合は、既に新しい内容が公開済みでもActionsが失敗表示になるため、まず公開先を確認する。
 
 ページURLは固定で、`?time=0900` / `?time=1400` で直接選択できる。表示は同じoriginの静的ファイルだけを読み、閲覧時に気象計算しない。Blob・R2・DBは使用しない。
+
+## PR #5の反映と障害復旧
+
+この再設計はPR内の実装であり、本番Workerへの配置・本番設定変更を含まない。反映には次の操作が必要となる。
+
+1. Hosted CI、独立レビュー、CodeRabbit、未解決スレッド等の必須条件を確認し、承認後にPR #5をmainへマージする
+2. main上のActionsを使用し、専用の `kyushu-weather-trigger` を既存設定のまま承認済み手順で再デプロイする。マージだけではWorkerの実行版は変わらない
+3. 自然Cron、Workerのdispatch受領、Actionsの生成、公開ファイル全体の読戻しを個別に確認する。provider CPU時間は実環境で確認する
+
+公開が更新されない場合は、まずstatusの日付・モデル・気象生成時刻とActionsの実行中状態を読む。履歴GETの一時障害はWorker内で再確認する。履歴が不明のまま送信したり、受付不明のPOSTを再送したりしない。
+
+既存の4回のCronで回復できなかった場合は、公開先を確認したうえで `weather-daily` の `operation=refresh, trigger=manual, target_date=当日JST, slot=対象版, publish=true` を実行する。Workerの同じIDを再利用しない。main制限、source cutoff、完成版検証、公開直列化は手動復旧にも適用する。前日分を当日として公開し直さない。
 
 ## ローカル実行
 

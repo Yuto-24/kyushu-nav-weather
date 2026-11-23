@@ -298,6 +298,11 @@ def validate_archive_package(manifest: dict, directory: Path, *, now: datetime) 
 
 def replacement_allowed(current: dict | None, candidate: dict) -> None:
     if (current and candidate["valid_date"] == current["valid_date"]
+            and current["model"] == candidate["model"]
+            and common.timestamp(candidate["weather_generated_time_jst"])
+            < common.timestamp(current["weather_generated_time_jst"])):
+        raise common.StalePublication("Older weather generation cannot replace the public sheet")
+    if (current and candidate["valid_date"] == current["valid_date"]
             and current["model"] == "GSM" and candidate["model"] == "MSM"):
         return  # Source validity was checked; terrain exclusion is not acquisition failure.
     if (current and candidate["valid_date"] == current["valid_date"]

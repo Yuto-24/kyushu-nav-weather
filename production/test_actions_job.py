@@ -1,8 +1,15 @@
 import unittest
 from datetime import datetime
+import json
+from pathlib import Path
+import tempfile
+from types import SimpleNamespace
+from unittest.mock import patch
+from urllib.parse import parse_qs, urlsplit
 
+from production import actions_job as job
 from production.actions_job import (
-    JobError, duplicate_worker, instant, resolve_plan, worker_ready,
+    JobError, duplicate_worker, instant, resolve_plan, worker_ready, worker_history,
 )
 
 
@@ -29,6 +36,27 @@ class ActionsJobTests(unittest.TestCase):
         self.assertEqual(plan.slots, ["0900"])
         afternoon = self.schedule("3,33 0 * * *", "2026-11-22T09:33:00+09:00")
         self.assertEqual(afternoon.slots, ["1400"])
+
+    def test_github_can_create_and_start_each_schedule_hours_late(self):
+        for cron, slot in (("3,33 19 * * *", "0900"), ("3,33 0 * * *", "1400")):
+            plan = self.schedule(cron, "2026-11-22T18:15:00+09:00", "2026-11-22T23:59:00+09:00")
+            self.assertEqual((plan.target_date, plan.slots), ("2026-11-22", [slot]))
+        for cron, early in (("3,33 19 * * *", "04:02"), ("3,33 0 * * *", "09:02")):
+            with self.assertRaises(JobError):
+                self.schedule(cron, f"2026-11-22T{early}:59+09:00")
+
+    def test_worker_delayed_creation_and_runner_wait_are_allowed_only_same_day(self):
+        for slot, tick in (("0900", "0420"), ("0900", "0440"), ("1400", "0920"), ("1400", "0940")):
+            event = {"inputs": {"trigger": "worker", "target_date": "2026-11-22", "slot": slot,
+                                "request_id": f"worker-20261122-{slot}-{tick}", "publish": True}}
+            for created in (f"{tick[:2]}:{tick[2:]}:08", "18:00:00"):
+                plan = resolve_plan("workflow_dispatch", event,
+                                    created_at=f"2026-11-22T{created}+09:00", now="2026-11-22T23:59:00+09:00",
+                                    run_id=100, ref="refs/heads/main")
+                self.assertEqual(plan.slots, [slot])
+                with self.assertRaises(JobError):
+                    resolve_plan("workflow_dispatch", event, created_at=f"2026-11-22T{created}+09:00",
+                                 now="2026-11-23T00:00:00+09:00", run_id=100, ref="refs/heads/main")
 
     def test_prior_day_queue_and_unknown_cron_rejected(self):
         with self.assertRaises(JobError):
@@ -87,6 +115,64 @@ class ActionsJobTests(unittest.TestCase):
                             run_id=100, ref="refs/heads/main")
         self.assertEqual(plan.slots, ["0900", "1400"])
         self.assertFalse(plan.publish)
+
+    def history_run(self, run_id):
+        return {"id": run_id, "event": "workflow_dispatch", "head_branch": "main",
+                "display_title": "weather-manual/0900"}
+
+    def test_worker_history_reads_later_pages_and_deduplicates(self):
+        runs = [self.history_run(i + 200) for i in range(30)] + [{
+            **self.history_run(99), "display_title": "weather-worker/2026-11-22/0900/worker-20261122-0900-0440"}]
+        def get(repository, suffix, *, token):
+            query = parse_qs(urlsplit(suffix).query)
+            self.assertEqual(query["branch"], ["main"])
+            self.assertEqual(query["created"], [">=2026-11-21T15:00:00Z"])
+            page = int(query["page"][0])
+            return {"total_count": len(runs), "workflow_runs": runs[(page - 1) * 30:page * 30]}
+        with patch.object(job, "github_get", side_effect=get) as getter:
+            result = worker_history("Example/repo", "2026-11-22", token="fixture")
+        self.assertEqual(getter.call_count, 2)
+        self.assertTrue(duplicate_worker(self.worker(), result))
+
+    def test_worker_history_fails_closed_on_incomplete_or_changing_pages(self):
+        first = [self.history_run(i + 200) for i in range(30)]
+        bad_pages = [
+            {"total_count": 301, "workflow_runs": first},
+            {"total_count": 31, "workflow_runs": []},
+            {"total_count": 32, "workflow_runs": [self.history_run(99)]},
+            {"total_count": 31, "workflow_runs": [first[0]]},
+            {"total_count": 31, "workflow_runs": [{**self.history_run(99), "head_branch": "other"}]},
+        ]
+        for bad in bad_pages:
+            with self.subTest(bad=bad), patch.object(job, "github_get", side_effect=[
+                {"total_count": 31, "workflow_runs": first}, bad
+            ]), self.assertRaises(JobError):
+                worker_history("Example/repo", "2026-11-22", token="fixture")
+
+    def test_prepare_skips_duplicate_and_rerun_but_not_unrelated_failures(self):
+        class Clock(datetime):
+            @classmethod
+            def now(cls, tz=None):
+                return cls(2026, 11, 22, 18, tzinfo=job.JST).astimezone(tz)
+        title = "weather-worker/2026-11-22/0900/worker-20261122-0900-0440"
+        for attempt, duplicate, skipped in ((1, False, False), (1, True, True), (2, False, True)):
+            with self.subTest(attempt=attempt, duplicate=duplicate), tempfile.TemporaryDirectory() as temp:
+                root = Path(temp)
+                event = root / "event.json"
+                event.write_text(json.dumps({"inputs": {"trigger": "worker", "target_date": "2026-11-22",
+                    "slot": "0900", "request_id": "worker-20261122-0900-0440", "publish": True}}))
+                current = {**self.history_run(100), "created_at": "2026-11-22T12:00:00+09:00",
+                           "run_attempt": attempt, "display_title": title}
+                earlier = {**self.history_run(99), "conclusion": "failure",
+                           "display_title": title if duplicate else title.replace("0440", "0420")}
+                with patch.dict(job.os.environ, {"GITHUB_RUN_ID": "100", "GITHUB_REPOSITORY": "Example/repo",
+                    "GITHUB_TOKEN": "fixture", "GITHUB_EVENT_PATH": str(event),
+                    "GITHUB_EVENT_NAME": "workflow_dispatch", "GITHUB_REF": "refs/heads/main"}), \
+                    patch.object(job, "datetime", Clock), \
+                    patch.object(job, "github_get", side_effect=[current,
+                        {"total_count": 2, "workflow_runs": [current, earlier]}]):
+                    result = job.prepare(SimpleNamespace(output=root / "plan.json", github_output=None))
+                self.assertEqual(bool(result["skip_reason"]), skipped)
 
 
 if __name__ == "__main__":
