@@ -101,6 +101,16 @@ GitHub API は既存 MSM 経路と同じ `X-GitHub-Api-Version: 2026-03-10`。HT
 
 通常の完成判定は公開statusの1要求だけ。補完時は履歴1ページ・再試行なしなら8要求。10ページすべてとactive 5状態を各3回確認しても、statusとPOSTを含め最大47要求となる。これはCloudflare Freeの50 subrequests枠内に収めるための上限で、300件は日次起動回数の割当ではない。GPV、catalog、PNG、PDF の取得や hash 計算を Worker に持ち込まない。
 
+## GitHub Actionsから手動デプロイ（ローカルNode/npm不要）
+
+`.github/workflows/deploy-worker.yml` は手動実行（`workflow_dispatch`）だけを受け付ける。対象branchは `main` のみ。既定の `mode=validate` ではNode 22で依存関係を一時インストールし、Workerテスト・構文・bundle生成を確認するが、Cloudflareへは送信しない。
+
+初回の認証接続では、CloudflareのAPI tokenに **既存の `kyushu-weather-trigger` のみを対象とするWorkers Editor** を付与する。他のWorker、Pages、Routesへ権限を広げない。Cloudflare [Workersの権限](https://developers.cloudflare.com/workers/authorization/workers/)を参照。生成したトークンをGitHub repository `Yuto-24/kyushu-nav-weather` の Settings → Secrets and variables → Actions のSecret `CLOUDFLARE_WORKER_TOKEN` に保存する。既存Variable `CLOUDFLARE_ACCOUNT_ID` を再利用し、Pages用 `CLOUDFLARE_PAGES_TOKEN` は使わない。
+
+[Actionsのdeploy-worker](https://github.com/Yuto-24/kyushu-nav-weather/actions/workflows/deploy-worker.yml) で `main` を選び、まず `mode=validate` を実行する。検証と承認が済んだら `mode=deploy` を選ぶ。毎回テスト・構文・bundle・デプロイ対象（名前、Cron、Vars、HTTP公開設定）を確認した後、既存のWorkerだけをWranglerで更新する。通常の `wrangler deploy` はWorkerの既存Secret `GITHUB_TOKEN` を保持し、GitHub Secretsへコピーしない。
+
+デプロイ成功とCron復旧は別の確認。CloudflareでWorkerのVersion ID、Secret名、Cron設定を確認し、次回の自然Cron・GitHub dispatch・公開ページの読戻しを別々に検証する。Secrets未登録時は`mode=deploy`が失敗し、本番Workerを変更しない。PRのマージ自体ではWorkerはデプロイされない。
+
 ## ローカル確認
 
 Node.js 22 以降を使う。
