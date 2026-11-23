@@ -37,7 +37,8 @@ jobs:
           npm test --prefix services/weather-trigger
           npm run check --prefix services/weather-trigger
       - name: Check bundle without deploying
-        run: npm run bundle --prefix services/weather-trigger
+        working-directory: services/weather-trigger
+        run: npm exec --yes --package=wrangler@4.156.2 -- wrangler deploy --dry-run --config wrangler.jsonc --outdir "$RUNNER_TEMP/kyushu-weather-trigger-bundle"
       - name: Verify deployment target
         if: inputs.mode == 'deploy'
         run: |
@@ -64,4 +65,4 @@ jobs:
         run: |
           test -n "$CLOUDFLARE_API_TOKEN"
           test -n "$CLOUDFLARE_ACCOUNT_ID"
-          ./node_modules/.bin/wrangler deploy --config wrangler.jsonc
+          npm exec --yes --package=wrangler@4.156.2 -- wrangler deploy --config wrangler.jsonc
