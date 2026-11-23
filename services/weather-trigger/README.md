@@ -2,22 +2,29 @@
 
 GitHub Actions の日次更新を補う、紙面専用の独立 Worker。公開された小さな `/status.json` と GitHub の実行履歴だけを読み、必要なときだけ `weather-daily.yml` を起動する。MSM/GSM の取得・GRIB デコード・計算・描画・Pages 公開は Actions 側で行う。
 
-このディレクトリは **`MODE=dispatch`、Cron `*/20 0-2,19-21 * * *`（UTC）、HTTP入口なし** の本番設定を保持する。既存NavMateのWorker、KV、GitHub workflow、公開サイトは変更しない。新しい環境の初回確認では、下記手順に従ってobserve・Cronなしから始める。
+このディレクトリは **`MODE=dispatch`、Cron `15,35,55 0,1,15-23 * * *`（UTC）、HTTP入口なし** の配置用設定を保持する。Issue #9の変更は未デプロイであり、本番反映には別途承認と実行が必要。既存NavMateのWorker、KV、GitHub workflow、公開サイトは変更しない。新しい環境の初回確認では、下記手順に従ってobserve・Cronなしから始める。
 
-2026-11-22に専用GitHub認証を接続し、`STATUS_URL=https://kyushu-wx.yuto24.com/status.json`、対象repository `Yuto-24/kyushu-nav-weather` で上記設定を有効化した。provider上の未公開previewでstatusとGitHub履歴の読み取りは成功した。previewのGET検証では本番の時刻判定・dispatchを実行していない。CPU時間、Workerからのdispatch、自然Cronは未確認であり、本番受入完了とは扱わない。運用状態の正本は `production/deployment.json`。
+2026-11-22に専用GitHub認証を接続し、`STATUS_URL=https://kyushu-wx.yuto24.com/status.json`、対象repository `Yuto-24/kyushu-nav-weather` で当時の設定を有効化した。provider上の未公開previewでstatusとGitHub履歴の読み取りは成功した。previewのGET検証では本番の時刻判定・dispatchを実行していない。CPU時間、Workerからのdispatch、自然Cronは未確認であり、本番受入完了とは扱わない。運用状態の正本は `production/deployment.json`。
 
 ## 時刻と完成判定
 
 | 紙面 | Actions の基本起動（JST） | Worker の補完確認（JST） | 公開締切 |
 | --- | --- | --- | --- |
-| 09:00 | 04:03 / 04:33 | 04:20〜06:20（20分間隔・計7回） | 05:00 |
-| 14:00 | 09:03 / 09:33 | 09:20〜11:00（20分間隔・計6回） | 10:00 |
+| 09:00 | 04:03 / 04:33 | 00:15〜06:15（20分間隔・計19回） | 05:00 |
+| 14:00 | 09:03 / 09:33 | 06:15〜10:55（20分間隔・計15回） | 10:00 |
 
-設定ファイルのWorker Cronは `*/20 0-2,19-21 * * *`（UTC）。Cloudflare Freeのアカウント全体でCron Triggerは5件までのため、6つの時刻別式ではなく1つの式を使う。1日18回発火し、JST 04:00・06:40・09:00・11:20・11:40の5回は `SKIPPED_CRON` として外部通信なしで正常終了する。補完判定するのは残り13回だけ。マージ後もWorkerの再デプロイが必要で、現在の本番設定を変えた証拠とは区別する。
+設定ファイルのWorker Cronは `15,35,55 0,1,15-23 * * *`（UTC）。1本の式でJST00:15〜10:55の33回に一致し、余分な発火はない。Cloudflare Freeのアカウント全体のCron Trigger上限5件のうち1件を使う。09:00版は06:30までの最終機会が06:15、14:00版は11:00までの最終機会が10:55となる。06:15には両版を判定するため、版ごとの確認は合計34回。マージ後もWorkerの再デプロイが必要で、現在の本番設定を変えた証拠とは区別する。
 
-04:20/09:20の初回は、当日の `complete` な MSM が **04:00/09:00以降**に生成済みなら終了する。04:40〜06:20/09:40〜11:00の各回は **04:25/09:25以降**を必要とする。03時台の初期表示や古い前半版で、2回目以降の更新確認が省略されないようにする。GSM と `partial` は追加取得の候補に残す。
+当日の `complete` なMSMで、`initial_time_jst` が次の目標以上なら終了する。WorkerとActionsは、それぞれ判定する実時刻で段階を選ぶ。00:15の予定が03:15以降に届いた場合やActionsの待機中に段階が進んだ場合も、新しい目標を使う。
 
-対象日・版・要求IDは `event.scheduledTime` のJST日付と時・分から決める。秒・ミリ秒のずれは許容する。予定した補完時刻が06:20/11:00以前なら、同じJST日付の遅延実行も受け付ける。前日分、未来の予定時刻、予定外の時・分は拒否し、POST直前にも日付を確認する。
+| 版 | 確認開始時の目標初期時刻 | 後半の目標初期時刻 |
+| --- | --- | --- |
+| 09:00 | 00:15から当日00:00（0000I） | 03:15以降は当日03:00（0300I） |
+| 14:00 | 06:15から当日06:00（0600I） | 09:15以降は当日09:00（0900I） |
+
+直前に旧Runから再生成しても更新済みとはしない。GSMと`partial`も補完候補に残す。開始時刻は配信保証ではなく、Runの実在・Last-Modified・source cutoff内の入手可能性はActionsの既存取得処理が確認する。新Runを取得できず旧MSM/GSMへフォールバックした場合、次の予定で再確認する。
+
+対象日・版・要求IDは `event.scheduledTime` のJST日付と時・分から決める。秒・ミリ秒のずれは許容する。予定した補完時刻が上表の範囲内なら、同じJST日付の遅延実行も受け付ける。前日分、未来の予定時刻、予定外の時・分は拒否し、各POST直前にも日付を確認する。
 
 05:00/10:00は公開目標と採用する気象データのsource cutoffであり、補完起動の締切ではない。Actionsは実生成開始時刻とsource cutoffの早い方で気象データを選ぶ。遅れて復旧しても、締切内の公開実績にはしない。
 
@@ -51,6 +58,7 @@ Cloudflareの本番Cronで04:20:07.197、04:40:07.197、09:20:07.197 JSTの`sche
 - 両 slot キーを必須にする。未公開は `null`、取得失敗後に前回版を残した場合は前回版の実際の日付・時刻のままにする。
 - `quality` は `complete` または `partial`、`model` は `MSM` または `GSM`。時刻は秒と `+09:00` を含める。
 - **`generated_at_jst` は気象取得・計算の実時刻**。画像の再描画時刻、status の保存時刻、公開確認時刻で更新しない。同じ数値の初期時刻や生成時刻を書き換えて更新済みに見せない。
+- `initial_time_jst <= generated_at_jst <= 現在時刻+60秒` と、生成時刻のJST日付が `valid_date` と一致することを検証する。生成時刻は時刻矛盾の検査に使い、Runの更新判定は初期時刻で行う。
 - 読み取りは HTTPS、redirect 禁止、no-store、8 秒、4 KiB 上限。404、HTML、過大、不正 JSON、不正 schema、未来時刻は `UNKNOWN` となり、GitHub に送信しない。
 - 初回有効化の前に、両 slot が `null` でもよいので正しい status を公開しておく。404 を「未生成」と読み替えて無条件起動しない。
 
@@ -69,7 +77,7 @@ Worker Secret `GITHUB_TOKEN` に、対象 repository の Actions read/write が�
   "inputs": {
     "target_date": "2026-11-23",
     "slot": "0900",
-    "request_id": "worker-20261123-0900-0420",
+    "request_id": "worker-20261123-0900-0015",
     "trigger": "worker",
     "publish": "true",
     "operation": "refresh"
@@ -77,15 +85,17 @@ Worker Secret `GITHUB_TOKEN` に、対象 repository の Actions read/write が�
 }
 ```
 
-`request_id` は `worker-YYYYMMDD-SLOT-HHMM`。`HHMM` は予定された JST 時刻の09:00版 `0420/0440/0500/0520/0540/0600/0620` または14:00版 `0920/0940/1000/1020/1040/1100` であり、実際の到着時刻や予報 Run ではない。同じ occurrence には同じ ID を使う。
+`request_id` は `worker-YYYYMMDD-SLOT-HHMM`。`HHMM` は09:00版の `0015` から `0615`、14:00版の `0615` から `1055` までの20分系列であり、実際の到着時刻や予報Runではない。06:15も版が異なるため別IDとなる。同じ予定日・版・予定時刻には同じIDを使う。
+
+切替当日の履歴照合に限り、旧予定の09:00版 `0420/0440/0500/0520/0540/0600/0620` と14:00版 `0920/0940/1000/1020/1040/1100` も認識する。これらを新規起動としては受け付けない。Actions更新からWorker切替までの旧Cron要求は拒否されるため、承認済みの切替は両者を続けて行う。
 
 Worker 起動の workflow `run-name` は、必ず次の文字列とする。
 
 ```text
-weather-worker/2026-11-23/0900/worker-20261123-0900-0420
+weather-worker/2026-11-23/0900/worker-20261123-0900-0015
 ```
 
-Actions 側は入力日付・slot・request ID・起動時刻・branch を検証し、同じ publication concurrency group（`cancel-in-progress: false`）で公開を直列化する。request IDの重複、Workerのrerun、古い日付、公開後の古い生成による上書きをそこで再検査する。Worker要求の90分制限は設けない。Worker の確認だけを公開許可として扱わない。
+Actions 側は入力日付・slot・request ID・起動時刻・branch を検証し、同じ publication concurrency group（`cancel-in-progress: false`、`queue: max`）で公開を直列化する。request IDの重複、Workerのrerun、古い日付、公開後の古い生成による上書きをそこで再検査する。Worker要求の90分制限は設けない。Worker の確認だけを公開許可として扱わない。
 
 GitHub API は既存 MSM 経路と同じ `X-GitHub-Api-Version: 2026-03-10`。HTTP 200 と `workflow_run_id`、同じ repository/run を指す `run_url`・`html_url` を確認して初めて `DISPATCH_ACCEPTED` と記録する。これは受付であり、実行完了や公開成功ではない。204、本文不正、送信後の通信断は受付未確認として扱い、POST をその invocation 内で再試行しない。
 
@@ -95,11 +105,13 @@ GitHub API は既存 MSM 経路と同じ `X-GitHub-Api-Version: 2026-03-10`。HT
 2. 当日JST 00:00以降の `workflow_dispatch` 履歴を30件ずつ最大10ページ（300件）取得する。1ページ256 KiB以内。URLは固定のAPIとページ番号から組み立て、Link先へ認証を転送しない。総件数の変化、欠落、重複ID、nextとの不一致、上限超過、未知状態、不正なWorker名は不明として止める
 3. 各履歴GETの一時的な通信失敗とHTTP 408/429/5xxは、初回を含め最大3回確認する。待機は1秒、3秒。認証エラー、不正JSON・schemaなどは即失敗し、履歴の完全性を確認できなければPOSTしない
 4. 同じrequest IDは成功・失敗・キャンセルを問わず再送しない。別IDの過去の失敗や起動回数、15分以内の作成履歴は次の補完を妨げない
-5. `observe` なら `WOULD_DISPATCH` を返して終了。`dispatch` でもPOSTは1回だけ
+5. `observe` なら版ごとに `WOULD_DISPATCH` を返して終了。`dispatch` でも各要求IDのPOSTは1回だけ
+
+06:15はstatus、active状態、当日履歴を共有し、両版の判定を済ませてから09:00版、14:00版の順に必要な要求を送る。既存のactive実行があれば両方を抑制する。自分が送った1件目を理由に2件目を落とさず、既存のActions待機列で公開を直列化する。一方の完成・重複IDは他方を抑制しない。POSTが不明でも再送せず、もう一方を個別に扱い、両結果をログに残してCronを失敗にする。途中で日付を越えた場合は残りのPOSTを拒否する。
 
 追加 KV / Durable Object は使用しない。GitHub 履歴がまだ見えない瞬間の同時 invocation、POST 受付不明と履歴反映の間について、厳密な一回配送や全送信試行の永続的な会計は保証しない。この照会は原子的な履歴snapshotではない。Actions の共通 concurrency・重複 ID gate・公開前再確認が必要になる。
 
-通常の完成判定は公開statusの1要求だけ。補完時は履歴1ページ・再試行なしなら8要求。10ページすべてとactive 5状態を各3回確認しても、statusとPOSTを含め最大47要求となる。これはCloudflare Freeの50 subrequests枠内に収めるための上限で、300件は日次起動回数の割当ではない。GPV、catalog、PNG、PDF の取得や hash 計算を Worker に持ち込まない。
+通常の完成判定は公開statusの1要求だけ。補完時は履歴1ページ・再試行なしなら8要求、06:15に両版が必要なら9要求。10ページすべてとactive 5状態を各3回確認しても、statusと最大2回のPOSTを含め最大48要求となる。これはCloudflare Freeの50 subrequests枠内に収めるための上限で、300件は日次起動回数の割当ではない。GPV、catalog、PNG、PDF の取得や hash 計算を Worker に持ち込まない。
 
 ## GitHub Actionsから手動デプロイ（ローカルNode/npm不要）
 
@@ -119,7 +131,7 @@ GitHub Actions run [45098209634](https://github.com/Yuto-24/kyushu-nav-weather/a
 
 ## ローカル確認
 
-Node.js 22 以降を使う。
+Node.js 22とPython 3.12（`python3`）を使う。WorkerテストからActionsの入力・初期時刻判定も照合する。
 
 ```sh
 npm ci
@@ -138,7 +150,7 @@ npm run bundle
 
 既存 NavMate の `services/msm-trigger/worker.ts`、`docs/msm_external_trigger.md`、`docs/evidence/issue-123/msm-worker-readback-2026-10-26.md` を確認し、metadata だけを読むこと、不明状態を未生成扱いしないこと、全 active 状態を見ること、POST 受付と公開成功を分けること、曖昧な POST を再送しないことを採用した。
 
-対象は固定の1日13補完時刻・2 slotに限定できるため、履歴を用いた抑制にとどめて新規 KV/DO を作らない。厳密な配送制御を実現したと一般化しない。Cron式は1つのまま、20分ごとの補完判定を延長する。全補完が消失・失敗した場合や、同一IDで既に実行済みの場合は、公開先を確認してActionsの当日manual refreshで復旧する。
+対象は固定の1日33予定時刻・2 slotに限定できるため、履歴を用いた抑制にとどめて新規 KV/DO を作らない。厳密な配送制御を実現したと一般化しない。Cron式は1つのまま、20分ごとの補完判定を前倒しする。全補完が消失・失敗した場合や、同一IDで既に実行済みの場合は、公開先を確認してActionsの当日manual refreshで復旧する。
 
 一次資料:
 

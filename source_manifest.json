@@ -19,8 +19,8 @@
     },
     {
       "path": ".github/workflows/deploy-worker.yml",
-      "bytes": 2769,
-      "sha256": "d8cba89faae378a3524e56bdc3e40d5419c8e7244ab0730e151548e0c69c8963"
+      "bytes": 2858,
+      "sha256": "c1f17ce8c8f6f3cee5eb48a73fb9b07d5a0ffcfc5db990e46439905d8624ff95"
     },
     {
       "path": ".github/workflows/verify.yml",
@@ -49,8 +49,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 8756,
-      "sha256": "15bfc0289e254ab1938c1128a285d23b00758b68ea18505b7887e0dd31b99584"
+      "bytes": 8939,
+      "sha256": "134b8533fb1915d157ff9513c68eff1c03db9a0a643f70ffc438e9a7feb0bbaf"
     },
     {
       "path": "analysis/geographic_revision/build_geographic_sheet.py",
@@ -114,8 +114,8 @@
     },
     {
       "path": "docs/knowledge/INDEX.md",
-      "bytes": 1191,
-      "sha256": "52dd7f6f9c61d67d4249204432d773d088fdec23498e3a1768896c72e2e48874"
+      "bytes": 1211,
+      "sha256": "dbd4072dc07cbee6641f99f57fa0d08673a24b1c3a41bbafc3a8cb70e36d2964"
     },
     {
       "path": "docs/knowledge/README.md",
@@ -139,8 +139,8 @@
     },
     {
       "path": "docs/testing.md",
-      "bytes": 1880,
-      "sha256": "036702881e1c1813bd1bf50fa31f78a500c033cbce4f9c338cbbaabe6c980bcd"
+      "bytes": 2076,
+      "sha256": "5837b260b96a3b487779cace22f1ab794a14343e409f23b8c0e36d4cce56bfc7"
     },
     {
       "path": "docs/ui_copy_review.md",
@@ -164,8 +164,8 @@
     },
     {
       "path": "production/README.md",
-      "bytes": 13729,
-      "sha256": "8453b1997ed64097fb76622ec411fe45d2c5f0b696fa0fec900cf353abfc5388"
+      "bytes": 14229,
+      "sha256": "db2ee18990fc2c78b7d016737df4ac5e55029573fadac21a6123d6fb855d149b"
     },
     {
       "path": "production/WEATHER_PIPELINE.md",
@@ -174,8 +174,8 @@
     },
     {
       "path": "production/actions_job.py",
-      "bytes": 19816,
-      "sha256": "d3b7e8c24aec01aacd0143ad6eb722258771d2d50cc660e2b52a8e7c9b36f753"
+      "bytes": 20143,
+      "sha256": "85d027a69e030a13fba1701c1f14bcc2e0718c28ed27d754998279aa43992807"
     },
     {
       "path": "production/build_pages.py",
@@ -194,8 +194,8 @@
     },
     {
       "path": "production/infra_reuse_notes.md",
-      "bytes": 46683,
-      "sha256": "1db9e987e4b133c007cf8ce788ecccc331fdefd9aff98333fc9649f63f6725db"
+      "bytes": 49308,
+      "sha256": "eb1d4c1975703aefb3a78bf01ff0b9a207e104ac9766c9806c49f2f7d1470cb1"
     },
     {
       "path": "production/pages_publication.py",
@@ -229,8 +229,8 @@
     },
     {
       "path": "production/test_actions_job.py",
-      "bytes": 13073,
-      "sha256": "de9f747ce5b94b26f7025a3079c42aec2636ff4c91ecf38bac26cc9142712d36"
+      "bytes": 13995,
+      "sha256": "be10be8c27e5607dc8fcade1ca9f3f809cac0d00a63fadf7051180b99c86faaa"
     },
     {
       "path": "production/test_pages_publication.py",
@@ -384,8 +384,8 @@
     },
     {
       "path": "services/weather-trigger/README.md",
-      "bytes": 15446,
-      "sha256": "3e0de6a136f83ce580632c3de281368b8e05a551df632a62b1237ae9493f58c3"
+      "bytes": 17553,
+      "sha256": "aef145af3b88ba7ea43356b42ad06215812d1754688a9ac545727655ac0d286f"
     },
     {
       "path": "services/weather-trigger/package-lock.json",
@@ -399,18 +399,18 @@
     },
     {
       "path": "services/weather-trigger/worker.mjs",
-      "bytes": 15180,
-      "sha256": "48b8ac571d25cae22f5abe51dfae129c72770da9da599045e1ff6d3dfbfb7f30"
+      "bytes": 16648,
+      "sha256": "cb04e96370895a8db1cca0aae0893e1a794df8977cbb1f48f6d29187e5b1a65e"
     },
     {
       "path": "services/weather-trigger/worker.test.mjs",
-      "bytes": 22477,
-      "sha256": "e5e407a5161069904e98c6d3cc42421bf7d777f6242478b69d4c6ef113ae1d9c"
+      "bytes": 28250,
+      "sha256": "524f9af8ff46653edfe996f22e2e62bec21c32afe791479fe62239628759401d"
     },
     {
       "path": "services/weather-trigger/wrangler.jsonc",
-      "bytes": 446,
-      "sha256": "5296495f5efff2db7f99a25a8183a95f4a2d807d126dc814838d8f449881da7b"
+      "bytes": 450,
+      "sha256": "30f2a44c19578dc33c736d78c298bfa9476b3a0683310cbfed4817b4c199e4d4"
     }
   ]
 }

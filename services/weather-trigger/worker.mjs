@@ -9,11 +9,17 @@ const SKEW_MS = 60_000;
 const JST = 9 * 3600_000;
 const ACTIVE = ["queued", "in_progress", "waiting", "pending", "requested"];
 const WORKER_TICKS = {
-  "0900": new Set(["0420","0440","0500","0520","0540","0600","0620"]),
-  "1400": new Set(["0920","0940","1000","1020","1040","1100"]),
+  "0900": new Set(Array.from({ length: 19 }, (_, i) => tickClock(15 + i * 20))),
+  "1400": new Set(Array.from({ length: 15 }, (_, i) => tickClock(375 + i * 20))),
 };
-// One UTC Cron covers the windows; these five extra ticks perform no network I/O.
-const NOOP_TICKS = new Set(["0400", "0640", "0900", "1120", "1140"]);
+// Read-only compatibility for same-day history from before the schedule switch.
+const LEGACY_TICKS = {
+  "0900": new Set(["0420", "0440", "0500", "0520", "0540", "0600", "0620"]),
+  "1400": new Set(["0920", "0940", "1000", "1020", "1040", "1100"]),
+};
+function tickClock(minutes) {
+  return `${String(Math.floor(minutes / 60)).padStart(2, "0")}${String(minutes % 60).padStart(2, "0")}`;
+}
 const decoder = new TextDecoder("utf-8", { fatal: true });
 const noDiagnostics = () => {};
 
@@ -72,18 +78,13 @@ export function occurrence(scheduledTime, now) {
   // Cloudflare scheduledTime may include seconds/milliseconds (e.g. 04:20:07.197).
   // Use the scheduled minute, while retaining the original JST date.
   const hhmm = `${String(hour).padStart(2, "0")}${String(minute).padStart(2, "0")}`;
-  const slot = WORKER_TICKS["0900"].has(hhmm) ? "0900" :
-    WORKER_TICKS["1400"].has(hhmm) ? "1400" : null;
-  requireThat(slot !== null || NOOP_TICKS.has(hhmm), "INVALID_OCCURRENCE");
+  const slots = ["0900", "1400"].filter(slot => WORKER_TICKS[slot].has(hhmm));
+  requireThat(slots.length > 0, "INVALID_OCCURRENCE");
   const targetDate = jstDate(scheduledTime);
   requireThat(jstDate(now) === targetDate, "EXPIRED_DAY");
   requireThat(scheduledTime <= now, "FUTURE_OCCURRENCE");
-  if (slot === null) return null;
-  const firstCheck = hhmm === "0420" || hhmm === "0920";
-  return { targetDate, slot, scheduledTime,
-    readyAfter: isoDay(targetDate) + (slot === "0900" ? 4 : 9) * 3600_000 +
-      (firstCheck ? 0 : 25) * 60_000,
-    requestId: `worker-${targetDate.replaceAll("-", "")}-${slot}-${hhmm}` };
+  return slots.map(slot => ({ targetDate, slot, scheduledTime,
+    requestId: `worker-${targetDate.replaceAll("-", "")}-${slot}-${hhmm}` }));
 }
 
 /** One request, bounded body/time, no redirect, no automatic POST retry. */
@@ -151,8 +152,12 @@ function statusHint(value, now) {
 }
 
 function isReady(item, target, now) {
+  const midnight = isoDay(target.targetDate);
+  const firstHour = target.slot === "0900" ? 0 : 6;
+  const secondStage = midnight + ((firstHour + 3) * 60 + 15) * 60_000;
+  const initialAfter = midnight + (firstHour + (now >= secondStage ? 3 : 0)) * 3600_000;
   return Boolean(item && item.valid_date === target.targetDate && item.quality === "complete" &&
-    item.model === "MSM" && jstTimestamp(item.generated_at_jst) >= target.readyAfter &&
+    item.model === "MSM" && jstTimestamp(item.initial_time_jst) >= initialAfter &&
     jstTimestamp(item.generated_at_jst) <= now + SKEW_MS);
 }
 
@@ -202,7 +207,7 @@ function workerIdentity(title) {
   isoDay(day);
   const hhmm = requestId.slice(-4);
   requireThat(requestId === `worker-${day.replaceAll("-", "")}-${slot}-${hhmm}` &&
-    WORKER_TICKS[slot].has(hhmm), "UNKNOWN_WORKER_HISTORY");
+    (WORKER_TICKS[slot].has(hhmm) || LEGACY_TICKS[slot].has(hhmm)), "UNKNOWN_WORKER_HISTORY");
   return { day, slot, requestId };
 }
 
@@ -236,13 +241,22 @@ function dispatchReceipt(value, repository) {
 export async function tick(env, scheduledTime, { fetcher = fetch, now = Date.now, diagnose = noDiagnostics,
   sleep = ms => new Promise(resolve => setTimeout(resolve, ms)) } = {}) {
   const config = configuration(env);
-  const target = occurrence(scheduledTime, now());
-  if (target === null) return { status: "SKIPPED_CRON", publication: "NOT_VERIFIED" };
-  const result = (status) => ({ status, publication: "NOT_VERIFIED", target_date: target.targetDate,
+  const targets = occurrence(scheduledTime, now());
+  const result = (target, status) => ({ status, publication: "NOT_VERIFIED", target_date: target.targetDate,
     slot: target.slot, request_id: target.requestId });
+  const results = [];
+  const finish = () => targets.length === 1 ? results[0] : {
+    status: results.some(item => item.status === "UNKNOWN") ? "UNKNOWN" : "CHECKED_SLOTS",
+    publication: "NOT_VERIFIED", results,
+  };
   const status = await request("status", config.statusURL, fetcher, diagnose, { cache: "no-store" });
   const slots = statusHint(status.value, now());
-  if (isReady(slots[target.slot], target, now())) return result("READY_MSM");
+  const needed = targets.filter(target => {
+    if (!isReady(slots[target.slot], target, now())) return true;
+    results.push(result(target, "READY_MSM"));
+    return false;
+  });
+  if (!needed.length) return finish();
   requireThat(typeof env.GITHUB_TOKEN === "string" && env.GITHUB_TOKEN.length > 0, "AUTH_REQUIRED");
   const headers = { Accept: "application/vnd.github+json", "User-Agent": "Kyushu-weather-trigger",
     "X-GitHub-Api-Version": API_VERSION, Authorization: `Bearer ${env.GITHUB_TOKEN}` };
@@ -255,25 +269,45 @@ export async function tick(env, scheduledTime, { fetcher = fetch, now = Date.now
     const value = response.value;
     requireThat(plain(value) && Number.isSafeInteger(value.total_count) && value.total_count >= 0 &&
       Array.isArray(value.workflow_runs), "UNKNOWN_ACTIONS");
-    if (value.total_count > 0) return result("IN_FLIGHT");
+    if (value.total_count > 0) {
+      results.push(...needed.map(target => result(target, "IN_FLIGHT")));
+      return finish();
+    }
     requireThat(value.workflow_runs.length === 0 && !/rel="next"/.test(response.response.headers.get("link") || ""),
       "UNKNOWN_ACTIONS");
   }
-  const runs = await recentHistory(config, target, fetcher, diagnose, headers, sleep);
-  const reason = checkRecent(runs, target, now());
-  if (reason) return result(reason);
-  // Slow reads/retries must not turn a valid occurrence into a prior-day request.
-  // Observe mode uses the same decision gates.
-  occurrence(scheduledTime, now());
-  if (env.MODE === "observe") return result("WOULD_DISPATCH");
-  const receipt = await request("dispatch", `${config.api}/dispatches`, fetcher, diagnose, {
-    method: "POST", headers: { ...headers, "Content-Type": "application/json" },
-    body: JSON.stringify({ ref: env.GITHUB_BRANCH, return_run_details: true, inputs: {
-      target_date: target.targetDate, slot: target.slot, request_id: target.requestId, trigger: "worker",
-      publish: "true", operation: "refresh",
-    } }),
-  }, 4096);
-  return { ...result("DISPATCH_ACCEPTED"), ...dispatchReceipt(receipt.value, config.repository) };
+  const runs = await recentHistory(config, targets[0], fetcher, diagnose, headers, sleep);
+  // Validate the shared snapshot for BOTH editions before any POST. The 06:15
+  // pair is admitted together; Actions queue:max serializes their publication.
+  const decisions = needed.map(target => ({ target, reason: checkRecent(runs, target, now()) }));
+  for (const { target, reason } of decisions) {
+    if (reason) {
+      results.push(result(target, reason));
+      continue;
+    }
+    try {
+      // Recheck before EACH POST, including a slow first dispatch crossing midnight.
+      occurrence(scheduledTime, now());
+      if (env.MODE === "observe") {
+        results.push(result(target, "WOULD_DISPATCH"));
+        continue;
+      }
+      const receipt = await request("dispatch", `${config.api}/dispatches`, fetcher, diagnose, {
+        method: "POST", headers: { ...headers, "Content-Type": "application/json" },
+        body: JSON.stringify({ ref: env.GITHUB_BRANCH, return_run_details: true, inputs: {
+          target_date: target.targetDate, slot: target.slot, request_id: target.requestId, trigger: "worker",
+          publish: "true", operation: "refresh",
+        } }),
+      }, 4096);
+      results.push({ ...result(target, "DISPATCH_ACCEPTED"), ...dispatchReceipt(receipt.value, config.repository) });
+    } catch (error) {
+      if (targets.length === 1) throw error;
+      // An ambiguous POST is never replayed; still account for the other edition.
+      results.push({ ...result(target, "UNKNOWN"),
+        reason: error instanceof Fault ? error.message : "IO_OR_VALIDATION_FAILED" });
+    }
+  }
+  return finish();
 }
 
 export default {
@@ -285,8 +319,9 @@ export default {
     let result;
     try {
       result = await tick(env, event.scheduledTime, { diagnose: record => diagnostics.push(record) });
+      if (result.status === "UNKNOWN") throw new Fault("SLOT_DISPATCH_UNCONFIRMED");
     } catch (error) {
-      result = { status: "UNKNOWN", publication: "NOT_VERIFIED",
+      result = { ...result, status: "UNKNOWN", publication: "NOT_VERIFIED",
         reason: error instanceof Fault ? error.message : "IO_OR_VALIDATION_FAILED" };
       throw new Error(`Weather trigger check failed: ${result.reason}`);
     } finally {
